@@ -51,7 +51,7 @@ watch(
         <Tooltip>
           <TooltipTrigger as-child>
             <a
-              href="/resume.pdf"
+              href="/ALI_KHALIL_FRONTEND.pdf"
               download
               :aria-label="t('nav.download_resume')"
               class="inline-flex h-9 items-center gap-1.5 rounded-md px-2 text-sm font-medium text-foreground no-underline hover:bg-accent hover:text-accent-foreground sm:px-3"
