@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ConfigProvider } from 'reka-ui';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { getHtmlAttributes, type Locales } from '~/constants/i18n';
 
 const { handleSetLocale, langCookie } = useI18nHandler();
@@ -62,8 +63,10 @@ onMounted(() => {
 
 <template>
   <ConfigProvider :use-id="useIdFunction" :dir="htmlAttrs.dir">
-    <NuxtLayout>
-      <NuxtPage :key="pageKey" :keepalive="false" />
-    </NuxtLayout>
+    <TooltipProvider :delay-duration="200">
+      <NuxtLayout>
+        <NuxtPage :key="pageKey" :keepalive="false" />
+      </NuxtLayout>
+    </TooltipProvider>
   </ConfigProvider>
 </template>
