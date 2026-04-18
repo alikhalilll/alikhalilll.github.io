@@ -8,7 +8,9 @@
     "home_aria": "Ali Khalil — home",
     "toggle_menu": "Toggle navigation",
     "theme_settings": "Theme settings",
-    "language": "Language"
+    "language": "Language",
+    "resume": "Resume",
+    "download_resume": "Download résumé (PDF)"
   },
   "footer": {
     "copyright": "© 2019–{year} Ali Khalil"

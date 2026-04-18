@@ -8,7 +8,9 @@
     "home_aria": "علي خليل — الرئيسية",
     "toggle_menu": "فتح القائمة",
     "theme_settings": "إعدادات المظهر",
-    "language": "اللغة"
+    "language": "اللغة",
+    "resume": "السيرة الذاتية",
+    "download_resume": "تحميل السيرة الذاتية (PDF)"
   },
   "footer": {
     "copyright": "© 2019–{year} علي خليل"

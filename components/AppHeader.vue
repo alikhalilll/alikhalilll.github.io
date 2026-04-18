@@ -46,6 +46,16 @@ watch(
           </NuxtLink>
         </nav>
 
+        <a
+          href="/resume.pdf"
+          download
+          :aria-label="t('nav.download_resume')"
+          class="inline-flex h-9 items-center gap-1.5 rounded-md px-2 text-sm font-medium text-foreground no-underline hover:bg-accent hover:text-accent-foreground sm:px-3"
+        >
+          <Icon name="lucide:download" class="size-4" />
+          <span class="hidden sm:inline">{{ t('nav.resume') }}</span>
+        </a>
+
         <LanguageSwitcher />
         <ThemeToggle />
 
