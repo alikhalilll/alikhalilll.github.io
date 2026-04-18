@@ -29,7 +29,10 @@ const { formatYear } = useLocalizedDate();
       <h3 class="text-base font-semibold text-foreground">
         <bdi>{{ title }}</bdi>
       </h3>
-      <span v-if="year" class="shrink-0 font-mono text-xs text-muted-foreground">
+      <span
+        v-if="year"
+        class="shrink-0 font-mono text-xs text-muted-foreground ar:font-sans ar:text-sm ar:font-bold"
+      >
         {{ formatYear(year) }}
       </span>
     </div>

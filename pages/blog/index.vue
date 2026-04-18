@@ -42,7 +42,7 @@ const { data: posts } = await useAsyncData('blog-list', () =>
             </div>
             <time
               v-if="post.date"
-              class="shrink-0 font-mono text-xs text-muted-foreground rtl:text-sm rtl:font-semibold"
+              class="shrink-0 font-mono text-xs text-muted-foreground ar:font-sans ar:text-sm ar:font-bold"
               :datetime="post.date"
             >
               {{ formatDate(post.date, { year: 'numeric', month: 'short', day: 'numeric' }) }}

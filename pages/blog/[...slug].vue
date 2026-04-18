@@ -86,7 +86,7 @@ useHead({
         <header :dir="postDir" :lang="postLang" class="mb-10 border-b border-border pb-8">
           <time
             v-if="post?.date"
-            class="mb-3 block font-mono text-xs tracking-widest text-muted-foreground uppercase rtl:text-sm rtl:font-semibold rtl:tracking-normal rtl:normal-case"
+            class="mb-3 block font-mono text-xs tracking-widest text-muted-foreground uppercase ar:font-sans ar:text-base ar:font-bold ar:tracking-normal ar:normal-case"
             :datetime="post.date"
             dir="ltr"
           >

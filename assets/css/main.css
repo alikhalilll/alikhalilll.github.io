@@ -3,6 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 @custom-variant rtl (&:is([dir='rtl'], [dir='rtl'] *));
+@custom-variant ar (&:is([lang^='ar'], [lang^='ar'] *));
 
 @theme inline {
   --font-sans:
