@@ -52,14 +52,12 @@ const reveal: Directive<HTMLElement, number | { delay?: number } | undefined> = 
     el.classList.add('reveal');
 
     const delay = typeof binding.value === 'number' ? binding.value : (binding.value?.delay ?? 0);
-    if (delay) el.style.transitionDelay = `${delay}ms`;
+    if (delay) el.style.animationDelay = `${delay}ms`;
 
     pending.add(el);
 
-    // Defer observation by one paint. IntersectionObserver runs its initial
-    // check in the same rendering tick as observe(), so without this the
-    // browser computes a single style with both .reveal and .reveal-in
-    // applied and skips the transition — cards pop in instead of fading.
+    // Defer observation by one paint so the .reveal initial state lands
+    // before the IntersectionObserver fires and adds .reveal-in.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (pending.has(el)) ensureObserver()?.observe(el);
