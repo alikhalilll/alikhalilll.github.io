@@ -20,7 +20,7 @@ useHead({
         name: 'Ali Khalil',
         url: siteUrl,
         jobTitle: 'Senior Frontend Developer & Team Lead',
-        image: `${siteUrl}/og.svg`,
+        image: `${siteUrl}/og-image.png`,
         sameAs: [
           'https://www.linkedin.com/in/alikhalilll',
           'https://github.com/alikhalilll',

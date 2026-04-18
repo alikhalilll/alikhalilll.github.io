@@ -36,7 +36,7 @@ export function useSiteSeo(input: SeoInput) {
 
   const path = input.path ?? route.path;
   const url = `${siteUrl}${path}`;
-  const image = `${siteUrl}${input.image ?? '/og.svg'}`;
+  const image = `${siteUrl}${input.image ?? '/og-image.png'}`;
   const description = input.description ?? fallbackDesc;
   const fullTitle = input.title.includes(siteName) ? input.title : `${input.title} — ${siteName}`;
 

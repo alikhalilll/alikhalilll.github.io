@@ -34,7 +34,7 @@ const siteUrl = (config.public.siteUrl as string).replace(/\/$/, '');
 const url = `${siteUrl}${route.path}`;
 const title = post.value?.title ?? '';
 const description = post.value?.description ?? '';
-const ogImage = `${siteUrl}/og.svg`;
+const ogImage = `${siteUrl}/og-image.png`;
 
 useSiteSeo({
   title,
