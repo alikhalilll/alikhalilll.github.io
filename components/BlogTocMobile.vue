@@ -49,7 +49,7 @@ function scrollTo(id: string, e: MouseEvent) {
   <div
     v-if="flat.length"
     data-mobile-toc-bar
-    class="sticky top-16 z-20 -mx-6 mb-8 border-y border-border bg-background/85 backdrop-blur-xl xl:hidden"
+    class="sticky top-14 z-20 -mx-6 mb-8 border-y border-border bg-background/85 backdrop-blur-xl xl:hidden"
   >
     <button
       type="button"
