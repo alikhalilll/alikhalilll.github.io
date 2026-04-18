@@ -66,6 +66,15 @@ export const useProjects = () => {
       group: 'work',
     },
     {
+      title: 'E-Commerce App (full-stack learning project)',
+      description:
+        'Full-stack e-commerce backend with Node.js, Express.js, and MongoDB (Mongoose). JWT auth, role-based access control (RBAC), Stripe + PayPal payments, plus search, filtering, pagination, input validation, rate limiting, and bcrypt.js for secure operations.',
+      tags: ['Node.js', 'Express', 'MongoDB', 'JWT', 'Stripe'],
+      year: '2023',
+      icon: 'lucide:shopping-cart',
+      group: 'work',
+    },
+    {
       title: '@alikhalilll/nuxt-api-provider',
       description:
         'Strongly-typed fetch client for Nuxt 3/4 with interceptors, retry/backoff, upload progress, and a framework-agnostic core that also runs outside Nuxt.',
@@ -80,24 +89,26 @@ export const useProjects = () => {
     {
       title: '@alikhalilll/nuxt-crypto',
       description:
-        'Symmetric Web Crypto service for Nuxt. AES-256-GCM + PBKDF2 with key caching, pluggable algorithms, and optional device-fingerprint binding.',
+        'AES-256-GCM + PBKDF2 via Web Crypto API for Nuxt. Key caching, pluggable algorithms, optional server-only mode, and device-fingerprint binding.',
       tags: ['Nuxt', 'Security', 'Web Crypto'],
       href: 'https://alikhalilll.github.io/ali-nuxt-toolkit/crypto',
       repo: 'https://github.com/alikhalilll/ali-nuxt-toolkit/tree/master/packages/crypto',
       year: '2026',
       icon: 'lucide:lock',
       group: 'open-source',
+      featured: true,
     },
     {
       title: '@alikhalilll/nuxt-auto-middleware',
       description:
-        'Declarative, layout-based route middleware for Nuxt. Glob matching, named groups, and per-page overrides — bind guards to whole areas instead of wiring them per page.',
+        'Layout → middleware mapping for Nuxt with glob patterns, named groups, per-page overrides, and a typed middleware-name registry.',
       tags: ['Nuxt', 'Routing', 'DX'],
       href: 'https://alikhalilll.github.io/ali-nuxt-toolkit/auto-middleware',
       repo: 'https://github.com/alikhalilll/ali-nuxt-toolkit/tree/master/packages/auto-middleware',
       year: '2026',
       icon: 'lucide:layers',
       group: 'open-source',
+      featured: true,
     },
   ];
 

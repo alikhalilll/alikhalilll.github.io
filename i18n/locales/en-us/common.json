@@ -1,0 +1,128 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "projects": "Projects",
+    "writing": "Writing",
+    "contact": "Contact",
+    "home_aria": "Ali Khalil — home",
+    "toggle_menu": "Toggle navigation",
+    "theme_settings": "Theme settings",
+    "language": "Language"
+  },
+  "footer": {
+    "copyright": "© 2019–{year} Ali Khalil"
+  },
+  "common": {
+    "explore": "Explore",
+    "all_projects": "All projects",
+    "get_in_touch": "Get in touch",
+    "back_home": "Back home",
+    "try_again": "Try again",
+    "on_this_page": "On this page",
+    "overview": "Overview",
+    "visit": "Visit",
+    "source": "Source",
+    "read_more": "Read more",
+    "all_writing": "All writing",
+    "present": "Present"
+  },
+  "home": {
+    "eyebrow": "Hi, I'm Ali",
+    "title": "Senior Frontend Developer & Team Lead.",
+    "subtitle": "I build scalable, high-performance web apps with Vue, Nuxt, and TypeScript — and lead the teams that ship them. Five years in, most of my recent work has been on real-time, multi-tenant SaaS in the Saudi and Egyptian markets.",
+    "location": "Mansoura, Egypt",
+    "relocate": "Ready to relocate to Riyadh",
+    "award": "2× Employee of the Month",
+    "see_work": "See my work",
+    "selected_work": "Selected work",
+    "what_i_do_well": "What I do well",
+    "explore_sections": {
+      "about_blurb": "Who I am and how I work.",
+      "projects_blurb": "Products and tools I have shipped.",
+      "writing_blurb": "Notes on frontend craft and leadership.",
+      "contact_blurb": "Say hello — I read everything."
+    },
+    "strengths": [
+      "Performance work that shows up in the numbers — recent role lifted LCP by ~40% and cut CLS by ~60% through lazy hydration and code-splitting.",
+      "Leading small frontend teams: code review, mentorship, and setting the bar for accessibility and DX.",
+      "Real-time systems on Pusher / WebSockets — registry-based event layers, multi-tab presence, message deduplication.",
+      "Client-side security: AES-GCM + PBKDF2 for local data, Apple Pay / Google Pay / Moyasar integrations."
+    ],
+    "cta": {
+      "title": "Working on something interesting?",
+      "body": "Roles, collaborations, or tricky frontend problems — I'd love to hear about it."
+    }
+  },
+  "about": {
+    "eyebrow": "About",
+    "title": "Senior Frontend Developer & Team Lead.",
+    "subtitle": "Five years in the trenches. Vue, Nuxt, TypeScript, and real-time systems. Comfortable owning an end-to-end frontend and the team that ships it.",
+    "intro": [
+      "I'm Ali. I've spent the last five years shipping web apps — mostly SaaS, mostly in the Saudi and Egyptian markets, increasingly at the lead / senior level. Recently that's meant owning the frontend of multi-tenant platforms with heavy real-time requirements, building the registries and patterns that let a small team move fast without things getting tangled.",
+      "I care about the boring details — the ones that turn a passable app into something that survives three years of feature churn. Clear types. Honest error states. Pages that load quickly enough that nobody has to apologize for them. Accessibility that isn't an afterthought. Docs that admit what a thing won't do.",
+      "I lead by example. I review pull requests carefully, mentor willingly, and push hard on performance and accessibility standards. I've been Employee of the Month twice — which I mention only because it's a decent proxy for 'the work held up under load.'",
+      "I'm not married to one framework. I've shipped production apps in React and Angular too — earlier in my career I delivered enterprise Angular apps with Material UI, and I still reach for React on side projects and client work when it's the right fit."
+    ],
+    "currently": "Currently",
+    "currently_items": [
+      "Leading the frontend at eDialogue Corner Society on Ataa SaaS.",
+      "Publishing open-source Nuxt modules under @alikhalilll.",
+      "Ready to relocate to Riyadh, Saudi Arabia."
+    ],
+    "experience": "Experience",
+    "skills": "Technical skills",
+    "stack": {
+      "frontend": "Frontend Development",
+      "backend": "Backend & APIs",
+      "databases": "Databases & Storage",
+      "state": "State Management",
+      "realtime": "Real-Time & Performance",
+      "devops": "Build & DevOps",
+      "quality": "Quality & Collaboration"
+    },
+    "education": "Education",
+    "education_degree": "BSc in Computer Science",
+    "education_meta": "Mansoura University, Egypt · 10/2018 — 10/2022",
+    "education_blurb": "Focus on software engineering, web development, and algorithms. Final-year projects centered on frontend architecture and RESTful API design.",
+    "languages_label": "Languages",
+    "languages_value": "Arabic (native) · English (advanced, B2–C1)"
+  },
+  "projects": {
+    "eyebrow": "Projects",
+    "title": "A catalog of things I've built.",
+    "subtitle": "Real-time SaaS platforms, AI-powered products, and open-source modules. The common thread: solid types, honest docs, and as little ceremony as the problem allows.",
+    "product_work": "Product work",
+    "product_work_blurb": "Products I have led or shipped major features for.",
+    "open_source": "Open source",
+    "open_source_blurb": "Nuxt modules I maintain. All free, MIT-licensed, and published on npm."
+  },
+  "writing": {
+    "eyebrow": "Writing",
+    "title": "Notes, mostly on the edges.",
+    "subtitle": "Short posts on frontend craft, Nuxt, TypeScript, performance, and leading small teams.",
+    "empty": "Nothing published yet — but ideas are brewing."
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Let's talk.",
+    "subtitle": "Roles, collaborations, open-source requests, or just a friendly 'I read your docs' — all welcome. I read everything.",
+    "channels": {
+      "email": { "label": "Email", "hint": "Best for anything longer than a tweet." },
+      "phone": { "label": "Phone / WhatsApp", "hint": "Available on WhatsApp for quick messages." },
+      "linkedin": { "label": "LinkedIn", "hint": "Work inquiries and professional hellos." },
+      "github": { "label": "GitHub", "hint": "Code, issues, and the usual." },
+      "npm": { "label": "npm", "hint": "Published packages and releases." }
+    }
+  },
+  "error": {
+    "label": "Error {code}",
+    "not_found": "Page not found",
+    "forbidden": "Forbidden",
+    "server_error": "Something broke on my end",
+    "generic": "Something went wrong",
+    "not_found_blurb": "The page you were looking for isn't here — it may have moved, or the link is off. Nothing lost, just a detour.",
+    "server_error_blurb": "An unexpected error tripped the server. Try again in a moment, or head back home while I take a look.",
+    "try_one_of_these": "Or try one of these"
+  }
+}

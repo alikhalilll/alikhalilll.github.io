@@ -1,7 +1,8 @@
 export interface Role {
   company: string;
   title: string;
-  period: string;
+  start: string;
+  end: string | null;
   location: string;
   highlights: string[];
   link?: string;
@@ -12,7 +13,8 @@ export const useExperience = () => {
     {
       company: 'eDialogue Corner Society',
       title: 'Frontend Team Lead / Senior Frontend Developer',
-      period: '06/2025 — Present',
+      start: '2025-06-01',
+      end: null,
       location: 'Remote · Saudi Arabia',
       highlights: [
         'Lead the frontend team building Ataa SaaS, a multi-tenant platform powering CRM, dashboards, and real-time communication for charitable organizations across Saudi Arabia.',
@@ -26,7 +28,8 @@ export const useExperience = () => {
     {
       company: 'PAIR AI',
       title: 'Frontend Team Lead / Senior Frontend Developer (Part-time)',
-      period: '07/2025 — 11/2025',
+      start: '2025-07-01',
+      end: '2025-11-01',
       location: 'Remote · Egypt',
       link: 'https://production.trypair.ai',
       highlights: [
@@ -40,7 +43,8 @@ export const useExperience = () => {
     {
       company: 'Velents.ai',
       title: 'Senior Frontend Developer',
-      period: '11/2023 — 08/2025',
+      start: '2023-11-01',
+      end: '2025-08-01',
       location: 'Remote · Saudi Arabia',
       link: 'https://crm.velents.com',
       highlights: [
@@ -53,7 +57,8 @@ export const useExperience = () => {
     {
       company: 'Codebase',
       title: 'Frontend Developer',
-      period: '01/2023 — 12/2023',
+      start: '2023-01-01',
+      end: '2023-12-01',
       location: 'Egypt',
       highlights: [
         'Delivered responsive interfaces using Vue 2, Vue 3, and TypeScript.',
@@ -64,7 +69,8 @@ export const useExperience = () => {
     {
       company: 'Grand Community',
       title: 'Frontend Developer',
-      period: '04/2022 — 01/2023',
+      start: '2022-04-01',
+      end: '2023-01-01',
       location: 'Egypt',
       highlights: [
         'Improved a large-scale influencer marketing platform built with Vue 2, Nuxt 2, and Vuetify.',
@@ -76,7 +82,8 @@ export const useExperience = () => {
     {
       company: 'IX Solutions',
       title: 'Frontend Developer',
-      period: '11/2022 — 02/2023',
+      start: '2022-11-01',
+      end: '2023-02-01',
       location: 'Egypt',
       highlights: [
         'Developed enterprise web applications using Angular and Material UI.',

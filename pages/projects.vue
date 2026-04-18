@@ -1,5 +1,10 @@
 <script setup lang="ts">
-useHead({ title: 'Projects — Ali Khalil' });
+const { t } = useI18n();
+
+useSiteSeo({
+  title: t('projects.eyebrow'),
+  description: t('projects.subtitle'),
+});
 
 const { work, openSource } = useProjects();
 </script>
@@ -7,21 +12,21 @@ const { work, openSource } = useProjects();
 <template>
   <div>
     <Hero
-      eyebrow="Projects"
-      title="A catalog of things I've built."
-      subtitle="Real-time SaaS platforms, AI-powered products, and open-source modules. The common thread: solid types, honest docs, and as little ceremony as the problem allows."
+      :eyebrow="t('projects.eyebrow')"
+      :title="t('projects.title')"
+      :subtitle="t('projects.subtitle')"
     />
 
     <section class="prose-container pb-16">
-      <h2 class="flex items-center gap-3 text-2xl sm:text-3xl">
-        <Icon name="lucide:briefcase" class="size-6 text-primary" />
-        Product work
+      <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+        {{ t('projects.product_work') }}
       </h2>
-      <p class="mt-3 text-muted-foreground">Products I have led or shipped major features for.</p>
-      <div class="mt-8 grid gap-5">
+      <p class="mt-2 text-sm text-muted-foreground">{{ t('projects.product_work_blurb') }}</p>
+      <div class="mt-6 grid gap-4">
         <ProjectCard
-          v-for="project in work"
+          v-for="(project, i) in work"
           :key="project.title"
+          v-reveal="i * 70"
           :title="project.title"
           :description="project.description"
           :tags="project.tags"
@@ -34,17 +39,15 @@ const { work, openSource } = useProjects();
     </section>
 
     <section class="prose-container pb-24">
-      <h2 class="flex items-center gap-3 text-2xl sm:text-3xl">
-        <Icon name="lucide:package" class="size-6 text-primary" />
-        Open source
+      <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+        {{ t('projects.open_source') }}
       </h2>
-      <p class="mt-3 text-muted-foreground">
-        Nuxt modules I maintain. All free, MIT-licensed, and published on npm.
-      </p>
-      <div class="mt-8 grid gap-5">
+      <p class="mt-2 text-sm text-muted-foreground">{{ t('projects.open_source_blurb') }}</p>
+      <div class="mt-6 grid gap-4">
         <ProjectCard
-          v-for="project in openSource"
+          v-for="(project, i) in openSource"
           :key="project.title"
+          v-reveal="i * 70"
           :title="project.title"
           :description="project.description"
           :tags="project.tags"

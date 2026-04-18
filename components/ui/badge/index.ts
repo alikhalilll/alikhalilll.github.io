@@ -6,9 +6,10 @@ export const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-muted text-muted-foreground',
+        default: 'bg-accent text-accent-foreground',
         primary: 'bg-primary/10 text-primary',
-        outline: 'border border-border text-foreground',
+        accent: 'bg-accent text-accent-foreground hover:bg-accent/70',
+        outline: 'border border-border text-foreground hover:bg-accent/60',
       },
     },
     defaultVariants: { variant: 'default' },

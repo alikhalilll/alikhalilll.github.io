@@ -10,6 +10,7 @@ export default defineContentConfig({
         description: z.string().optional(),
         date: z.string(),
         draft: z.boolean().optional(),
+        lang: z.string().optional(),
       }),
     }),
   },

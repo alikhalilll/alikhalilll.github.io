@@ -2,10 +2,14 @@
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant rtl (&:is([dir='rtl'], [dir='rtl'] *));
 
 @theme inline {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-serif: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-sans:
+    'Inter', 'IBM Plex Sans Arabic', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'Fraunces', 'Noto Kufi Arabic', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-arabic: 'IBM Plex Sans Arabic', 'Noto Kufi Arabic', ui-sans-serif, system-ui, sans-serif;
+  --font-arabic-display: 'Noto Kufi Arabic', 'IBM Plex Sans Arabic', ui-serif, Georgia, serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -33,35 +37,82 @@
 }
 
 :root {
-  /* Warm, Tania-inspired palette: cream paper, ink text, terracotta accent */
-  --background: oklch(0.975 0.012 80); /* warm cream #faf7f2 */
-  --foreground: oklch(0.24 0.015 40); /* deep ink */
+  /* Quiet, near-white stationery. Cool neutrals with a whisper of warmth.
+     Inspired by awad.dev's restrained, content-first feel. */
+  --background: oklch(0.988 0.003 80); /* near-white */
+  --foreground: oklch(0.18 0.008 40); /* deep ink */
 
-  --card: oklch(0.985 0.008 80);
-  --card-foreground: oklch(0.24 0.015 40);
+  /* Brand triad for decorative gradients (top glow, hover sheens).
+     Same palette as ali-nuxt-toolkit docs — blue → cyan → violet. */
+  --brand-1: #60a5fa;
+  --brand-2: #22d3ee;
+  --brand-3: #a78bfa;
+  --hero-glow: var(--brand-1);
 
-  --popover: oklch(0.985 0.008 80);
-  --popover-foreground: oklch(0.24 0.015 40);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.008 40);
 
-  --primary: oklch(0.58 0.13 40); /* terracotta */
-  --primary-foreground: oklch(0.985 0.008 80);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.008 40);
 
-  --secondary: oklch(0.94 0.012 80);
-  --secondary-foreground: oklch(0.24 0.015 40);
+  --primary: oklch(0.32 0.015 250); /* deep slate — formal */
+  --primary-foreground: oklch(0.988 0.003 80);
 
-  --muted: oklch(0.94 0.012 80);
-  --muted-foreground: oklch(0.48 0.012 40);
+  --secondary: oklch(0.96 0.004 80);
+  --secondary-foreground: oklch(0.18 0.008 40);
 
-  --accent: oklch(0.68 0.12 190); /* Tania-ish teal accent */
-  --accent-foreground: oklch(0.985 0.008 80);
+  --muted: oklch(0.96 0.004 80);
+  --muted-foreground: oklch(0.5 0.008 40);
+
+  --accent: oklch(0.94 0.008 60);
+  --accent-foreground: oklch(0.18 0.008 40);
 
   --destructive: oklch(0.58 0.22 25);
 
-  --border: oklch(0.88 0.012 80);
-  --input: oklch(0.92 0.012 80);
-  --ring: oklch(0.58 0.13 40);
+  --border: oklch(0.92 0.004 60);
+  --input: oklch(0.94 0.004 60);
+  --ring: oklch(0.32 0.015 250);
 
-  --radius: 0.75rem;
+  --radius: 0.5rem;
+
+  color-scheme: light;
+}
+
+.dark {
+  --background: oklch(0.16 0.005 40); /* deep neutral */
+  --foreground: oklch(0.96 0.005 60);
+
+  /* Slightly cooler brand tones in dark mode so the glow doesn't over-blast. */
+  --brand-1: #3b82f6;
+  --brand-2: #06b6d4;
+  --brand-3: #8b5cf6;
+  --hero-glow: var(--brand-1);
+
+  --card: oklch(0.2 0.006 40);
+  --card-foreground: oklch(0.96 0.005 60);
+
+  --popover: oklch(0.2 0.006 40);
+  --popover-foreground: oklch(0.96 0.005 60);
+
+  --primary: oklch(0.85 0.015 250); /* lifted slate for contrast */
+  --primary-foreground: oklch(0.16 0.005 40);
+
+  --secondary: oklch(0.24 0.006 40);
+  --secondary-foreground: oklch(0.96 0.005 60);
+
+  --muted: oklch(0.24 0.006 40);
+  --muted-foreground: oklch(0.7 0.006 60);
+
+  --accent: oklch(0.26 0.006 40);
+  --accent-foreground: oklch(0.96 0.005 60);
+
+  --destructive: oklch(0.65 0.2 25);
+
+  --border: oklch(0.28 0.006 40);
+  --input: oklch(0.26 0.006 40);
+  --ring: oklch(0.85 0.015 250);
+
+  color-scheme: dark;
 }
 
 @layer base {
@@ -71,31 +122,132 @@
 
   html {
     scroll-behavior: smooth;
+    background: var(--background);
+  }
+
+  /* body / #__nuxt stay transparent so the fixed gradient layers below show. */
+  body,
+  #__nuxt {
+    background: transparent;
   }
 
   body {
     font-family: var(--font-sans);
-    background: var(--background);
     color: var(--foreground);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: 'ss01', 'cv11';
+    position: relative;
   }
 
-  h1,
-  h2,
-  h3,
-  h4 {
+  /* Arabic typography — swap the body font to a face designed for Arabic
+     script. Covers both `lang="ar-*"` and `dir="rtl"` so the Arabic font
+     applies even inside LTR subtrees on an RTL page. */
+  :lang(ar),
+  :lang(ar-eg),
+  :lang(ar-sa),
+  [dir='rtl'] {
+    font-family: var(--font-arabic);
+  }
+
+  :lang(ar) h1,
+  :lang(ar-eg) h1,
+  :lang(ar-sa) h1,
+  [dir='rtl'] h1 {
+    font-family: var(--font-arabic-display);
+    letter-spacing: 0;
+  }
+
+  :lang(ar) h2,
+  :lang(ar) h3,
+  :lang(ar) h4,
+  :lang(ar-eg) h2,
+  :lang(ar-eg) h3,
+  :lang(ar-eg) h4,
+  :lang(ar-sa) h2,
+  :lang(ar-sa) h3,
+  :lang(ar-sa) h4,
+  [dir='rtl'] h2,
+  [dir='rtl'] h3,
+  [dir='rtl'] h4 {
+    font-family: var(--font-arabic);
+    letter-spacing: 0;
+  }
+
+  /* Top brand glow — a soft radial ellipse anchored above the fold. Painted
+     on html::before so body's own background can stay transparent and the
+     glow sits below page content but above the html base color. Full-opacity
+     colors are defined here; the whole layer is dialed back via opacity so
+     the rest of the palette stays deliberately quiet. */
+  html::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.025;
+    background:
+      radial-gradient(ellipse 65% 45% at 50% -8%, var(--hero-glow), transparent 65%),
+      radial-gradient(ellipse 45% 30% at 85% 5%, var(--brand-3), transparent 70%),
+      radial-gradient(ellipse 45% 30% at 10% 0%, var(--brand-2), transparent 70%);
+  }
+
+  .dark html::before,
+  html.dark::before {
+    opacity: 0.04;
+  }
+
+  /* Subtle grid texture over the gradient — fades out mid-page. */
+  html::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in oklab, var(--foreground) 6%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklab, var(--foreground) 6%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse 80% 55% at 50% 0%, black, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 55% at 50% 0%, black, transparent 75%);
+  }
+
+  /* Lift page content above the fixed background layers. */
+  body > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Keep serif for display / hero only. Section headings stay in sans with
+     a calm weight — awad.dev-style understated hierarchy. */
+  h1 {
     font-family: var(--font-serif);
     font-weight: 600;
     letter-spacing: -0.02em;
     color: var(--foreground);
   }
 
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--foreground);
+  }
+
   a {
-    color: var(--primary);
+    color: var(--foreground);
     text-decoration: underline;
-    text-decoration-color: color-mix(in oklab, var(--primary) 40%, transparent);
+    text-decoration-color: color-mix(in oklab, var(--foreground) 25%, transparent);
     text-underline-offset: 3px;
     transition:
       text-decoration-color 0.15s,
@@ -103,12 +255,12 @@
   }
 
   a:hover {
-    text-decoration-color: var(--primary);
+    text-decoration-color: var(--foreground);
   }
 
   ::selection {
-    background: var(--primary);
-    color: var(--primary-foreground);
+    background: var(--foreground);
+    color: var(--background);
   }
 }
 
@@ -134,5 +286,109 @@
     border-radius: 999px;
     background: var(--muted);
     color: var(--muted-foreground);
+  }
+
+  /* Scroll reveal — per-item, subtle. The goal is "I didn't notice an
+     animation, the page just felt alive", not "look at my animation". */
+  .reveal {
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity 0.5s ease-out,
+      transform 0.5s ease-out;
+    will-change: opacity, transform;
+  }
+
+  .reveal-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .reveal-in {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* Page transition — matches the reveal vibe: quick fade + tiny translate. */
+  .page-enter-active,
+  .page-leave-active,
+  .layout-enter-active,
+  .layout-leave-active {
+    transition:
+      opacity 0.25s ease-out,
+      transform 0.25s ease-out;
+  }
+
+  .page-enter-from,
+  .layout-enter-from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  .page-leave-to,
+  .layout-leave-to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-enter-active,
+    .page-leave-active,
+    .layout-enter-active,
+    .layout-leave-active {
+      transition: none;
+    }
+    .page-enter-from,
+    .page-leave-to,
+    .layout-enter-from,
+    .layout-leave-to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Hover state — quiet. Just a faint background tint and a slightly firmer
+     border. No lift, no shimmer, no glow. */
+  .hover-gradient {
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .hover-gradient:hover,
+  .hover-gradient:focus-within {
+    background-color: color-mix(in oklab, var(--foreground) 3%, transparent);
+    border-color: color-mix(in oklab, var(--foreground) 18%, var(--border));
+  }
+
+  .dark .hover-gradient:hover,
+  .dark .hover-gradient:focus-within {
+    background-color: color-mix(in oklab, var(--foreground) 5%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hover-gradient {
+      transition: none;
+    }
+  }
+
+  /* RTL helpers — flip horizontal arrow glyphs. Add `rtl-flip` to any icon
+     that has an inherent left-right direction (arrow-right, arrow-left,
+     arrow-up-right, chevrons in ltr-only widgets). */
+  [dir='rtl'] .rtl-flip {
+    transform: scaleX(-1);
+  }
+
+  /* Brand text-gradient — used for hero-accented spans. */
+  .text-gradient-brand {
+    background: linear-gradient(135deg, var(--brand-1) 0%, var(--brand-2) 50%, var(--brand-3) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
   }
 }

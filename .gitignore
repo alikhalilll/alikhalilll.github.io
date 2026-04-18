@@ -10,3 +10,5 @@ dist
 !.env.example
 .vscode
 .idea
+CLAUDE.md
+.claude

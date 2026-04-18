@@ -1,72 +1,77 @@
 <script setup lang="ts">
-useHead({ title: 'Contact — Ali Khalil' });
+const { t } = useI18n();
 
-const channels = [
+useSiteSeo({
+  title: t('contact.eyebrow'),
+  description: t('contact.subtitle'),
+});
+
+const channels = computed(() => [
   {
-    label: 'Email',
+    key: 'email',
     value: 'alikhalilll.dev@gmail.com',
     href: 'mailto:alikhalilll.dev@gmail.com',
-    hint: 'Best for anything longer than a tweet.',
     icon: 'lucide:mail',
   },
   {
-    label: 'Phone / WhatsApp',
+    key: 'phone',
     value: '+20 106 610 5963',
     href: 'tel:+201066105963',
-    hint: 'Available on WhatsApp for quick messages.',
     icon: 'lucide:phone',
   },
   {
-    label: 'LinkedIn',
+    key: 'linkedin',
     value: 'linkedin.com/in/alikhalilll',
     href: 'https://www.linkedin.com/in/alikhalilll',
-    hint: 'Work inquiries and professional hellos.',
     icon: 'lucide:linkedin',
   },
   {
-    label: 'GitHub',
+    key: 'github',
     value: '@alikhalilll',
     href: 'https://github.com/alikhalilll',
-    hint: 'Code, issues, and the usual.',
     icon: 'lucide:github',
   },
-];
+  {
+    key: 'npm',
+    value: '~alikhalilll',
+    href: 'https://www.npmjs.com/~alikhalilll',
+    icon: 'lucide:package',
+  },
+]);
 </script>
 
 <template>
   <div>
     <Hero
-      eyebrow="Contact"
-      title="Let's talk."
-      subtitle="Roles, collaborations, open-source requests, or just a friendly 'I read your docs' — all welcome. I read everything."
+      :eyebrow="t('contact.eyebrow')"
+      :title="t('contact.title')"
+      :subtitle="t('contact.subtitle')"
     />
 
     <section class="prose-container pb-24">
-      <ul class="flex flex-col gap-3">
-        <li v-for="c in channels" :key="c.label">
+      <ul class="flex flex-col gap-2">
+        <li v-for="(c, i) in channels" :key="c.key" v-reveal="i * 50">
           <a
             :href="c.href"
             target="_blank"
             rel="noopener"
-            class="group flex items-center gap-5 rounded-xl border border-border bg-card p-5 no-underline transition-all hover:border-foreground"
+            class="group hover-gradient flex items-center gap-4 rounded-md border border-border p-4 no-underline transition-colors hover:border-foreground/40"
           >
-            <span
-              class="grid size-12 place-items-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground"
-            >
-              <Icon :name="c.icon" class="size-5" />
-            </span>
+            <Icon :name="c.icon" class="size-5 shrink-0 text-muted-foreground" />
             <div class="min-w-0 flex-1">
-              <p class="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                {{ c.label }}
+              <p class="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                {{ t(`contact.channels.${c.key}.label`) }}
               </p>
-              <p class="mt-0.5 truncate font-serif text-lg font-semibold text-foreground">
+              <p class="mt-0.5 truncate text-base font-medium text-foreground" dir="ltr">
                 {{ c.value }}
               </p>
-              <p class="mt-1 text-sm text-muted-foreground">{{ c.hint }}</p>
+              <p class="mt-1 text-xs text-muted-foreground">
+                {{ t(`contact.channels.${c.key}.hint`) }}
+              </p>
             </div>
             <Icon
-              name="lucide:arrow-right"
-              class="size-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-foreground"
+              name="lucide:arrow-up-right"
+              class="rtl-flip size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground rtl:group-hover:-translate-x-0.5"
             />
           </a>
         </li>
