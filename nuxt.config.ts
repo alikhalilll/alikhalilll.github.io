@@ -6,6 +6,20 @@ const siteName = 'Ali Khalil';
 const siteDescription =
   "Software engineer writing about the parts of building software that don't fit in a README.";
 
+// Cloudflare Web Analytics — unlimited, cookieless, no banner required.
+// Set NUXT_PUBLIC_CF_ANALYTICS_TOKEN (see .env.example) to enable tracking.
+// Unset = no script injected, so local dev stays silent.
+const cfAnalyticsToken = process.env.NUXT_PUBLIC_CF_ANALYTICS_TOKEN?.trim();
+const analyticsScripts = cfAnalyticsToken
+  ? [
+      {
+        src: 'https://static.cloudflareinsights.com/beacon.min.js',
+        defer: true,
+        'data-cf-beacon': JSON.stringify({ token: cfAnalyticsToken }),
+      },
+    ]
+  : [];
+
 export default defineNuxtConfig({
   compatibilityDate: '2026-04-01',
   srcDir: '.',
@@ -123,6 +137,7 @@ export default defineNuxtConfig({
           innerHTML: `(()=>{try{var r=document.documentElement;var s=localStorage.getItem('theme');var m=window.matchMedia('(prefers-color-scheme: dark)').matches;var d=s==='dark'||((!s||s==='auto')&&m);r.classList.toggle('dark',d);var a=localStorage.getItem('accent')||'slate';var P={slate:{l:'0.32 0.015 250',d:'0.85 0.015 250'},terracotta:{l:'0.58 0.13 40',d:'0.72 0.14 45'},teal:{l:'0.55 0.12 195',d:'0.72 0.13 195'},rose:{l:'0.6 0.18 15',d:'0.72 0.18 15'},indigo:{l:'0.5 0.18 270',d:'0.7 0.16 270'},olive:{l:'0.5 0.09 130',d:'0.72 0.1 130'},amber:{l:'0.62 0.16 70',d:'0.78 0.15 75'}};var p=P[a]||P.slate;var t='oklch('+(d?p.d:p.l)+')';r.style.setProperty('--primary',t);r.style.setProperty('--ring',t);}catch(e){}})();`,
           tagPosition: 'head',
         },
+        ...analyticsScripts,
       ],
     },
     pageTransition: { name: 'page', mode: 'out-in' },
