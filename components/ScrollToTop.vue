@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useWindowScroll } from '@vueuse/core';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { y } = useWindowScroll({ behavior: 'smooth' });
 const visible = computed(() => y.value > 600);
 const playerOpen = useState('audioPlayerOpen', () => false);
+const dir = computed(() => (locale.value.toLowerCase().startsWith('ar') ? 'rtl' : 'ltr'));
 
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -23,6 +24,7 @@ function scrollToTop() {
     <button
       v-show="visible"
       type="button"
+      :dir="dir"
       :aria-label="t('common.scroll_to_top')"
       :title="t('common.scroll_to_top')"
       :class="[
