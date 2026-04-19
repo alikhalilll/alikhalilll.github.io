@@ -46,20 +46,12 @@ export default defineNuxtConfig({
   },
   i18n: {
     defaultLocale,
-    strategy: 'prefix_except_default',
+    strategy: 'prefix',
     locales: [
-      { code: 'en-us', name: 'English', file: 'en-us/index.ts', dir: 'ltr' },
-      { code: 'ar-eg', name: 'العربية (مصر)', file: 'ar-eg/index.ts', dir: 'rtl' },
-      { code: 'ar-sa', name: 'العربية (السعودية)', file: 'ar-sa/index.ts', dir: 'rtl' },
+      { code: 'en-us', name: 'English', file: 'en-us/index.ts', language: 'en-US' },
+      { code: 'ar-eg', name: 'العربية (مصر)', file: 'ar-eg/index.ts', language: 'ar-EG' },
+      { code: 'ar-sa', name: 'العربية (السعودية)', file: 'ar-sa/index.ts', language: 'ar-SA' },
     ],
-    bundle: {
-      optimizeTranslationDirective: false,
-    },
-    vueI18n: './i18n/vue-i18n.options.ts',
-    compilation: {
-      strictMessage: false,
-      escapeHtml: false,
-    },
     detectBrowserLanguage: {
       useCookie: true,
       cookieKey: localeCookieName,
@@ -134,7 +126,10 @@ export default defineNuxtConfig({
       ],
       script: [
         {
-          innerHTML: `(()=>{try{var r=document.documentElement;var s=localStorage.getItem('theme');var m=window.matchMedia('(prefers-color-scheme: dark)').matches;var d=s==='dark'||((!s||s==='auto')&&m);r.classList.toggle('dark',d);var a=localStorage.getItem('accent')||'slate';var P={slate:{l:'0.32 0.015 250',d:'0.85 0.015 250'},terracotta:{l:'0.58 0.13 40',d:'0.72 0.14 45'},teal:{l:'0.55 0.12 195',d:'0.72 0.13 195'},rose:{l:'0.6 0.18 15',d:'0.72 0.18 15'},indigo:{l:'0.5 0.18 270',d:'0.7 0.16 270'},olive:{l:'0.5 0.09 130',d:'0.72 0.1 130'},amber:{l:'0.62 0.16 70',d:'0.78 0.15 75'}};var p=P[a]||P.slate;var t='oklch('+(d?p.d:p.l)+')';r.style.setProperty('--primary',t);r.style.setProperty('--ring',t);}catch(e){}})();`,
+          // Mirrors server/plugins/extend-html.ts but runs even for static
+          // exports (where render:html sees no cookies at build time). Reads
+          // theme + accent cookies and resolves auto-mode before paint.
+          innerHTML: `(()=>{try{var r=document.documentElement,c={};(document.cookie||'').split(';').forEach(function(p){var i=p.indexOf('=');if(i>0)c[p.slice(0,i).trim()]=decodeURIComponent(p.slice(i+1).trim())});var m=c.theme||'auto',a=c.accent||'slate';var P={slate:{l:'0.32 0.015 250',d:'0.85 0.015 250'},terracotta:{l:'0.58 0.13 40',d:'0.72 0.14 45'},teal:{l:'0.55 0.12 195',d:'0.72 0.13 195'},rose:{l:'0.6 0.18 15',d:'0.72 0.18 15'},indigo:{l:'0.5 0.18 270',d:'0.7 0.16 270'},olive:{l:'0.5 0.09 130',d:'0.72 0.1 130'},amber:{l:'0.62 0.16 70',d:'0.78 0.15 75'}};var p=P[a]||P.slate;var d=m==='dark'||(m==='auto'&&window.matchMedia('(prefers-color-scheme: dark)').matches);r.classList.toggle('dark',d);var t='oklch('+(d?p.d:p.l)+')';r.style.setProperty('--primary',t);r.style.setProperty('--ring',t)}catch(e){}})();`,
           tagPosition: 'head',
         },
         ...analyticsScripts,
