@@ -9,12 +9,11 @@ const emit = defineEmits<{
   'update:activeIndex': [number | null];
 }>();
 
-const { t, locale } = useI18n();
+const { t } = useI18n();
 const config = useRuntimeConfig();
 const base = (config.app?.baseURL ?? '/').replace(/\/$/, '');
 const src = computed(() => `${base}/audio/${props.slug}.mp3`);
 const cuesUrl = computed(() => `${base}/audio/${props.slug}.cues.json`);
-const dir = computed(() => (locale.value.toLowerCase().startsWith('ar') ? 'rtl' : 'ltr'));
 
 type Cue = { index: number; startSec: number; endSec: number };
 const audio = ref<HTMLAudioElement | null>(null);
@@ -211,7 +210,7 @@ onMounted(async () => {
     >
       <div
         v-show="available"
-        :dir="dir"
+        dir="ltr"
         :class="[
           'fixed bottom-4 left-1/2 z-40 -translate-x-1/2 overflow-hidden rounded-full sm:bottom-6',
           'border shadow-md ring-1 ring-inset',
