@@ -56,6 +56,15 @@ export const useTheme = () => {
   );
 
   onMounted(() => {
+    // SSG pre-renders at build time with no browser cookie, so useState's
+    // SSR payload snapshots the default. Re-sync from the live cookie before
+    // applying so a user-chosen mode survives a hard refresh.
+    if (isThemeMode(modeCookie.value) && modeCookie.value !== mode.value) {
+      mode.value = modeCookie.value;
+    }
+    if (isAccentKey(accentCookie.value) && accentCookie.value !== accent.value) {
+      accent.value = accentCookie.value;
+    }
     applyMode(mode.value);
     applyAccent(accent.value);
 
