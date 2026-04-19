@@ -226,17 +226,17 @@ onMounted(async () => {
         @pointerdown="bumpActivity"
         @focusin="bumpActivity"
       >
-        <div class="flex items-center gap-2 px-2 py-1.5 sm:gap-3 sm:px-3 sm:py-2">
+        <div class="flex items-center gap-2 py-1 pr-4 pl-2 sm:gap-3 sm:py-1.5 sm:pr-5 sm:pl-3">
           <button
             type="button"
             :aria-label="playing ? t('blog.audio.pause') : t('blog.audio.play')"
-            class="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition hover:opacity-90 sm:size-8"
+            class="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition hover:opacity-90 sm:size-7"
             @click="toggle"
           >
             <Icon :name="playing ? 'lucide:pause' : 'lucide:play'" class="size-4 sm:size-3.5" />
           </button>
 
-          <div class="group min-w-0 flex-1 py-2">
+          <div class="group min-w-0 flex-1 py-1.5">
             <div
               role="slider"
               tabindex="0"
