@@ -226,7 +226,7 @@ onMounted(async () => {
         @pointerdown="bumpActivity"
         @focusin="bumpActivity"
       >
-        <div class="flex items-center gap-2 py-1 pr-4 pl-2 sm:gap-3 sm:py-1.5 sm:pr-5 sm:pl-3">
+        <div class="flex items-center gap-2 py-1.5 pr-4 pl-2 sm:gap-3 sm:py-2 sm:pr-5 sm:pl-3">
           <button
             type="button"
             :aria-label="playing ? t('blog.audio.pause') : t('blog.audio.play')"
