@@ -34,6 +34,20 @@ const applyAccent = (key: AccentKey) => {
   root.style.setProperty('--ring', `oklch(${tone.ring})`);
 };
 
+// Read a cookie straight off document.cookie — bypasses any ref-rehydration
+// timing questions after SSG hydrates with build-time defaults.
+const readCookie = (name: string): string | undefined => {
+  if (typeof document === 'undefined') return undefined;
+  const entries = document.cookie.split(';');
+  for (const raw of entries) {
+    const eq = raw.indexOf('=');
+    if (eq < 0) continue;
+    const k = raw.slice(0, eq).trim();
+    if (k === name) return decodeURIComponent(raw.slice(eq + 1).trim());
+  }
+  return undefined;
+};
+
 export const useTheme = () => {
   const modeCookie = useCookie<ThemeMode>(themeCookieName, {
     default: () => defaultTheme,
@@ -57,13 +71,17 @@ export const useTheme = () => {
 
   onMounted(() => {
     // SSG pre-renders at build time with no browser cookie, so useState's
-    // SSR payload snapshots the default. Re-sync from the live cookie before
-    // applying so a user-chosen mode survives a hard refresh.
-    if (isThemeMode(modeCookie.value) && modeCookie.value !== mode.value) {
-      mode.value = modeCookie.value;
+    // SSR payload snapshots the default. Re-read straight from document.cookie
+    // and sync the state so a user-chosen mode survives a hard refresh.
+    const rawMode = readCookie(themeCookieName);
+    if (isThemeMode(rawMode) && rawMode !== mode.value) {
+      mode.value = rawMode;
+      modeCookie.value = rawMode;
     }
-    if (isAccentKey(accentCookie.value) && accentCookie.value !== accent.value) {
-      accent.value = accentCookie.value;
+    const rawAccent = readCookie(accentCookieName);
+    if (isAccentKey(rawAccent) && rawAccent !== accent.value) {
+      accent.value = rawAccent;
+      accentCookie.value = rawAccent;
     }
     applyMode(mode.value);
     applyAccent(accent.value);
