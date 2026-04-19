@@ -88,7 +88,7 @@ useHead({
 </script>
 
 <template>
-  <article class="py-16 sm:py-24">
+  <article :dir="postDir" :lang="postLang" class="py-16 sm:py-24">
     <div
       class="mx-auto grid max-w-[80rem] gap-12 px-6 xl:grid-cols-[minmax(0,42rem)_minmax(0,18rem)] xl:justify-center xl:gap-16"
     >
@@ -100,7 +100,7 @@ useHead({
           <Icon name="lucide:arrow-left" class="rtl-flip size-4" /> {{ t('common.all_writing') }}
         </NuxtLink>
 
-        <header :dir="postDir" :lang="postLang" class="mb-10 border-b border-border pb-8">
+        <header class="mb-10 border-b border-border pb-8">
           <time
             v-if="post?.date"
             class="mb-3 block font-mono text-xs tracking-widest text-muted-foreground uppercase ar:font-sans ar:text-base ar:font-bold ar:tracking-normal ar:normal-case"
@@ -117,13 +117,7 @@ useHead({
 
         <BlogTocMobile :links="tocLinks" />
 
-        <ContentRenderer
-          v-if="post"
-          :value="post"
-          :dir="postDir"
-          :lang="postLang"
-          class="post-body"
-        />
+        <ContentRenderer v-if="post" :value="post" class="post-body" />
       </div>
 
       <BlogToc :links="tocLinks" />
