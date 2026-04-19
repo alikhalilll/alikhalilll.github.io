@@ -256,9 +256,9 @@ onMounted(async () => {
                 :style="{ width: `${progressPct}%` }"
               />
               <span
-                class="absolute top-1/2 size-3 -translate-y-1/2 rounded-full bg-primary opacity-100 shadow transition-opacity duration-150 sm:opacity-0 sm:group-hover:opacity-100 ltr:-translate-x-1/2 rtl:translate-x-1/2"
+                class="pointer-events-none absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary opacity-100 shadow transition-opacity duration-150 sm:opacity-0 sm:group-hover:opacity-100"
                 :class="{ 'sm:opacity-100': dragging }"
-                :style="{ insetInlineStart: `${progressPct}%` }"
+                :style="{ left: `${progressPct}%` }"
               />
             </div>
           </div>
