@@ -27,6 +27,76 @@ if (!post.value) {
 
 const tocLinks = computed(() => post.value?.body?.toc?.links ?? []);
 
+const slug = computed(() => {
+  const path = post.value?.path ?? lookupPath.value;
+  return path.replace(/^\/blog\//, '').replace(/\/$/, '');
+});
+
+// Text-bearing block tags — must match the generator's SKIP rules.
+// SKIP on generator side: code (→ <pre>), table, hr, image-only paragraph.
+const AUDIO_BLOCK_TAGS = new Set([
+  'P',
+  'H1',
+  'H2',
+  'H3',
+  'H4',
+  'H5',
+  'H6',
+  'UL',
+  'OL',
+  'BLOCKQUOTE',
+]);
+const postBody = useTemplateRef<{ $el?: HTMLElement } | HTMLElement>('postBody');
+const activeIndex = ref<number | null>(null);
+
+function contentRoot(): HTMLElement | null {
+  const raw = postBody.value as unknown;
+  if (!raw) return null;
+  if (raw instanceof HTMLElement) return raw;
+  const el = (raw as { $el?: HTMLElement }).$el;
+  return el ?? null;
+}
+
+function textBlocks(): HTMLElement[] {
+  const root = contentRoot();
+  if (!root) return [];
+  const out: HTMLElement[] = [];
+  for (const el of Array.from(root.children) as HTMLElement[]) {
+    if (!AUDIO_BLOCK_TAGS.has(el.tagName)) continue;
+    if (el.tagName === 'P' && !el.textContent?.trim()) continue;
+    out.push(el);
+  }
+  return out;
+}
+
+function labelBlocks() {
+  const blocks = textBlocks();
+  blocks.forEach((el, i) => {
+    el.setAttribute('data-audio-index', String(i));
+  });
+}
+
+watch(activeIndex, (next, prev) => {
+  const root = contentRoot();
+  if (!root) return;
+  if (prev !== null && prev !== undefined) {
+    root
+      .querySelector<HTMLElement>(`[data-audio-index="${prev}"]`)
+      ?.classList.remove('audio-active');
+  }
+  if (next !== null && next !== undefined) {
+    const el = root.querySelector<HTMLElement>(`[data-audio-index="${next}"]`);
+    if (el) {
+      el.classList.add('audio-active');
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+});
+
+onMounted(() => {
+  nextTick(() => labelBlocks());
+});
+
 const postLang = computed(() => post.value?.lang ?? 'en');
 const postDir = computed(() => (postLang.value.toLowerCase().startsWith('ar') ? 'rtl' : 'ltr'));
 
@@ -115,9 +185,13 @@ useHead({
           </p>
         </header>
 
+        <ClientOnly>
+          <ArticleAudio :slug="slug" @update:active-index="activeIndex = $event" />
+        </ClientOnly>
+
         <BlogTocMobile :links="tocLinks" />
 
-        <ContentRenderer v-if="post" :value="post" class="post-body" />
+        <ContentRenderer v-if="post" ref="postBody" :value="post" class="post-body pb-20" />
       </div>
 
       <BlogToc :links="tocLinks" />
@@ -141,6 +215,19 @@ useHead({
   font-size: 1.75rem;
   color: var(--foreground);
   scroll-margin-top: 6rem;
+}
+
+.post-body [data-audio-index] {
+  scroll-margin-top: 6rem;
+  border-radius: 0.5rem;
+  transition: background-color 250ms ease;
+}
+
+.post-body .audio-active {
+  background: color-mix(in oklab, var(--primary) 14%, transparent);
+  box-shadow:
+    -0.75rem 0 0 color-mix(in oklab, var(--primary) 14%, transparent),
+    0.75rem 0 0 color-mix(in oklab, var(--primary) 14%, transparent);
 }
 
 .post-body h3 {

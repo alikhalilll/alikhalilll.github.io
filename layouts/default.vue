@@ -5,5 +5,8 @@
       <slot />
     </main>
     <AppFooter />
+    <ClientOnly>
+      <ScrollToTop />
+    </ClientOnly>
   </div>
 </template>

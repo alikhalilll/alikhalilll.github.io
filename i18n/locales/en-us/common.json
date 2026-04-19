@@ -27,7 +27,8 @@
     "source": "Source",
     "read_more": "Read more",
     "all_writing": "All writing",
-    "present": "Present"
+    "present": "Present",
+    "scroll_to_top": "Back to top"
   },
   "home": {
     "eyebrow": "Hi, I'm Ali",
@@ -104,6 +105,33 @@
     "title": "Notes, mostly on the edges.",
     "subtitle": "Short posts on frontend craft, Nuxt, TypeScript, performance, and leading small teams.",
     "empty": "Nothing published yet — but ideas are brewing."
+  },
+  "blog": {
+    "audio": {
+      "listen": "Listen to this article",
+      "play": "Play",
+      "pause": "Pause",
+      "speed": "Playback speed",
+      "progress": "Playback progress"
+    }
+  },
+  "theme": {
+    "mode": "Mode",
+    "accent": "Accent",
+    "modes": {
+      "light": "Light",
+      "dark": "Dark",
+      "auto": "System"
+    },
+    "accents": {
+      "slate": "Slate",
+      "terracotta": "Terracotta",
+      "teal": "Teal",
+      "rose": "Rose",
+      "indigo": "Indigo",
+      "olive": "Olive",
+      "amber": "Amber"
+    }
   },
   "contact": {
     "eyebrow": "Contact",

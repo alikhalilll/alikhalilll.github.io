@@ -7,10 +7,10 @@ const { t } = useI18n();
 
 const open = ref(false);
 
-const modes: { key: ThemeMode; label: string; icon: string }[] = [
-  { key: 'light', label: 'Light', icon: 'lucide:sun' },
-  { key: 'dark', label: 'Dark', icon: 'lucide:moon' },
-  { key: 'auto', label: 'System', icon: 'lucide:monitor' },
+const modes: { key: ThemeMode; icon: string }[] = [
+  { key: 'light', icon: 'lucide:sun' },
+  { key: 'dark', icon: 'lucide:moon' },
+  { key: 'auto', icon: 'lucide:monitor' },
 ];
 
 const triggerIcon = computed(
@@ -37,8 +37,10 @@ const swatchColor = (preset: (typeof presets)[number]) =>
     </PopoverTrigger>
 
     <PopoverContent align="end" class="w-60 p-3">
-      <p class="px-1 pb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-        Mode
+      <p
+        class="px-1 pb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase ar:normal-case"
+      >
+        {{ t('theme.mode') }}
       </p>
       <div class="grid grid-cols-3 gap-1.5">
         <button
@@ -54,12 +56,14 @@ const swatchColor = (preset: (typeof presets)[number]) =>
           @click="setMode(m.key)"
         >
           <Icon :name="m.icon" class="size-4" />
-          {{ m.label }}
+          {{ t(`theme.modes.${m.key}`) }}
         </button>
       </div>
 
-      <p class="mt-4 px-1 pb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-        Accent
+      <p
+        class="mt-4 px-1 pb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase ar:normal-case"
+      >
+        {{ t('theme.accent') }}
       </p>
       <div class="grid grid-cols-7 gap-1.5">
         <button
@@ -69,8 +73,8 @@ const swatchColor = (preset: (typeof presets)[number]) =>
           class="relative grid size-7 place-items-center rounded-full border-2 transition-transform hover:scale-110"
           :class="accent === p.key ? 'border-foreground' : 'border-transparent'"
           :style="{ backgroundColor: swatchColor(p) }"
-          :aria-label="p.label"
-          :title="p.label"
+          :aria-label="t(`theme.accents.${p.key}`)"
+          :title="t(`theme.accents.${p.key}`)"
           @click="setAccent(p.key)"
         >
           <Icon

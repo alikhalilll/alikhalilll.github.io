@@ -1,8 +1,8 @@
 ---
 title: Inside ATellInput — a multi-country phone input in Vue
 description: A Vue phone input backed by REST Countries and libphonenumber-js — three-tier data loading, bucketed indexes, dynamic placeholders, seven validation reasons.
-date: 2026-04-19
-updatedAt: 2026-04-19
+date: 2025-11-14
+updatedAt: 2025-11-14
 keywords:
   - phone input
   - Vue 3
