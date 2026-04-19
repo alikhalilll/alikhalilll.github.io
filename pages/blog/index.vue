@@ -30,11 +30,17 @@ const { data: posts } = await useAsyncData('blog-list', () =>
         >
           <NuxtLink
             :to="post.path"
-            class="group flex flex-col gap-2 no-underline sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+            class="group flex flex-col gap-2 no-underline sm:flex-row sm:items-baseline sm:gap-6"
           >
             <div class="flex-1">
-              <h2 class="text-lg font-semibold text-foreground group-hover:underline sm:text-xl">
-                {{ post.title }}
+              <h2
+                class="inline-flex items-baseline gap-1.5 text-lg font-semibold text-foreground decoration-primary/50 decoration-2 underline-offset-4 group-hover:text-primary group-hover:underline sm:text-xl"
+              >
+                <span>{{ post.title }}</span>
+                <Icon
+                  name="lucide:arrow-up-right"
+                  class="rtl-flip size-4 shrink-0 self-center text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary rtl:group-hover:-translate-x-0.5"
+                />
               </h2>
               <p v-if="post.description" class="mt-1 text-sm text-muted-foreground">
                 {{ post.description }}
