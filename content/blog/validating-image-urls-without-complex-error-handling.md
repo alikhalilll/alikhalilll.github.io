@@ -1,7 +1,16 @@
 ---
 title: Validating image URLs without complex error handling
-description: A tiny async helper that uses the browser's Image object to tell you whether a URL actually resolves to a loadable image.
+description: A tiny async helper that uses the browser's Image object to tell you whether a URL actually resolves to a loadable image — no fetch, no CORS.
 date: 2023-07-11
+keywords:
+  - JavaScript
+  - image validation
+  - async
+  - Promise
+  - fallback image
+  - Image object
+  - browser API
+  - TypeScript
 ---
 
 If you've ever rendered a list of images from untrusted data, you know the pattern: most URLs are fine, a few are dead, and the broken-image icon ruins the layout. You can wrap everything in `try/catch`, or you can ask the browser directly: _can you load this?_

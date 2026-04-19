@@ -34,17 +34,25 @@ const siteUrl = (config.public.siteUrl as string).replace(/\/$/, '');
 const url = `${siteUrl}${route.path}`;
 const title = post.value?.title ?? '';
 const description = post.value?.description ?? '';
-const ogImage = `${siteUrl}/og-image.png`;
+const keywords = post.value?.keywords ?? [];
+const publishedAt = post.value?.date;
+const modifiedAt = post.value?.updatedAt ?? post.value?.date;
+const ogImage = post.value?.image ? `${siteUrl}${post.value.image}` : `${siteUrl}/og-image.png`;
+const inLanguage = post.value?.lang ?? 'en';
 
 useSiteSeo({
   title,
   description,
   ogType: 'article',
+  image: post.value?.image,
 });
 
 useSeoMeta({
   articleAuthor: [config.public.siteName as string],
-  articlePublishedTime: post.value?.date,
+  articlePublishedTime: publishedAt,
+  articleModifiedTime: modifiedAt,
+  articleTag: keywords.length ? keywords : undefined,
+  keywords: keywords.length ? keywords.join(', ') : undefined,
 });
 
 useHead({
@@ -56,14 +64,23 @@ useHead({
         '@type': 'BlogPosting',
         headline: title,
         description,
-        datePublished: post.value?.date,
+        datePublished: publishedAt,
+        dateModified: modifiedAt,
         author: {
+          '@type': 'Person',
+          name: config.public.siteName,
+          url: siteUrl,
+        },
+        publisher: {
           '@type': 'Person',
           name: config.public.siteName,
           url: siteUrl,
         },
         mainEntityOfPage: { '@type': 'WebPage', '@id': url },
         image: ogImage,
+        url,
+        inLanguage,
+        ...(keywords.length ? { keywords: keywords.join(', ') } : {}),
       }),
     },
   ],

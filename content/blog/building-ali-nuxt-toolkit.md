@@ -1,7 +1,20 @@
 ---
 title: Building ali-nuxt-toolkit — a tour of the internals
-description: Three Nuxt modules, one monorepo. The design choices, the tricks, and the pieces I'd happily lift into another project.
+description: Three Nuxt 4 modules in a pnpm monorepo — a typed fetch client with upload progress, AES-GCM + PBKDF2 crypto, and layout-scoped middleware.
 date: 2026-04-18
+keywords:
+  - Nuxt 4
+  - Nuxt modules
+  - TypeScript
+  - pnpm monorepo
+  - fetch client
+  - interceptors
+  - upload progress
+  - AES-GCM
+  - PBKDF2
+  - Web Crypto
+  - route middleware
+  - Changesets
 ---
 
 A while back I decided to pull the patterns I kept rewriting at work into a small set of Nuxt modules. Nothing novel — just the stuff that everyone on every SaaS team eventually writes: a typed HTTP client, layout-scoped middleware, and a crypto service for locally-stored secrets. Packaging them properly turned into its own project: **ali-nuxt-toolkit**.
