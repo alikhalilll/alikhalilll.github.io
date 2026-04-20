@@ -74,6 +74,109 @@
         padding: 2.5rem 1.25rem 5rem;
       }
 
+      .love-banner {
+        text-align: center;
+        margin: 0 0 1.75rem;
+        padding: 1.1rem 1rem;
+        font-family: 'Noto Kufi Arabic', 'IBM Plex Sans Arabic', sans-serif;
+        font-weight: 600;
+        font-size: clamp(1.2rem, 3.5vw, 1.65rem);
+        background: linear-gradient(
+          120deg,
+          #ffd6e0 0%,
+          #ffe4ec 25%,
+          #fff0f3 50%,
+          #ffe4ec 75%,
+          #ffd6e0 100%
+        );
+        background-size: 200% 200%;
+        color: #c2185b;
+        border-radius: 1rem;
+        border: 1px solid #fbcfe8;
+        box-shadow: 0 4px 20px -8px rgba(244, 114, 182, 0.35);
+        animation:
+          love-shimmer 6s ease-in-out infinite,
+          love-float 4s ease-in-out infinite;
+      }
+      @media (prefers-color-scheme: dark) {
+        .love-banner {
+          background: linear-gradient(
+            120deg,
+            #4a1d2c 0%,
+            #5a1f33 25%,
+            #6a223a 50%,
+            #5a1f33 75%,
+            #4a1d2c 100%
+          );
+          color: #ffc7d6;
+          border-color: #6a223a;
+        }
+      }
+      .love-banner .hearts {
+        display: inline-flex;
+        gap: 0.35rem;
+        margin-inline: 0.45rem;
+        vertical-align: middle;
+      }
+      .love-banner .hearts span {
+        display: inline-block;
+        animation: love-beat 1.4s ease-in-out infinite;
+        transform-origin: center;
+      }
+      .love-banner .hearts span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .love-banner .hearts span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      @keyframes love-shimmer {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+      @keyframes love-float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-3px);
+        }
+      }
+      @keyframes love-beat {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        15% {
+          transform: scale(1.25);
+        }
+        30% {
+          transform: scale(1);
+        }
+        45% {
+          transform: scale(1.18);
+        }
+        60% {
+          transform: scale(1);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .love-banner,
+        .love-banner .hearts span {
+          animation: none !important;
+        }
+      }
+      @media print {
+        .love-banner {
+          display: none !important;
+        }
+      }
+
       header.hero {
         text-align: center;
         margin-bottom: 2.5rem;
@@ -608,6 +711,16 @@
   </head>
   <body>
     <main class="wrap">
+      <div class="love-banner" aria-label="رسالة حب">
+        <span class="hearts" aria-hidden="true"
+          ><span>💖</span><span>💕</span><span>💖</span></span
+        >
+        بحبك يا بنوتي
+        <span class="hearts" aria-hidden="true"
+          ><span>💖</span><span>💕</span><span>💖</span></span
+        >
+      </div>
+
       <header class="hero">
         <h1>خطة غذائية لشهر كامل — 1,250 سعرة يومياً</h1>
         <p class="sub">نزول 2-4 كجم في الشهر مع الحفاظ على العضلات</p>
