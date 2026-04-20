@@ -1,0 +1,2203 @@
+<!doctype html>
+<html lang="ar-EG" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="referrer" content="no-referrer" />
+    <title>خطة غذائية لشهر — 1,250 سعرة يومياً</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@500;600;700&display=swap"
+    />
+    <style>
+      :root {
+        --bg: #fbfaf7;
+        --fg: #1a1a1a;
+        --muted: #6b6b6b;
+        --border: #e6e3dd;
+        --card: #ffffff;
+        --accent: #2f3a4a;
+        --accent-soft: #eef1f5;
+        --warn-bg: #fdf6e3;
+        --warn-fg: #6b5a1f;
+        --warn-border: #ead9a6;
+        --row-alt: #faf8f3;
+        --total-bg: #f1efea;
+        --flex-bg: #f5f0e6;
+        --flex-border: #e3d6b8;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #14130f;
+          --fg: #efece6;
+          --muted: #a39f97;
+          --border: #2a2823;
+          --card: #1c1a16;
+          --accent: #c9d3e1;
+          --accent-soft: #232830;
+          --warn-bg: #2a2412;
+          --warn-fg: #e8d68a;
+          --warn-border: #4a3f1c;
+          --row-alt: #1a1813;
+          --total-bg: #232017;
+          --flex-bg: #221d12;
+          --flex-border: #4a3f1c;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        background: var(--bg);
+      }
+      body {
+        margin: 0;
+        font-family:
+          'IBM Plex Sans Arabic', 'Noto Kufi Arabic', ui-sans-serif, system-ui, -apple-system,
+          sans-serif;
+        color: var(--fg);
+        background: var(--bg);
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-feature-settings: 'kern';
+      }
+
+      .wrap {
+        max-width: 56rem;
+        margin: 0 auto;
+        padding: 2.5rem 1.25rem 5rem;
+      }
+
+      header.hero {
+        text-align: center;
+        margin-bottom: 2.5rem;
+      }
+      header.hero h1 {
+        font-family: 'Noto Kufi Arabic', 'IBM Plex Sans Arabic', sans-serif;
+        font-size: clamp(1.75rem, 4.5vw, 2.4rem);
+        font-weight: 700;
+        margin: 0 0 0.5rem;
+        letter-spacing: 0;
+        line-height: 1.3;
+      }
+      header.hero .sub {
+        color: var(--muted);
+        font-size: 1rem;
+        margin: 0;
+      }
+
+      .meta {
+        display: grid;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+      }
+      .meta .row {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        padding: 0.85rem 1.1rem;
+        font-size: 0.95rem;
+      }
+      .meta .row strong {
+        color: var(--fg);
+        font-weight: 600;
+      }
+      .meta .row.label {
+        color: var(--muted);
+      }
+
+      .warn {
+        background: var(--warn-bg);
+        color: var(--warn-fg);
+        border: 1px solid var(--warn-border);
+        border-radius: 0.75rem;
+        padding: 0.85rem 1.1rem;
+        font-size: 0.95rem;
+        margin-bottom: 2.5rem;
+      }
+
+      h2.phase {
+        font-family: 'Noto Kufi Arabic', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 3rem 0 0.4rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 2px solid var(--accent);
+        color: var(--fg);
+      }
+      h2.phase + .phase-desc {
+        color: var(--muted);
+        margin: 0 0 1.5rem;
+        font-size: 0.98rem;
+      }
+
+      h3.week {
+        font-family: 'Noto Kufi Arabic', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin: 2rem 0 1rem;
+        color: var(--accent);
+      }
+
+      .day {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 0.85rem;
+        padding: 1.1rem 1.1rem 0.4rem;
+        margin-bottom: 1rem;
+        overflow-x: auto;
+      }
+      .day.flex {
+        background: var(--flex-bg);
+        border-color: var(--flex-border);
+      }
+
+      .day h4 {
+        font-family: 'Noto Kufi Arabic', sans-serif;
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin: 0 0 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .day h4 .star {
+        color: #c9962b;
+        font-size: 0.9em;
+      }
+      .day h4 .pill {
+        font-size: 0.7rem;
+        font-weight: 500;
+        background: var(--accent-soft);
+        color: var(--muted);
+        padding: 0.15rem 0.55rem;
+        border-radius: 999px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0.4rem 0 0.8rem;
+        font-size: 0.93rem;
+      }
+      th,
+      td {
+        text-align: start;
+        padding: 0.55rem 0.6rem;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+      thead th {
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 0.78rem;
+        text-transform: none;
+        letter-spacing: 0;
+        background: transparent;
+        border-bottom: 1px solid var(--border);
+      }
+      tbody tr:nth-child(even) td {
+        background: var(--row-alt);
+      }
+      tbody tr.total td {
+        background: var(--total-bg);
+        font-weight: 600;
+        color: var(--fg);
+        border-bottom: none;
+      }
+
+      .col-meal {
+        width: 22%;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      .col-cal {
+        width: 18%;
+        text-align: end;
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: 'tnum';
+        color: var(--accent);
+        font-weight: 500;
+      }
+
+      .rules {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 0.85rem;
+        padding: 1.25rem 1.4rem;
+        margin: 2.5rem 0 1.5rem;
+      }
+      .rules h2,
+      .goals h2 {
+        font-family: 'Noto Kufi Arabic', sans-serif;
+        font-size: 1.25rem;
+        margin: 0 0 1rem;
+      }
+      .rules ul {
+        margin: 0;
+        padding-inline-start: 1.2rem;
+      }
+      .rules li {
+        margin-bottom: 0.45rem;
+        font-size: 0.97rem;
+      }
+      .rules li strong {
+        color: var(--accent);
+      }
+
+      .goals {
+        margin-top: 2rem;
+      }
+      .goals h2 {
+        margin-bottom: 1rem;
+      }
+      .goal-block {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 0.85rem;
+        padding: 1.1rem 1.3rem;
+        margin-bottom: 1rem;
+      }
+      .goal-block h3 {
+        font-family: 'Noto Kufi Arabic', sans-serif;
+        font-size: 1.05rem;
+        margin: 0 0 0.7rem;
+        color: var(--accent);
+      }
+      .goal-block ul {
+        margin: 0;
+        padding-inline-start: 1.2rem;
+      }
+      .goal-block li {
+        margin-bottom: 0.35rem;
+        font-size: 0.95rem;
+      }
+
+      hr.sep {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 2.5rem 0;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 3rem;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      @media (max-width: 540px) {
+        .wrap {
+          padding: 1.5rem 0.85rem 3rem;
+        }
+        .day {
+          padding: 0.85rem 0.7rem 0.3rem;
+        }
+        table {
+          font-size: 0.86rem;
+        }
+        th,
+        td {
+          padding: 0.45rem 0.4rem;
+        }
+      }
+
+      @media print {
+        :root {
+          --bg: #fff;
+          --card: #fff;
+          --row-alt: #fafafa;
+          --total-bg: #f0f0f0;
+          --flex-bg: #fff;
+        }
+        .day {
+          break-inside: avoid;
+          box-shadow: none;
+        }
+        h2.phase,
+        h3.week {
+          break-after: avoid;
+        }
+        .controls,
+        .day-reset,
+        .col-check {
+          display: none !important;
+        }
+      }
+
+      /* Interactive controls */
+      .controls {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 0.85rem;
+        padding: 1rem 1.2rem;
+        margin-bottom: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.85rem 1.5rem;
+        align-items: center;
+      }
+      .controls label {
+        display: inline-flex;
+        gap: 0.5rem;
+        align-items: center;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+      .controls input[type='date'] {
+        font-family: inherit;
+        background: var(--bg);
+        color: var(--fg);
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.9rem;
+      }
+      .controls .stat {
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+      .controls .stat strong {
+        color: var(--accent);
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: 'tnum';
+        font-weight: 600;
+      }
+      .controls .spacer {
+        margin-inline-start: auto;
+      }
+      .controls .reset-all {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        padding: 0.4rem 0.85rem;
+        border-radius: 0.5rem;
+        font-family: inherit;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+      }
+      .controls .reset-all:hover {
+        color: var(--fg);
+        border-color: var(--fg);
+      }
+
+      /* Checkbox column + checked styling */
+      .col-check {
+        width: 2.2rem;
+        text-align: center;
+      }
+      th.col-check {
+        padding: 0;
+      }
+      td.col-check input[type='checkbox'] {
+        width: 1.1rem;
+        height: 1.1rem;
+        cursor: pointer;
+        accent-color: var(--accent);
+        margin: 0;
+      }
+      tbody tr.done td:not(.col-check) {
+        text-decoration: line-through;
+        text-decoration-color: color-mix(in oklab, var(--fg) 35%, transparent);
+        opacity: 0.55;
+      }
+
+      /* Day header extras */
+      .day h4 {
+        flex-wrap: wrap;
+      }
+      .date-label {
+        font-family: 'IBM Plex Sans Arabic', sans-serif;
+        font-size: 0.78rem;
+        font-weight: 400;
+        color: var(--muted);
+        margin-inline-start: auto;
+        font-variant-numeric: tabular-nums;
+      }
+      .prog-badge {
+        font-family: 'IBM Plex Sans Arabic', sans-serif;
+        font-size: 0.74rem;
+        font-weight: 500;
+        background: var(--accent-soft);
+        color: var(--accent);
+        padding: 0.18rem 0.6rem;
+        border-radius: 999px;
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: 'tnum';
+      }
+
+      /* Day completion + today highlight */
+      .day.done {
+        background: color-mix(in oklab, #2a8a4a 8%, var(--card));
+        border-color: color-mix(in oklab, #2a8a4a 35%, var(--border));
+      }
+      .day.done .prog-badge {
+        background: color-mix(in oklab, #2a8a4a 18%, var(--accent-soft));
+        color: #2a8a4a;
+      }
+      @media (prefers-color-scheme: dark) {
+        .day.done {
+          background: color-mix(in oklab, #4cc079 14%, var(--card));
+          border-color: color-mix(in oklab, #4cc079 40%, var(--border));
+        }
+        .day.done .prog-badge {
+          background: color-mix(in oklab, #4cc079 22%, var(--accent-soft));
+          color: #8ddca7;
+        }
+      }
+      .day.today {
+        box-shadow: 0 0 0 2px color-mix(in oklab, var(--accent) 35%, transparent);
+      }
+      .day .today-pill {
+        font-size: 0.7rem;
+        font-weight: 600;
+        background: var(--accent);
+        color: var(--bg);
+        padding: 0.18rem 0.55rem;
+        border-radius: 999px;
+      }
+
+      /* Week tabs */
+      .week-tabs {
+        display: flex;
+        gap: 0.15rem;
+        margin: 0 0 1.5rem;
+        border-bottom: 1px solid var(--border);
+        overflow-x: auto;
+        scrollbar-width: thin;
+      }
+      .week-tab {
+        background: transparent;
+        border: none;
+        font-family: 'Noto Kufi Arabic', 'IBM Plex Sans Arabic', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--muted);
+        padding: 0.7rem 1rem;
+        cursor: pointer;
+        white-space: nowrap;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+      }
+      .week-tab:hover {
+        color: var(--fg);
+      }
+      .week-tab.active {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+        font-weight: 600;
+      }
+      .week-tab .week-prog {
+        font-size: 0.72rem;
+        font-weight: 500;
+        color: var(--muted);
+        background: var(--accent-soft);
+        padding: 0.1rem 0.45rem;
+        border-radius: 999px;
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: 'tnum';
+      }
+      .week-tab.active .week-prog {
+        color: var(--accent);
+      }
+      .week-tab.complete .week-prog {
+        background: color-mix(in oklab, #2a8a4a 18%, var(--accent-soft));
+        color: #2a8a4a;
+      }
+      .week-tab.has-today::after {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: var(--accent);
+      }
+      .week-section[hidden] {
+        display: none;
+      }
+      .week-section hr.sep {
+        display: none;
+      }
+      h2.phase[hidden],
+      .phase-desc[hidden] {
+        display: none;
+      }
+
+      @media print {
+        .week-tabs {
+          display: none !important;
+        }
+        .week-section[hidden] {
+          display: block !important;
+        }
+        .week-section hr.sep {
+          display: block !important;
+        }
+      }
+
+      /* Per-day reset link */
+      .day-reset {
+        display: inline-block;
+        margin: 0.2rem 0 0.6rem;
+        background: transparent;
+        border: none;
+        color: var(--muted);
+        font-family: inherit;
+        font-size: 0.78rem;
+        cursor: pointer;
+        padding: 0.25rem 0;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .day-reset:hover {
+        color: var(--fg);
+      }
+
+      /* Collapsible day */
+      .day > h4 {
+        cursor: pointer;
+        user-select: none;
+      }
+      .day > h4:hover {
+        color: var(--accent);
+      }
+      .day:not(.open) {
+        padding-bottom: 0.85rem;
+      }
+      .day:not(.open) > h4 {
+        margin-bottom: 0;
+      }
+      .day:not(.open) .day-body {
+        display: none;
+      }
+      .day .day-chev {
+        margin-inline-start: 0.1rem;
+        transition: transform 0.2s ease;
+        color: var(--muted);
+        font-size: 0.85rem;
+        display: inline-block;
+        line-height: 1;
+      }
+      .day.open .day-chev {
+        transform: rotate(180deg);
+      }
+
+      @media print {
+        .day:not(.open) .day-body {
+          display: block !important;
+        }
+        .day .day-chev {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="hero">
+        <h1>خطة غذائية لشهر كامل — 1,250 سعرة يومياً</h1>
+        <p class="sub">نزول 2-4 كجم في الشهر مع الحفاظ على العضلات</p>
+      </header>
+
+      <section class="meta">
+        <div class="row"><strong>الهدف:</strong> نزول 2-4 كجم في الشهر مع الحفاظ على العضلات</div>
+        <div class="row">
+          <strong>الجدول:</strong> فطار 5:30 ص — غداء 1:30 م — سناك 5:00 م — عشاء 10:00 م
+        </div>
+      </section>
+
+
+      <section class="controls" aria-label="تتبّع الخطة">
+        <label>
+          تاريخ البداية
+          <input type="date" id="start-date" />
+        </label>
+        <div class="stat">الوجبات: <strong id="overall-meals">0 / 0</strong></div>
+        <div class="stat">الأيام المكتملة: <strong id="overall-days">0 / 0</strong></div>
+        <span class="spacer"></span>
+        <button type="button" class="reset-all" id="reset-all">مسح الكل</button>
+      </section>
+
+      <h2 class="phase">المرحلة الأولى: تأسيس العادات (أسبوع 1 و 2)</h2>
+      <p class="phase-desc">التركيز على تقليل النشويات والسكر تدريجياً مع تنويع الأكل</p>
+
+      <h3 class="week">الأسبوع الأول</h3>
+
+      <article class="day">
+        <h4>السبت</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>2 بيضة أومليت + فلفل ألوان + بصل + ربع رغيف بلدي</td>
+              <td class="col-cal">300</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>150g صدور فراخ مشوية + 4 ملاعق أرز + سلطة خضرا كبيرة</td>
+              <td class="col-cal">500</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>تفاحة متوسطة</td>
+              <td class="col-cal">95</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>100g جبنة قريش + خيار + طماطم + نعناع</td>
+              <td class="col-cal">200</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,095</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الأحد</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>2 بيضة مسلوقة + ربع رغيف + قطعة جبنة لايت صغيرة</td>
+              <td class="col-cal">310</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>فراخ بالفرن بالزبادي والتوابل + 4 ملاعق أرز + سلطة</td>
+              <td class="col-cal">490</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>زبادي لايت + ملعقة عسل صغيرة</td>
+              <td class="col-cal">120</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>تونة لايت مصفّاة + سلطة خضرا + ربع رغيف</td>
+              <td class="col-cal">280</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,200</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الاتنين</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>4 ملاعق فول + ملعقة زيت زيتون + ربع رغيف</td>
+              <td class="col-cal">320</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>لحمة مشوية 120g + خضار سوتيه + 3 ملاعق أرز</td>
+              <td class="col-cal">490</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>برتقالة كبيرة</td>
+              <td class="col-cal">80</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>2 بيضة + طماطم مطبوخة + ربع رغيف</td>
+              <td class="col-cal">270</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,160</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الثلاثاء</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>3 ملاعق شوفان + كوب حليب خالي الدسم + قرفة</td>
+              <td class="col-cal">280</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>فراخ مشوية + فاصوليا خضرا + 4 ملاعق أرز</td>
+              <td class="col-cal">500</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>10 حبات لوز نيء</td>
+              <td class="col-cal">140</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>سلطة يونانية (خيار + طماطم + فلفل + جبنة فيتا لايت + زيتون)</td>
+              <td class="col-cal">220</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,140</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الأربعاء</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>2 توست أسمر + جبنة لايت + خيار</td>
+              <td class="col-cal">290</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>3 أصابع كفتة مشوية + سلطة + ربع رغيف</td>
+              <td class="col-cal">480</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>موزة صغيرة + ملعقة زبدة فول سوداني</td>
+              <td class="col-cal">160</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>زبادي + 2 ملعقة شوفان + فراولة</td>
+              <td class="col-cal">200</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,130</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الخميس</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>2 بيضة أومليت بالجبنة اللايت + ربع رغيف</td>
+              <td class="col-cal">320</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>فراخ تكا مشوية + بطاطس مشوية صغيرة + سلطة</td>
+              <td class="col-cal">470</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>جزر مقطع + ملعقة حمص (hummus)</td>
+              <td class="col-cal">100</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>4 ملاعق فول + ليمون + ربع رغيف + سلطة</td>
+              <td class="col-cal">280</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,170</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day flex">
+        <h4>الجمعة <span class="star">★</span> <span class="pill">يوم مرن</span></h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>بيض أو فول + ربع رغيف + شاي</td>
+              <td class="col-cal">320</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>أكل البيت العادي — كمية أقل + سلطة كبيرة</td>
+              <td class="col-cal">550</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>قطعة حلويات صغيرة (بسبوسة/كنافة) 🎉</td>
+              <td class="col-cal">200</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>زبادي + فاكهة أو جبنة قريش</td>
+              <td class="col-cal">180</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,250</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <hr class="sep" />
+
+      <h3 class="week">الأسبوع التاني</h3>
+
+      <article class="day">
+        <h4>السبت</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>2 بيضة بالسبانخ سوتيه + ربع رغيف</td>
+              <td class="col-cal">290</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>صدور فراخ بانيه بالفرن (مغطاة بالشوفان) + سلطة كول سلو لايت + 3 ملاعق أرز</td>
+              <td class="col-cal">500</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>كمّثرى متوسطة</td>
+              <td class="col-cal">100</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>3 ملاعق لبنة + خيار + نعناع + ربع رغيف</td>
+              <td class="col-cal">230</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,120</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الأحد</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>توست أسمر + ربع أفوكادو + ليمون + ملح</td>
+              <td class="col-cal">280</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>شوربة عدس + قطعة صدر فراخ مشوية + ربع رغيف</td>
+              <td class="col-cal">490</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>زبادي يوناني لايت + ملعقة عسل</td>
+              <td class="col-cal">130</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>تونة لايت + خس + ذرة + ليمون</td>
+              <td class="col-cal">250</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,150</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الاتنين</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>4 ملاعق فول + ملعقة طحينة + ربع رغيف</td>
+              <td class="col-cal">330</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>لحمة مطبوخة مع كوسة وبطاطس + 3 ملاعق أرز</td>
+              <td class="col-cal">500</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>تفاحة متوسطة</td>
+              <td class="col-cal">95</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>2 بيضة مسلوقة + سلطة خضرا</td>
+              <td class="col-cal">220</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,145</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الثلاثاء</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>3 ملاعق شوفان + حليب + نص موزة + قرفة</td>
+              <td class="col-cal">300</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>فراخ تكا متبّلة مشوية + سلطة + ربع رغيف</td>
+              <td class="col-cal">470</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>حفنة فول سوداني صغيرة (15g)</td>
+              <td class="col-cal">130</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>100g جبنة قريش + فلفل ألوان + ليمون</td>
+              <td class="col-cal">190</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,090</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الأربعاء</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>2 بيضة عيون بملعقة زيت + ربع رغيف + طماطم</td>
+              <td class="col-cal">310</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>لحمة مفرومة بالبازلاء والجزر + 4 ملاعق أرز + سلطة</td>
+              <td class="col-cal">490</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>برتقالة كبيرة</td>
+              <td class="col-cal">80</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>شوربة كوسة وجزر وبروكلي + ربع رغيف</td>
+              <td class="col-cal">200</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,080</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الخميس</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>4 ملاعق فول + ليمون + كمّون + ربع رغيف</td>
+              <td class="col-cal">300</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>6 حبات محشي كوسة (أرز قليل) + سلطة</td>
+              <td class="col-cal">480</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>خضار مقطع (جزر + خيار) مع حمص</td>
+              <td class="col-cal">110</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>تونة لايت + ذرة + خس + ليمون</td>
+              <td class="col-cal">240</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,130</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day flex">
+        <h4>الجمعة <span class="star">★</span> <span class="pill">يوم مرن</span></h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>أي فطار حبيتيه من الأسبوع</td>
+              <td class="col-cal">310</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>وجبة البيت العادية بكمية محسوبة + سلطة كبيرة</td>
+              <td class="col-cal">550</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>قطعة صغيرة من الحلو اللي بتحبيه 🎉</td>
+              <td class="col-cal">200</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>زبادي بفاكهة أو بيض مسلوق</td>
+              <td class="col-cal">180</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,240</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <hr class="sep" />
+
+      <h2 class="phase">المرحلة التانية: رفع البروتين وتنويع أكتر (أسبوع 3 و 4)</h2>
+      <p class="phase-desc">
+        التركيز على زيادة الإحساس بالشبع والحفاظ على العضلات مع وصفات جديدة
+      </p>
+
+      <h3 class="week">الأسبوع التالت</h3>
+
+      <article class="day">
+        <h4>السبت</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>2 بيضة أومليت بالمشروم + بصل أخضر + ربع رغيف</td>
+              <td class="col-cal">290</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>صدور فراخ بالزبادي مشوية + خضار سوتيه + 3 ملاعق أرز</td>
+              <td class="col-cal">480</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>50g جبنة قريش + خيار شرائح</td>
+              <td class="col-cal">80</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>فاصوليا بيضاء + طماطم + بقدونس + ليمون</td>
+              <td class="col-cal">250</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,100</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الأحد</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>3 ملاعق شوفان + حليب + بيضة مسلوقة مفرومة</td>
+              <td class="col-cal">320</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>فراخ شاورما بالفرن + سلطة طحينة + ربع رغيف</td>
+              <td class="col-cal">500</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>تفاحة مقطعة + رشّة قرفة</td>
+              <td class="col-cal">95</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>بيضة مسلوقة + ربع أفوكادو + ليمون + ملح</td>
+              <td class="col-cal">230</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,145</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الاتنين</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>3 ملاعق فول + بيضة مسلوقة + ربع رغيف</td>
+              <td class="col-cal">340</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>لحمة 100g بالبامية + ربع رغيف</td>
+              <td class="col-cal">470</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>زبادي يوناني + ملعقة عسل + 5 حبات لوز</td>
+              <td class="col-cal">160</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>تونة لايت + جرجير + طماطم + ليمون</td>
+              <td class="col-cal">220</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,190</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الثلاثاء</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>2 بيضة + طماطم شيري + بصل + ربع رغيف</td>
+              <td class="col-cal">300</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>فراخ مشوية بالأعشاب والليمون + خضار سوتيه + 4 ملاعق أرز</td>
+              <td class="col-cal">500</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>موزة صغيرة</td>
+              <td class="col-cal">90</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>شوربة عدس أصفر + ليمون</td>
+              <td class="col-cal">240</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,130</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الأربعاء</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>2 توست أسمر + بيضة مقلية بملعقة زيت + خيار</td>
+              <td class="col-cal">310</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>3 أصابع كباب مشوي + سلطة طحينة + ربع رغيف + خضار</td>
+              <td class="col-cal">490</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>2 برتقالة صغيرة</td>
+              <td class="col-cal">120</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>جبنة فيتا لايت + فلفل + طماطم + زيتون</td>
+              <td class="col-cal">210</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,130</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الخميس</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>3 ملاعق شوفان + حليب + توت مجمّد</td>
+              <td class="col-cal">280</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>فراخ بالكاري (صدور + بصل + طماطم + توابل) + 3 ملاعق أرز بسمتي</td>
+              <td class="col-cal">510</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>3 ملاعق حمص + جزر + خيار</td>
+              <td class="col-cal">130</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>2 بيضة مسلوقة + سلطة خضرا كبيرة + ليمون</td>
+              <td class="col-cal">210</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,130</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day flex">
+        <h4>الجمعة <span class="star">★</span> <span class="pill">يوم مرن</span></h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>أي فطار حبيتيه من الأسبوع</td>
+              <td class="col-cal">310</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>أكل البيت — كمية معقولة + سلطة</td>
+              <td class="col-cal">550</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>قطعة حلو صغيرة 🎉</td>
+              <td class="col-cal">200</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>أي عشاء خفيف من الأسبوع</td>
+              <td class="col-cal">180</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,240</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <hr class="sep" />
+
+      <h3 class="week">الأسبوع الرابع</h3>
+
+      <article class="day">
+        <h4>السبت</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>فطيرة بيض بالفرن (2 بيضة + سبانخ + جبنة لايت — بدون عجين)</td>
+              <td class="col-cal">280</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>فراخ بالليمون والروزماري + 4 ملاعق أرز + سلطة</td>
+              <td class="col-cal">500</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>2 تمرة + 5 حبات لوز</td>
+              <td class="col-cal">140</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>طبق حمص بالطحينة + ربع رغيف + خيار</td>
+              <td class="col-cal">260</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,180</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الأحد</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>2 بان كيك شوفان (شوفان + بيضة + موزة)</td>
+              <td class="col-cal">300</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>شوربة فراخ بالخضار (صدور + جزر + كوسة + بطاطس صغيرة) + ربع رغيف</td>
+              <td class="col-cal">480</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>زبادي + خيار مبشور + نعناع</td>
+              <td class="col-cal">90</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>3 ملاعق فول + بيضة مسلوقة + ليمون</td>
+              <td class="col-cal">280</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,150</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الاتنين</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>جبنة بيضاء + طماطم + زعتر + ربع رغيف</td>
+              <td class="col-cal">290</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>6 كوسات محشي (أرز ولحمة مفرومة) + سلطة</td>
+              <td class="col-cal">500</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>كمّثرى متوسطة</td>
+              <td class="col-cal">100</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>تونة لايت + ذرة + خس + فلفل ألوان + ليمون</td>
+              <td class="col-cal">240</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,130</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الثلاثاء</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>2 بيضة + شرائح بسطرمة قليلة + ربع رغيف</td>
+              <td class="col-cal">310</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>لحمة مشوية + خضار مشكّل بالفرن + 3 ملاعق أرز</td>
+              <td class="col-cal">490</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>تفاحة خضرا</td>
+              <td class="col-cal">80</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>3 ملاعق لبنة + زعتر + ملعقة زيت زيتون + ربع رغيف</td>
+              <td class="col-cal">260</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,140</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الأربعاء</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>شوفان مالح (شوفان + بيضة + جبنة + فلفل أسود)</td>
+              <td class="col-cal">310</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>10 ورقات عنب + قطعة صدر فراخ مشوي + سلطة</td>
+              <td class="col-cal">500</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>حفنة عنب صغيرة (~15 حبة)</td>
+              <td class="col-cal">100</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>2 بيضة مسلوقة + ربع أفوكادو + ليمون</td>
+              <td class="col-cal">250</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,160</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day">
+        <h4>الخميس</h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>فول + طماطم + بصل أخضر + ليمون + ربع رغيف</td>
+              <td class="col-cal">300</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>طاجن لحمة بالخضار (بطاطس قليلة + جزر + بسلة) + ربع رغيف</td>
+              <td class="col-cal">510</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>زبادي لايت + ملعقة عسل</td>
+              <td class="col-cal">120</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>100g جبنة قريش + رمان + نعناع</td>
+              <td class="col-cal">200</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,130</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="day flex">
+        <h4>الجمعة <span class="star">★</span> <span class="pill">يوم مرن</span></h4>
+        <table>
+          <thead>
+            <tr>
+              <th class="col-meal">الوجبة</th>
+              <th>التفاصيل</th>
+              <th class="col-cal">السعرات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-meal">فطار</td>
+              <td>أي فطار من الأسبوع</td>
+              <td class="col-cal">310</td>
+            </tr>
+            <tr>
+              <td class="col-meal">غداء</td>
+              <td>أكل البيت — استمتعي بكمية معقولة</td>
+              <td class="col-cal">560</td>
+            </tr>
+            <tr>
+              <td class="col-meal">سناك</td>
+              <td>مكافأة نهاية الأسبوع 🎉</td>
+              <td class="col-cal">200</td>
+            </tr>
+            <tr>
+              <td class="col-meal">عشاء</td>
+              <td>زبادي أو جبنة قريش أو بيض</td>
+              <td class="col-cal">180</td>
+            </tr>
+            <tr class="total">
+              <td>الإجمالي</td>
+              <td></td>
+              <td class="col-cal">1,250</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <section class="rules">
+        <h2>قواعد عامة طول الشهر</h2>
+        <ul>
+          <li><strong>المية:</strong> 8 كوبايات على الأقل يومياً</li>
+          <li><strong>المشروبات الغازية:</strong> استبدليها بمية فوارة أو دايت مرحلياً</li>
+          <li><strong>العصائر:</strong> كلي الفاكهة كاملة — الألياف بتشبّع أكتر</li>
+          <li><strong>الحلويات:</strong> مرة واحدة في الأسبوع يوم الجمعة — قطعة صغيرة</li>
+          <li><strong>المقليات:</strong> شوي أو فرن بملعقة زيت واحدة</li>
+          <li><strong>الخبز:</strong> ربع رغيف بلدي أفضل من الفينو أو الشامي</li>
+          <li><strong>الشاي/القهوة:</strong> 1-2 كوباية بدون سكر (أو سكر دايت)</li>
+          <li><strong>المشي:</strong> حاولي 20 دقيقة يومياً — حتى في البيت</li>
+        </ul>
+      </section>
+
+      <section class="goals">
+        <h2>أهداف كل مرحلة</h2>
+
+        <div class="goal-block">
+          <h3>المرحلة الأولى (أسبوع 1 و 2)</h3>
+          <ul>
+            <li>تقليل الخبز والأرز (ربع رغيف و 3-4 ملاعق أرز)</li>
+            <li>استبدال المقليات بالشوي والفرن</li>
+            <li>بناء عادة الأكل المنظّم</li>
+          </ul>
+        </div>
+
+        <div class="goal-block">
+          <h3>المرحلة التانية (أسبوع 3 و 4)</h3>
+          <ul>
+            <li>رفع البروتين في كل وجبة</li>
+            <li>تجربة وصفات جديدة عشان ما تمليش</li>
+            <li>إضافة المشي اليومي</li>
+            <li><strong>المتوقع:</strong> نزول 2-4 كجم نهاية الشهر</li>
+          </ul>
+        </div>
+      </section>
+
+      <footer>صفحة خاصة — غير مفهرسة · التشيكات بتتسجّل تلقائياً في المتصفح</footer>
+    </main>
+
+    <script>
+      (function () {
+        const STORAGE_KEY = 'meal-plan-v1';
+
+        function isoLocal(d) {
+          // YYYY-MM-DD in local time (no UTC shift)
+          const pad = (n) => String(n).padStart(2, '0');
+          return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+        }
+        function defaultStart() {
+          const t = new Date();
+          t.setDate(t.getDate() + 1);
+          return isoLocal(t);
+        }
+        function todayLocal() {
+          return isoLocal(new Date());
+        }
+        const MONTHS_AR = [
+          'يناير',
+          'فبراير',
+          'مارس',
+          'أبريل',
+          'مايو',
+          'يونيو',
+          'يوليو',
+          'أغسطس',
+          'سبتمبر',
+          'أكتوبر',
+          'نوفمبر',
+          'ديسمبر',
+        ];
+        // getDay() returns 0=Sun..6=Sat
+        const WEEKDAYS_AR = [
+          'الأحد',
+          'الإتنين',
+          'الثلاثاء',
+          'الأربعاء',
+          'الخميس',
+          'الجمعة',
+          'السبت',
+        ];
+        function parseISO(iso) {
+          const parts = iso.split('-');
+          return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+        }
+        function formatAr(iso) {
+          const parts = iso.split('-');
+          const day = Number(parts[2]);
+          const month = Number(parts[1]) - 1;
+          const d = parseISO(iso);
+          return WEEKDAYS_AR[d.getDay()] + ' · ' + day + ' ' + MONTHS_AR[month];
+        }
+
+        function defaultOpenDays() {
+          return { 1: 0, 2: 0, 3: 0, 4: 0 };
+        }
+        function loadState() {
+          try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+              const s = JSON.parse(raw);
+              if (!s.startDate) s.startDate = defaultStart();
+              if (!s.checks) s.checks = {};
+              if (!s.openDays) s.openDays = defaultOpenDays();
+              return s;
+            }
+          } catch {}
+          return { startDate: defaultStart(), checks: {}, openDays: defaultOpenDays() };
+        }
+        function saveState(s) {
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+          } catch {}
+        }
+
+        const state = loadState();
+        const startInput = document.getElementById('start-date');
+        startInput.value = state.startDate;
+        startInput.max = '2099-12-31';
+
+        const days = Array.from(document.querySelectorAll('.day'));
+
+        days.forEach((day, i) => {
+          const week = Math.floor(i / 7) + 1;
+          const dayIdx = i % 7;
+          day.dataset.week = String(week);
+          day.dataset.dayIdx = String(dayIdx);
+
+          const h4 = day.querySelector('h4');
+
+          const dateLabel = document.createElement('span');
+          dateLabel.className = 'date-label';
+          h4.appendChild(dateLabel);
+
+          const progBadge = document.createElement('span');
+          progBadge.className = 'prog-badge';
+          h4.appendChild(progBadge);
+
+          const table = day.querySelector('table');
+          const headRow = table.querySelector('thead tr');
+          const checkTh = document.createElement('th');
+          checkTh.className = 'col-check';
+          checkTh.setAttribute('aria-label', 'تم');
+          headRow.insertBefore(checkTh, headRow.firstChild);
+
+          let mealCounter = 0;
+          const rows = table.querySelectorAll('tbody tr');
+          rows.forEach((row) => {
+            const td = document.createElement('td');
+            td.className = 'col-check';
+            if (!row.classList.contains('total')) {
+              const meal = mealCounter++;
+              const key = 'w' + week + '-d' + dayIdx + '-m' + meal;
+              const cb = document.createElement('input');
+              cb.type = 'checkbox';
+              cb.dataset.key = key;
+              cb.setAttribute('aria-label', 'تم تناول الوجبة');
+              cb.checked = !!state.checks[key];
+              if (cb.checked) row.classList.add('done');
+              cb.addEventListener('change', () => {
+                if (cb.checked) state.checks[key] = true;
+                else delete state.checks[key];
+                saveState(state);
+                row.classList.toggle('done', cb.checked);
+                updateDay(day);
+                updateGlobal();
+              });
+              td.appendChild(cb);
+            }
+            row.insertBefore(td, row.firstChild);
+          });
+
+          const reset = document.createElement('button');
+          reset.type = 'button';
+          reset.className = 'day-reset';
+          reset.textContent = 'مسح اليوم';
+          reset.addEventListener('click', () => {
+            day.querySelectorAll('input[type="checkbox"]:checked').forEach((cb) => {
+              cb.checked = false;
+              cb.dispatchEvent(new Event('change'));
+            });
+          });
+          day.appendChild(reset);
+
+          // Wrap everything after h4 into a collapsible body
+          const body = document.createElement('div');
+          body.className = 'day-body';
+          body.id = 'mp-body-' + week + '-' + dayIdx;
+          while (h4.nextSibling) body.appendChild(h4.nextSibling);
+          day.appendChild(body);
+
+          // Make h4 toggleable
+          h4.setAttribute('role', 'button');
+          h4.setAttribute('tabindex', '0');
+          h4.setAttribute('aria-expanded', 'false');
+          h4.setAttribute('aria-controls', body.id);
+          const chev = document.createElement('span');
+          chev.className = 'day-chev';
+          chev.setAttribute('aria-hidden', 'true');
+          chev.textContent = '▾';
+          h4.appendChild(chev);
+          h4.addEventListener('click', () => toggleDay(week, dayIdx));
+          h4.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              toggleDay(week, dayIdx);
+            }
+          });
+        });
+
+        function toggleDay(week, dayIdx) {
+          const target = document.querySelector(
+            '.day[data-week="' + week + '"][data-day-idx="' + dayIdx + '"]'
+          );
+          if (!target) return;
+          const willOpen = !target.classList.contains('open');
+          document.querySelectorAll('.day[data-week="' + week + '"]').forEach((d) => {
+            d.classList.remove('open');
+            const h = d.querySelector('h4');
+            if (h) h.setAttribute('aria-expanded', 'false');
+          });
+          if (willOpen) {
+            target.classList.add('open');
+            const th = target.querySelector('h4');
+            if (th) th.setAttribute('aria-expanded', 'true');
+            state.openDays[week] = dayIdx;
+          } else {
+            state.openDays[week] = null;
+          }
+          saveState(state);
+        }
+
+        function applyOpenDays() {
+          for (let w = 1; w <= 4; w++) {
+            const idx = state.openDays ? state.openDays[w] : 0;
+            document.querySelectorAll('.day[data-week="' + w + '"]').forEach((d) => {
+              const dayIdx = Number(d.dataset.dayIdx);
+              const shouldOpen = idx !== null && idx !== undefined && dayIdx === idx;
+              d.classList.toggle('open', shouldOpen);
+              const h4 = d.querySelector('h4');
+              if (h4) h4.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+            });
+          }
+        }
+
+        // ---- Week tabs ----
+        const WEEK_LABELS = [
+          'الأسبوع الأول',
+          'الأسبوع التاني',
+          'الأسبوع التالت',
+          'الأسبوع الرابع',
+        ];
+        const phases = Array.from(document.querySelectorAll('h2.phase'));
+        const phaseDescs = phases.map((p) => p.nextElementSibling);
+
+        const weekHeadings = Array.from(document.querySelectorAll('h3.week'));
+        const weekSections = weekHeadings.map((h3, i) => {
+          const container = document.createElement('div');
+          container.className = 'week-section';
+          container.dataset.week = String(i + 1);
+          h3.before(container);
+          container.appendChild(h3);
+          let next = container.nextElementSibling;
+          while (
+            next &&
+            (next.classList.contains('day') ||
+              (next.tagName === 'HR' && next.classList.contains('sep')))
+          ) {
+            const node = next;
+            next = next.nextElementSibling;
+            container.appendChild(node);
+          }
+          return container;
+        });
+
+        const tabBar = document.createElement('nav');
+        tabBar.className = 'week-tabs';
+        tabBar.setAttribute('role', 'tablist');
+        tabBar.setAttribute('aria-label', 'الأسابيع');
+        const tabButtons = WEEK_LABELS.map((label, i) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'week-tab';
+          btn.dataset.week = String(i + 1);
+          btn.setAttribute('role', 'tab');
+          const labelSpan = document.createElement('span');
+          labelSpan.textContent = label;
+          const prog = document.createElement('span');
+          prog.className = 'week-prog';
+          prog.textContent = '0 / 7';
+          btn.appendChild(labelSpan);
+          btn.appendChild(prog);
+          btn.addEventListener('click', () => activateWeek(i + 1));
+          tabBar.appendChild(btn);
+          return btn;
+        });
+        if (phases[0]) phases[0].before(tabBar);
+
+        function activateWeek(n) {
+          weekSections.forEach((sec, i) => {
+            sec.hidden = i + 1 !== n;
+          });
+          // Phase 0 covers weeks 1-2; Phase 1 covers weeks 3-4
+          phases.forEach((p, i) => {
+            const inThisPhase = (i === 0 && n <= 2) || (i === 1 && n > 2);
+            p.hidden = !inThisPhase;
+            const desc = phaseDescs[i];
+            if (desc && desc.classList && desc.classList.contains('phase-desc')) {
+              desc.hidden = !inThisPhase;
+            }
+          });
+          tabButtons.forEach((btn) => {
+            const active = btn.dataset.week === String(n);
+            btn.classList.toggle('active', active);
+            btn.setAttribute('aria-selected', active ? 'true' : 'false');
+          });
+        }
+
+        function updateTabBadges() {
+          weekSections.forEach((sec, i) => {
+            const total = sec.querySelectorAll('.day').length;
+            const done = sec.querySelectorAll('.day.done').length;
+            const btn = tabButtons[i];
+            const prog = btn.querySelector('.week-prog');
+            if (prog) prog.textContent = done + ' / ' + total;
+            btn.classList.toggle('complete', total > 0 && done === total);
+            btn.classList.toggle('has-today', !!sec.querySelector('.day.today'));
+          });
+        }
+
+        function currentWeek() {
+          const start = parseISO(state.startDate);
+          const today = parseISO(todayLocal());
+          const diff = Math.floor((today.getTime() - start.getTime()) / 86400000);
+          if (diff < 0) return 1;
+          return Math.min(4, Math.max(1, Math.floor(diff / 7) + 1));
+        }
+
+        function updateDay(day) {
+          const all = day.querySelectorAll('input[type="checkbox"]');
+          const checked = day.querySelectorAll('input[type="checkbox"]:checked');
+          day.querySelector('.prog-badge').textContent = checked.length + ' / ' + all.length;
+          day.classList.toggle('done', all.length > 0 && checked.length === all.length);
+        }
+
+        function updateDates() {
+          const start = startInput.value || defaultStart();
+          state.startDate = start;
+          saveState(state);
+          const startD = parseISO(start);
+          const today = todayLocal();
+          days.forEach((day, i) => {
+            const d = new Date(startD);
+            d.setDate(d.getDate() + i);
+            const iso = isoLocal(d);
+            day.dataset.date = iso;
+            const dateLabel = day.querySelector('.date-label');
+            if (dateLabel) dateLabel.textContent = formatAr(iso);
+            const isToday = iso === today;
+            day.classList.toggle('today', isToday);
+
+            const h4 = day.querySelector('h4');
+            const existing = h4.querySelector('.today-pill');
+            if (isToday && !existing) {
+              const pill = document.createElement('span');
+              pill.className = 'today-pill';
+              pill.textContent = 'اليوم';
+              h4.insertBefore(pill, h4.querySelector('.date-label'));
+            } else if (!isToday && existing) {
+              existing.remove();
+            }
+          });
+        }
+
+        function updateGlobal() {
+          const all = document.querySelectorAll('.day input[type="checkbox"]');
+          const checked = document.querySelectorAll('.day input[type="checkbox"]:checked');
+          document.getElementById('overall-meals').textContent =
+            checked.length + ' / ' + all.length;
+          const completed = document.querySelectorAll('.day.done').length;
+          document.getElementById('overall-days').textContent =
+            completed + ' / ' + days.length;
+          updateTabBadges();
+        }
+
+        function scrollToToday() {
+          const t = document.querySelector('.day.today');
+          if (!t) return;
+          setTimeout(() => t.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
+        }
+
+        startInput.addEventListener('change', () => {
+          updateDates();
+          activateWeek(currentWeek());
+          updateGlobal();
+          scrollToToday();
+        });
+        document.getElementById('reset-all').addEventListener('click', () => {
+          if (!confirm('هتمسحي كل التشيكات. متأكدة؟')) return;
+          state.checks = {};
+          saveState(state);
+          document
+            .querySelectorAll('.day input[type="checkbox"]:checked')
+            .forEach((cb) => (cb.checked = false));
+          document
+            .querySelectorAll('.day tr.done')
+            .forEach((r) => r.classList.remove('done'));
+          days.forEach(updateDay);
+          updateGlobal();
+        });
+
+        // Keep state in sync across tabs
+        window.addEventListener('storage', (e) => {
+          if (e.key !== STORAGE_KEY) return;
+          location.reload();
+        });
+
+        updateDates();
+        days.forEach(updateDay);
+        activateWeek(currentWeek());
+        applyOpenDays();
+        updateGlobal();
+        scrollToToday();
+      })();
+    </script>
+  </body>
+</html>
