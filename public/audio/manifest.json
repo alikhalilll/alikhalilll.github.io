@@ -27,18 +27,18 @@
     "durationSec": 972,
     "generatedAt": "2026-04-19T21:45:16.439Z"
   },
-  "inside-atell-input-phone-validation": {
-    "hash": "47a750993d6efb4b",
-    "bytes": 11687616,
-    "blocks": 71,
-    "durationSec": 974,
-    "generatedAt": "2026-04-19T21:53:29.440Z"
-  },
   "anatomy-of-adatatable": {
     "hash": "b1c6c48b52facaed",
     "bytes": 12106080,
     "blocks": 85,
     "durationSec": 1009,
     "generatedAt": "2026-04-19T22:02:02.145Z"
+  },
+  "atell-input-the-library-rewrite": {
+    "hash": "478357f4addb9d04",
+    "bytes": 11473632,
+    "blocks": 72,
+    "durationSec": 956,
+    "generatedAt": "2026-05-21T13:22:38.641Z"
   }
 }

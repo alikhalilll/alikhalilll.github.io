@@ -1,0 +1,365 @@
+{
+  "sampleRate": 24000,
+  "cues": [
+    {
+      "index": 0,
+      "startSec": 0,
+      "endSec": 25.675
+    },
+    {
+      "index": 1,
+      "startSec": 25.675,
+      "endSec": 29.175
+    },
+    {
+      "index": 2,
+      "startSec": 29.175,
+      "endSec": 55.9
+    },
+    {
+      "index": 3,
+      "startSec": 55.9,
+      "endSec": 59.7
+    },
+    {
+      "index": 4,
+      "startSec": 59.7,
+      "endSec": 63.875
+    },
+    {
+      "index": 5,
+      "startSec": 63.875,
+      "endSec": 66.8
+    },
+    {
+      "index": 6,
+      "startSec": 66.8,
+      "endSec": 78.55
+    },
+    {
+      "index": 7,
+      "startSec": 78.55,
+      "endSec": 81.35
+    },
+    {
+      "index": 8,
+      "startSec": 81.35,
+      "endSec": 106
+    },
+    {
+      "index": 9,
+      "startSec": 106,
+      "endSec": 107.9
+    },
+    {
+      "index": 10,
+      "startSec": 107.9,
+      "endSec": 132.4
+    },
+    {
+      "index": 11,
+      "startSec": 132.4,
+      "endSec": 159.225
+    },
+    {
+      "index": 12,
+      "startSec": 159.225,
+      "endSec": 174.2
+    },
+    {
+      "index": 13,
+      "startSec": 174.2,
+      "endSec": 179.2
+    },
+    {
+      "index": 14,
+      "startSec": 179.2,
+      "endSec": 182.625
+    },
+    {
+      "index": 15,
+      "startSec": 182.625,
+      "endSec": 196.7
+    },
+    {
+      "index": 16,
+      "startSec": 196.7,
+      "endSec": 210.9
+    },
+    {
+      "index": 17,
+      "startSec": 210.9,
+      "endSec": 236.45
+    },
+    {
+      "index": 18,
+      "startSec": 236.45,
+      "endSec": 244.55
+    },
+    {
+      "index": 19,
+      "startSec": 244.55,
+      "endSec": 249.7
+    },
+    {
+      "index": 20,
+      "startSec": 249.7,
+      "endSec": 274.85
+    },
+    {
+      "index": 21,
+      "startSec": 274.85,
+      "endSec": 302.025
+    },
+    {
+      "index": 22,
+      "startSec": 302.025,
+      "endSec": 321.7
+    },
+    {
+      "index": 23,
+      "startSec": 321.7,
+      "endSec": 328.475
+    },
+    {
+      "index": 24,
+      "startSec": 328.475,
+      "endSec": 331.275
+    },
+    {
+      "index": 25,
+      "startSec": 331.275,
+      "endSec": 354.4
+    },
+    {
+      "index": 26,
+      "startSec": 354.4,
+      "endSec": 363.375
+    },
+    {
+      "index": 27,
+      "startSec": 363.375,
+      "endSec": 367.025
+    },
+    {
+      "index": 28,
+      "startSec": 367.025,
+      "endSec": 387.625
+    },
+    {
+      "index": 29,
+      "startSec": 387.625,
+      "endSec": 390.275
+    },
+    {
+      "index": 30,
+      "startSec": 390.275,
+      "endSec": 396.85
+    },
+    {
+      "index": 31,
+      "startSec": 396.85,
+      "endSec": 423.8
+    },
+    {
+      "index": 32,
+      "startSec": 423.8,
+      "endSec": 428.725
+    },
+    {
+      "index": 33,
+      "startSec": 428.725,
+      "endSec": 454.95
+    },
+    {
+      "index": 34,
+      "startSec": 454.95,
+      "endSec": 458.875
+    },
+    {
+      "index": 35,
+      "startSec": 458.875,
+      "endSec": 481.875
+    },
+    {
+      "index": 36,
+      "startSec": 481.875,
+      "endSec": 491.925
+    },
+    {
+      "index": 37,
+      "startSec": 491.925,
+      "endSec": 507.95
+    },
+    {
+      "index": 38,
+      "startSec": 507.95,
+      "endSec": 511.825
+    },
+    {
+      "index": 39,
+      "startSec": 511.825,
+      "endSec": 529.225
+    },
+    {
+      "index": 40,
+      "startSec": 529.225,
+      "endSec": 538.4
+    },
+    {
+      "index": 41,
+      "startSec": 538.4,
+      "endSec": 564.45
+    },
+    {
+      "index": 42,
+      "startSec": 564.45,
+      "endSec": 585.025
+    },
+    {
+      "index": 43,
+      "startSec": 585.025,
+      "endSec": 587.55
+    },
+    {
+      "index": 44,
+      "startSec": 587.55,
+      "endSec": 602.6
+    },
+    {
+      "index": 45,
+      "startSec": 602.6,
+      "endSec": 607.125
+    },
+    {
+      "index": 46,
+      "startSec": 607.125,
+      "endSec": 627.2
+    },
+    {
+      "index": 47,
+      "startSec": 627.2,
+      "endSec": 633.9
+    },
+    {
+      "index": 48,
+      "startSec": 633.9,
+      "endSec": 650.8
+    },
+    {
+      "index": 49,
+      "startSec": 650.8,
+      "endSec": 653.075
+    },
+    {
+      "index": 50,
+      "startSec": 653.075,
+      "endSec": 668.225
+    },
+    {
+      "index": 51,
+      "startSec": 668.225,
+      "endSec": 672.2
+    },
+    {
+      "index": 52,
+      "startSec": 672.2,
+      "endSec": 699
+    },
+    {
+      "index": 53,
+      "startSec": 699,
+      "endSec": 703.9
+    },
+    {
+      "index": 54,
+      "startSec": 703.9,
+      "endSec": 707.45
+    },
+    {
+      "index": 55,
+      "startSec": 707.45,
+      "endSec": 733.375
+    },
+    {
+      "index": 56,
+      "startSec": 733.375,
+      "endSec": 736.65
+    },
+    {
+      "index": 57,
+      "startSec": 736.65,
+      "endSec": 742.05
+    },
+    {
+      "index": 58,
+      "startSec": 742.05,
+      "endSec": 748.625
+    },
+    {
+      "index": 59,
+      "startSec": 748.625,
+      "endSec": 774.675
+    },
+    {
+      "index": 60,
+      "startSec": 774.675,
+      "endSec": 788.575
+    },
+    {
+      "index": 61,
+      "startSec": 788.575,
+      "endSec": 791.075
+    },
+    {
+      "index": 62,
+      "startSec": 791.075,
+      "endSec": 808.8
+    },
+    {
+      "index": 63,
+      "startSec": 808.8,
+      "endSec": 811.85
+    },
+    {
+      "index": 64,
+      "startSec": 811.85,
+      "endSec": 832.375
+    },
+    {
+      "index": 65,
+      "startSec": 832.375,
+      "endSec": 840.45
+    },
+    {
+      "index": 66,
+      "startSec": 840.45,
+      "endSec": 843.275
+    },
+    {
+      "index": 67,
+      "startSec": 843.275,
+      "endSec": 867.65
+    },
+    {
+      "index": 68,
+      "startSec": 867.65,
+      "endSec": 894.775
+    },
+    {
+      "index": 69,
+      "startSec": 894.775,
+      "endSec": 913.275
+    },
+    {
+      "index": 70,
+      "startSec": 913.275,
+      "endSec": 930.675
+    },
+    {
+      "index": 71,
+      "startSec": 930.675,
+      "endSec": 956.075
+    }
+  ]
+}
