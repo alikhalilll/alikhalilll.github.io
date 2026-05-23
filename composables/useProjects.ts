@@ -110,6 +110,18 @@ export const useProjects = () => {
       group: 'open-source',
       featured: true,
     },
+    {
+      title: '@alikhalilll/ui',
+      description:
+        'Headless, shadcn-vue style Vue 3 component library. Every component is its own importable subpath (`/tell-input`, `/popover`, `/drawer`, …) so consumers only ship what they use. Built on reka-ui + vaul-vue, themed via prefixed CSS variables, fully typed.',
+      tags: ['Vue 3', 'Nuxt', 'Headless UI', 'Tailwind'],
+      href: 'https://alikhalilll.github.io/ali-nuxt-toolkit/ui',
+      repo: 'https://github.com/alikhalilll/ali-nuxt-toolkit/tree/master/packages/ui',
+      year: '2026',
+      icon: 'lucide:component',
+      group: 'open-source',
+      featured: true,
+    },
   ];
 
   return {
