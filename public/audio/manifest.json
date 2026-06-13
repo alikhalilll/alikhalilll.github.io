@@ -35,10 +35,17 @@
     "generatedAt": "2026-04-19T22:02:02.145Z"
   },
   "atell-input-the-library-rewrite": {
-    "hash": "478357f4addb9d04",
-    "bytes": 11473632,
+    "hash": "9ebb52ef9b93e782",
+    "bytes": 11418912,
     "blocks": 72,
-    "durationSec": 956,
-    "generatedAt": "2026-05-21T13:22:38.641Z"
+    "durationSec": 952,
+    "generatedAt": "2026-06-13T20:30:36.269Z"
+  },
+  "inside-a-skeleton-self-generating-skeleton-loaders": {
+    "hash": "56fd9d24c1bcc8d9",
+    "bytes": 11515680,
+    "blocks": 61,
+    "durationSec": 960,
+    "generatedAt": "2026-06-13T20:38:12.534Z"
   }
 }
