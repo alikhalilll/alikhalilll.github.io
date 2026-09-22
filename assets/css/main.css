@@ -232,6 +232,15 @@
     max-width: 56rem;
     margin-inline: auto;
     padding-inline: 1.5rem;
+    /* Prevent stray horizontal overflow from decorative or bleed elements.
+       Keeps every section inside the 56rem rail on narrow viewports. */
+    overflow-x: clip;
+  }
+
+  @media (min-width: 640px) {
+    .framed-container {
+      border-inline: 1px solid var(--border);
+    }
   }
 
   /* Kept for backwards compat during the migration; same width fix applies. */

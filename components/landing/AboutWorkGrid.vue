@@ -45,7 +45,7 @@ const topRoles = computed(() => roles.slice(0, 4));
           :transition="{ duration: 0.5, delay: 0.15 * i }"
           class="py-3"
         >
-          <div class="flex items-baseline justify-between gap-4">
+          <div class="flex items-baseline justify-between gap-4 flex-wrap">
             <div class="min-w-0">
               <p class="truncate text-sm font-medium text-foreground">{{ role.title }}</p>
               <p class="truncate text-xs text-muted-foreground">{{ role.company }}</p>

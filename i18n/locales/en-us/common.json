@@ -70,10 +70,16 @@
       "featured": "Featured"
     },
     "highlights": {
-      "eyebrow": "Featured",
+      "eyebrow": "Highlights",
       "title": "Highlights",
-      "subtitle": "Recent writing, shipped products, and open source.",
+      "title_lead": "Featured",
+      "title_accent": "case studies",
+      "subtitle": "Hand-picked writing, shipped products, and open-source work — one swipe through recent highlights.",
       "explore": "Explore",
+      "read": "Read article",
+      "visit": "View case study",
+      "prev": "Previous highlight",
+      "next": "Next highlight",
       "article": "Article",
       "project": "Project",
       "opensource": "Open source"
