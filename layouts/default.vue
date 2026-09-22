@@ -1,10 +1,12 @@
 <template>
   <div class="flex min-h-screen flex-col">
-    <AppHeader />
-    <main class="flex-1">
-      <slot />
-    </main>
-    <AppFooter />
+    <FloatingNav />
+    <div class="framed-container flex-1 pt-20 sm:pt-24">
+      <main>
+        <slot />
+      </main>
+      <AppFooter />
+    </div>
     <ClientOnly>
       <ScrollToTop />
     </ClientOnly>

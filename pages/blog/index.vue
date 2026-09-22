@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { Motion } from 'motion-v';
+
 const { t } = useI18n();
 const { formatDate } = useLocalizedDate();
+const localePath = useLocalePath();
 
 useSiteSeo({
   title: t('writing.eyebrow'),
@@ -10,6 +13,14 @@ useSiteSeo({
 const { data: posts } = await useAsyncData('blog-list', () =>
   queryCollection('blog').order('date', 'DESC').all()
 );
+
+const tilt = (i: number) => (i % 2 === 0 ? '-rotate-1' : 'rotate-1');
+
+const coverFor = (post: { path: string; image?: string }) => {
+  if (post.image) return post.image;
+  const slug = post.path.replace(/^\/blog\//, '').replace(/\/$/, '');
+  return `/blog-covers/${slug}.png`;
+};
 </script>
 
 <template>
@@ -20,41 +31,48 @@ const { data: posts } = await useAsyncData('blog-list', () =>
       :subtitle="t('writing.subtitle')"
     />
 
-    <section class="prose-container pb-24">
-      <ul v-if="posts && posts.length" class="flex flex-col">
-        <li
+    <section class="pb-24">
+      <ul v-if="posts && posts.length" class="grid gap-8 sm:grid-cols-2 sm:gap-10">
+        <Motion
           v-for="(post, i) in posts"
           :key="post.path"
-          v-reveal="i * 50"
-          class="border-b border-border last:border-b-0"
+          as="li"
+          :initial="{ y: 20, opacity: 0 }"
+          :while-in-view="{ y: 0, opacity: 1 }"
+          :in-view-options="{ once: true, amount: 0.2 }"
+          :transition="{ duration: 0.5, delay: 0.08 * i }"
         >
-          <NuxtLink
-            :to="post.path"
-            class="group -mx-3 flex flex-col gap-2 rounded-md px-3 py-5 no-underline transition-colors hover:bg-foreground/[0.04] sm:flex-row sm:items-center sm:gap-6"
-          >
-            <div class="min-w-0 flex-1">
-              <h2
-                class="inline-flex items-baseline gap-1.5 text-lg font-semibold text-foreground decoration-primary/60 decoration-2 underline-offset-4 group-hover:text-primary group-hover:underline sm:text-xl"
-              >
-                <span>{{ post.title }}</span>
-              </h2>
-              <p v-if="post.description" class="mt-1 text-sm text-muted-foreground">
-                {{ post.description }}
-              </p>
+          <NuxtLink :to="localePath(post.path)" class="group/blog-post block no-underline">
+            <div
+              class="mb-4 aspect-[4/3] overflow-hidden rounded-lg border-4 border-background shadow-lg ring-2 ring-border transition-transform duration-300 group-hover/blog-post:scale-105"
+              :class="tilt(i)"
+            >
+              <img
+                :src="coverFor(post)"
+                :alt="post.title"
+                class="size-full object-cover"
+                loading="lazy"
+                width="480"
+                height="360"
+              />
             </div>
+            <h2
+              class="text-lg font-semibold text-foreground group-hover/blog-post:text-primary sm:text-xl"
+            >
+              {{ post.title }}
+            </h2>
+            <p v-if="post.description" class="mt-2 line-clamp-2 text-sm text-muted-foreground">
+              {{ post.description }}
+            </p>
             <time
               v-if="post.date"
-              class="shrink-0 font-mono text-xs text-muted-foreground ar:font-sans ar:text-sm ar:font-bold"
+              class="mt-3 block font-mono text-xs text-muted-foreground ar:font-sans ar:text-sm"
               :datetime="post.date"
             >
               {{ formatDate(post.date, { year: 'numeric', month: 'short', day: 'numeric' }) }}
             </time>
-            <Icon
-              name="lucide:arrow-right"
-              class="rtl-flip size-5 shrink-0 self-center text-muted-foreground transition-transform duration-200 group-hover:translate-x-1 group-hover:text-primary rtl:group-hover:-translate-x-1"
-            />
           </NuxtLink>
-        </li>
+        </Motion>
       </ul>
       <div v-else class="py-12 text-center text-muted-foreground">
         <p>{{ t('writing.empty') }}</p>

@@ -158,10 +158,8 @@ useHead({
 </script>
 
 <template>
-  <article :dir="postDir" :lang="postLang" class="py-16 sm:py-24">
-    <div
-      class="mx-auto grid max-w-[80rem] gap-12 px-6 xl:grid-cols-[minmax(0,42rem)_minmax(0,18rem)] xl:justify-center xl:gap-16"
-    >
+  <article :dir="postDir" :lang="postLang" class="py-10 sm:py-16">
+    <div class="grid gap-12 xl:grid-cols-[minmax(0,1fr)_minmax(0,16rem)] xl:gap-12">
       <div class="min-w-0">
         <NuxtLink
           :to="localePath('/blog')"

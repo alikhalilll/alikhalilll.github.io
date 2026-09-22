@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
+import { Motion } from 'motion-v';
 
 useSiteSeo({
   title: 'Ali Khalil — Senior Frontend Developer & Team Lead',
   description:
-    'Senior Frontend Developer & Team Lead specializing in Vue, Nuxt, and TypeScript. Five years shipping real-time, multi-tenant SaaS across the Saudi and Egyptian markets.',
+    'Senior Frontend Developer & Team Lead specializing in Vue, Nuxt, and TypeScript. Six years shipping real-time, multi-tenant SaaS across the Saudi and Egyptian markets.',
 });
 
 const config = useRuntimeConfig();
@@ -64,8 +65,17 @@ const sections = computed(() => [
 
 <template>
   <div>
-    <Hero :eyebrow="t('home.eyebrow')" :title="t('home.title')" :subtitle="t('home.subtitle')">
-      <div class="mt-7 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+    <Hero
+      :eyebrow="t('home.eyebrow')"
+      :title="t('home.title')"
+      :subtitle="t('home.subtitle')"
+      :show-chrome="true"
+      :available="true"
+      :status-label="t('hero.status.available')"
+    >
+      <div
+        class="mt-7 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-muted-foreground"
+      >
         <span class="inline-flex items-center gap-1.5">
           <Icon name="lucide:map-pin" class="size-3.5" />
           {{ t('home.location') }}
@@ -82,7 +92,7 @@ const sections = computed(() => [
         </span>
       </div>
 
-      <div class="mt-8 flex flex-wrap gap-3">
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
         <Button as="a" :href="localePath('/projects')" variant="primary">
           {{ t('home.see_work') }}
           <Icon name="lucide:arrow-right" class="rtl-flip" />
@@ -93,15 +103,27 @@ const sections = computed(() => [
       </div>
     </Hero>
 
-    <section class="prose-container pb-20">
-      <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+    <LandingHeroMarquee />
+
+    <section class="py-16">
+      <h2
+        class="text-sm font-semibold tracking-wide text-muted-foreground uppercase ar:normal-case"
+      >
         {{ t('common.explore') }}
       </h2>
       <ul class="mt-5 grid gap-2 sm:grid-cols-2">
-        <li v-for="(s, i) in sections" :key="s.to" v-reveal="i * 50">
+        <Motion
+          v-for="(s, i) in sections"
+          :key="s.to"
+          as="li"
+          :initial="{ y: 10, opacity: 0 }"
+          :while-in-view="{ y: 0, opacity: 1 }"
+          :in-view-options="{ once: true, amount: 0.3 }"
+          :transition="{ duration: 0.4, delay: 0.08 * i }"
+        >
           <NuxtLink
             :to="s.to"
-            class="group hover-gradient flex items-baseline justify-between gap-4 rounded-md border border-border p-4 no-underline transition-colors hover:border-foreground/40"
+            class="group flex items-baseline justify-between gap-4 rounded-lg border border-border p-4 no-underline transition-colors hover:border-foreground/40 hover:bg-foreground/[0.02]"
           >
             <span class="flex-1">
               <span class="block font-medium text-foreground">{{ s.title }}</span>
@@ -112,15 +134,15 @@ const sections = computed(() => [
               class="rtl-flip size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground rtl:group-hover:-translate-x-0.5"
             />
           </NuxtLink>
-        </li>
+        </Motion>
       </ul>
     </section>
 
-    <section class="prose-container pb-20">
+    <LandingAboutWorkGrid />
+
+    <section class="py-16">
       <div class="flex items-baseline justify-between gap-4">
-        <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-          {{ t('home.selected_work') }}
-        </h2>
+        <h2 class="text-xl font-medium sm:text-2xl">{{ t('home.selected_work') }}</h2>
         <NuxtLink
           :to="localePath('/projects')"
           class="text-sm text-muted-foreground no-underline hover:text-foreground"
@@ -129,38 +151,56 @@ const sections = computed(() => [
         </NuxtLink>
       </div>
 
-      <div class="mt-6 grid gap-4">
-        <ProjectCard
+      <div class="mt-6 flex flex-col gap-6">
+        <Motion
           v-for="(project, i) in featured"
           :key="project.title"
-          v-reveal="i * 70"
-          :title="project.title"
-          :description="project.description"
-          :tags="project.tags"
-          :href="project.href"
-          :repo="project.repo"
-          :year="project.year"
-          :icon="project.icon"
-        />
+          :initial="{ y: 20, opacity: 0 }"
+          :while-in-view="{ y: 0, opacity: 1 }"
+          :in-view-options="{ once: true, amount: 0.2 }"
+          :transition="{ duration: 0.5, delay: 0.12 * i }"
+        >
+          <ProjectCard
+            :title="project.title"
+            :description="project.description"
+            :tags="project.tags"
+            :href="project.href"
+            :repo="project.repo"
+            :year="project.year"
+            :icon="project.icon"
+            :horizontal="true"
+            :reverse="i % 2 === 1"
+          />
+        </Motion>
       </div>
     </section>
 
-    <section class="prose-container pb-20">
-      <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-        {{ t('home.what_i_do_well') }}
-      </h2>
+    <section class="py-16">
+      <h2 class="text-xl font-medium sm:text-2xl">{{ t('home.what_i_do_well') }}</h2>
       <ul class="mt-5 space-y-3 text-foreground/90">
-        <li v-for="(s, i) in strengths" :key="i" v-reveal="i * 60" class="flex items-start gap-3">
+        <Motion
+          v-for="(s, i) in strengths"
+          :key="i"
+          as="li"
+          :initial="{ y: 10, opacity: 0 }"
+          :while-in-view="{ y: 0, opacity: 1 }"
+          :in-view-options="{ once: true, amount: 0.3 }"
+          :transition="{ duration: 0.4, delay: 0.08 * i }"
+          class="flex items-start gap-3"
+        >
           <span class="mt-[0.6rem] size-1 shrink-0 rounded-full bg-foreground/40" />
           <span>{{ s }}</span>
-        </li>
+        </Motion>
       </ul>
     </section>
 
-    <section class="prose-container pb-24">
+    <LandingTestimonials />
+
+    <LandingFAQ />
+
+    <section class="py-16">
       <div
-        v-reveal
-        class="hover-gradient rounded-md border border-border p-6 transition-colors hover:border-foreground/40"
+        class="rounded-lg border border-border p-6 transition-colors hover:border-foreground/40 hover:bg-foreground/[0.02]"
       >
         <h3 class="text-lg font-semibold">{{ t('home.cta.title') }}</h3>
         <p class="mt-2 text-sm text-muted-foreground">{{ t('home.cta.body') }}</p>

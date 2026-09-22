@@ -15,13 +15,13 @@ const socials = [
 </script>
 
 <template>
-  <footer class="mt-20 border-t border-border">
+  <footer class="mt-16 border-t border-border">
     <div
-      class="wide-container flex flex-col items-start gap-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
+      class="flex flex-col items-start gap-3 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between"
     >
       <p>{{ t('footer.copyright', { year }) }}</p>
 
-      <div class="flex gap-4">
+      <div class="flex items-center gap-1">
         <a
           v-for="s in socials"
           :key="s.label"
@@ -29,10 +29,9 @@ const socials = [
           target="_blank"
           rel="noopener"
           :aria-label="s.label"
-          class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-accent-foreground"
+          class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-foreground"
         >
           <Icon :name="s.icon" class="size-4" />
-          <span>{{ s.label }}</span>
         </a>
       </div>
     </div>

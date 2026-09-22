@@ -97,6 +97,7 @@ export default defineNuxtConfig({
           href: 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@500;600;700&display=swap',
         },
         { rel: 'preload', as: 'image', href: '/og-image.png', type: 'image/png' },
+        { rel: 'preload', as: 'image', href: '/avatar.jpg', type: 'image/jpeg' },
       ],
       meta: [
         { charset: 'utf-8' },

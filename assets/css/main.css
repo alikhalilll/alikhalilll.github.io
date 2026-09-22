@@ -124,6 +124,9 @@
   html {
     scroll-behavior: smooth;
     background: var(--background);
+    /* Pin root font-size so `rem` values stay consistent regardless of locale.
+       Something in the Arabic-locale render path was resolving 1rem to 11.2px. */
+    font-size: 16px !important;
   }
 
   /* body / #__nuxt stay transparent so the fixed gradient layers below show. */
@@ -175,57 +178,9 @@
     letter-spacing: 0;
   }
 
-  /* Top brand glow — a soft radial ellipse anchored above the fold. Painted
-     on html::before so body's own background can stay transparent and the
-     glow sits below page content but above the html base color. Full-opacity
-     colors are defined here; the whole layer is dialed back via opacity so
-     the rest of the palette stays deliberately quiet. */
-  html::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.025;
-    background:
-      radial-gradient(ellipse 65% 45% at 50% -8%, var(--hero-glow), transparent 65%),
-      radial-gradient(ellipse 45% 30% at 85% 5%, var(--brand-3), transparent 70%),
-      radial-gradient(ellipse 45% 30% at 10% 0%, var(--brand-2), transparent 70%);
-  }
-
-  .dark html::before,
-  html.dark::before {
-    opacity: 0.04;
-  }
-
-  /* Subtle grid texture over the gradient — fades out mid-page. */
-  html::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    background-image:
-      linear-gradient(
-        to right,
-        color-mix(in oklab, var(--foreground) 6%, transparent) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        to bottom,
-        color-mix(in oklab, var(--foreground) 6%, transparent) 1px,
-        transparent 1px
-      );
-    background-size: 40px 40px;
-    mask-image: radial-gradient(ellipse 80% 55% at 50% 0%, black, transparent 75%);
-    -webkit-mask-image: radial-gradient(ellipse 80% 55% at 50% 0%, black, transparent 75%);
-  }
-
-  /* Lift page content above the fixed background layers. */
-  body > * {
-    position: relative;
-    z-index: 1;
-  }
+  /* Framed page — the template's signature. Solid background, no fixed
+     decorative layers. The container carries a thin left/right border rail
+     at ≥sm to create the "framed sheet of paper" look. */
 
   /* Keep serif for display / hero only. Section headings stay in sans with
      a calm weight — awad.dev-style understated hierarchy. */
@@ -266,14 +221,24 @@
 }
 
 @layer components {
-  .prose-container {
-    max-width: 42rem;
+  /* Centered 4xl container. `width: 100%` is CRITICAL — this wrapper lives
+     inside `flex flex-col` in layouts/default.vue, where `margin-inline: auto`
+     disables the default cross-axis stretch. Without an explicit width the
+     container falls back to intrinsic content width, which is narrower in
+     RTL locales because Arabic content doesn't reach the 56rem cap.
+     Forcing width: 100% makes max-width the real ceiling in both directions. */
+  .framed-container {
+    width: 100%;
+    max-width: 56rem;
     margin-inline: auto;
     padding-inline: 1.5rem;
   }
 
+  /* Kept for backwards compat during the migration; same width fix applies. */
+  .prose-container,
   .wide-container {
-    max-width: 64rem;
+    width: 100%;
+    max-width: 56rem;
     margin-inline: auto;
     padding-inline: 1.5rem;
   }

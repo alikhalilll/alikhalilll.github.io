@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 useSiteSeo({
   title: 'About Ali Khalil',
   description:
-    'About Ali Khalil — five years shipping Vue, Nuxt, and TypeScript at senior/lead level. Real-time SaaS, performance work, small-team leadership.',
+    'About Ali Khalil — six years shipping Vue, Nuxt, and TypeScript at senior/lead level. Real-time SaaS, performance work, small-team leadership.',
 });
 
 const { roles } = useExperience();
@@ -98,14 +98,41 @@ const stack: StackGroup[] = [
 
 <template>
   <div>
-    <Hero :eyebrow="t('about.eyebrow')" :title="t('about.title')" :subtitle="t('about.subtitle')" />
+    <section class="pt-6 pb-10 sm:pt-10 sm:pb-14">
+      <div class="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:gap-10">
+        <img
+          src="/avatar.jpg"
+          alt="Ali Khalil"
+          width="384"
+          height="384"
+          decoding="async"
+          fetchpriority="high"
+          class="size-32 shrink-0 rounded-lg object-cover shadow-lg ring-2 ring-border ring-offset-4 ring-offset-background sm:size-40 sm:rotate-3"
+        />
+        <div class="min-w-0">
+          <p class="mb-4">
+            <span
+              class="inline-block rounded-full bg-accent px-3 py-1 text-[11px] font-medium tracking-widest text-accent-foreground uppercase ar:normal-case ar:tracking-normal"
+            >
+              {{ t('about.eyebrow') }}
+            </span>
+          </p>
+          <h1 class="text-3xl leading-[1.15] sm:text-4xl md:text-5xl">{{ t('about.title') }}</h1>
+          <p class="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+            {{ t('about.subtitle') }}
+          </p>
+        </div>
+      </div>
+    </section>
 
-    <article class="prose-container pb-20">
+    <article class="pb-20">
       <section class="space-y-5 text-base leading-relaxed text-foreground/90 sm:text-lg">
         <p v-for="(p, i) in introParagraphs" :key="i">{{ p }}</p>
       </section>
 
-      <h2 class="mt-14 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+      <h2
+        class="mt-14 text-sm font-semibold tracking-wide text-muted-foreground uppercase ar:normal-case"
+      >
         {{ t('about.currently') }}
       </h2>
       <ul class="mt-4 space-y-2 text-foreground/90">
@@ -121,12 +148,14 @@ const stack: StackGroup[] = [
       </ul>
     </article>
 
-    <section class="prose-container pb-20">
-      <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+    <section class="pb-20">
+      <h2
+        class="text-sm font-semibold tracking-wide text-muted-foreground uppercase ar:normal-case"
+      >
         {{ t('about.experience') }}
       </h2>
 
-      <ol class="mt-6 ms-3 space-y-10 border-s border-border ps-8">
+      <ol class="mt-6 space-y-8 border-s border-border ps-6 sm:ms-2 sm:space-y-10 sm:ps-8">
         <li
           v-for="(role, i) in roles"
           :key="role.company + role.start"
@@ -134,42 +163,58 @@ const stack: StackGroup[] = [
           class="relative"
         >
           <span
-            class="absolute top-2 -start-[37px] block size-2 rounded-full bg-foreground"
+            class="absolute top-2 -start-[29px] block size-2 rounded-full bg-foreground sm:-start-[37px]"
             aria-hidden="true"
           />
 
-          <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-            <h3 class="text-lg font-semibold text-foreground">
-              {{ role.title }}
+          <div
+            class="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-baseline sm:justify-between sm:gap-x-4"
+          >
+            <h3
+              class="min-w-0 text-base leading-snug font-semibold text-foreground text-balance sm:text-lg"
+            >
+              <bdi>{{ role.title }}</bdi>
             </h3>
-            <span class="text-xs text-muted-foreground rtl:text-sm rtl:font-semibold">
+            <span
+              class="font-mono text-xs whitespace-nowrap text-muted-foreground ar:font-sans ar:text-sm ar:font-semibold"
+            >
               {{ formatPeriod(role.start, role.end) }}
             </span>
           </div>
-          <p class="mt-0.5 text-sm text-muted-foreground">
-            <a v-if="role.link" :href="role.link" target="_blank" rel="noopener">
-              {{ role.company }}
+          <p class="mt-1 flex flex-wrap items-baseline gap-x-1.5 text-sm text-muted-foreground">
+            <a
+              v-if="role.link"
+              :href="role.link"
+              target="_blank"
+              rel="noopener"
+              class="min-w-0 truncate hover:text-foreground"
+            >
+              <bdi>{{ role.company }}</bdi>
             </a>
-            <span v-else>{{ role.company }}</span>
-            · {{ role.location }}
+            <span v-else class="min-w-0"
+              ><bdi>{{ role.company }}</bdi></span
+            >
+            <span class="opacity-40" aria-hidden="true">·</span>
+            <span>{{ role.location }}</span>
           </p>
 
-          <ul class="mt-3 space-y-1.5 text-sm text-foreground/90">
-            <li
-              v-for="(h, j) in role.highlights"
-              :key="j"
-              class="flex items-start gap-2 leading-relaxed"
-            >
-              <span class="mt-[0.55rem] size-1 shrink-0 rounded-full bg-foreground/40" />
-              <span>{{ h }}</span>
+          <ul class="mt-3 space-y-1.5 text-sm leading-relaxed text-foreground/90 sm:mt-4">
+            <li v-for="(h, j) in role.highlights" :key="j" class="flex items-start gap-2">
+              <span
+                class="mt-[0.55rem] size-1 shrink-0 rounded-full bg-foreground/40"
+                aria-hidden="true"
+              />
+              <span class="min-w-0">{{ h }}</span>
             </li>
           </ul>
         </li>
       </ol>
     </section>
 
-    <section class="prose-container pb-20">
-      <h2 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+    <section class="pb-20">
+      <h2
+        class="text-sm font-semibold tracking-wide text-muted-foreground uppercase ar:normal-case"
+      >
         {{ t('about.skills') }}
       </h2>
 
@@ -185,12 +230,14 @@ const stack: StackGroup[] = [
       </div>
     </section>
 
-    <section class="prose-container pb-24">
+    <section class="pb-24">
       <div
         v-reveal
-        class="hover-gradient rounded-md border border-border p-6 transition-colors hover:border-foreground/40"
+        class="rounded-lg border border-border p-6 transition-colors hover:border-foreground/40 hover:bg-foreground/[0.02]"
       >
-        <h3 class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+        <h3
+          class="text-sm font-semibold tracking-wide text-muted-foreground uppercase ar:normal-case"
+        >
           {{ t('about.education') }}
         </h3>
         <p class="mt-3 text-base font-semibold text-foreground">

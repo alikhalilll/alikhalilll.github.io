@@ -33,7 +33,7 @@
   "home": {
     "eyebrow": "Hi, I'm Ali",
     "title": "Senior Frontend Developer & Team Lead.",
-    "subtitle": "I build scalable, high-performance web apps with Vue, Nuxt, and TypeScript — and lead the teams that ship them. Five years in, most of my recent work has been on real-time, multi-tenant SaaS in the Saudi and Egyptian markets.",
+    "subtitle": "I build scalable, high-performance web apps with Vue, Nuxt, and TypeScript — and lead the teams that ship them. Six years in, most of my recent work has been on real-time, multi-tenant SaaS in the Saudi and Egyptian markets.",
     "location": "Mansoura, Egypt",
     "relocate": "Ready to relocate to Riyadh",
     "award": "2× Employee of the Month",
@@ -55,14 +55,87 @@
     "cta": {
       "title": "Working on something interesting?",
       "body": "Roles, collaborations, or tricky frontend problems — I'd love to hear about it."
+    },
+    "about": {
+      "title": "About",
+      "body": "Senior frontend developer and team lead. Six years shipping Vue, Nuxt, and TypeScript at senior/lead level — real-time SaaS, performance work, small-team leadership.",
+      "more": "Read the long version"
+    },
+    "work": {
+      "title": "Work experience"
+    },
+    "blog_previews": {
+      "title": "Latest writing",
+      "read_more": "Read article",
+      "featured": "Featured"
+    },
+    "highlights": {
+      "eyebrow": "Featured",
+      "title": "Highlights",
+      "subtitle": "Recent writing, shipped products, and open source.",
+      "explore": "Explore",
+      "article": "Article",
+      "project": "Project",
+      "opensource": "Open source"
+    },
+    "testimonials": {
+      "title": "What people say"
+    },
+    "faq": {
+      "title": "Frequently asked",
+      "general": {
+        "label": "General",
+        "questions": [
+          "Where are you based, and are you open to relocation?",
+          "What is your primary stack?",
+          "Do you take on freelance or contract work?"
+        ],
+        "answers": [
+          "I am based in Mansoura, Egypt, and ready to relocate to Riyadh, Saudi Arabia for the right role.",
+          "Vue, Nuxt, and TypeScript for frontend; Node.js when a full-stack task requires it. Comfortable in React and Angular too.",
+          "Yes — for shorter engagements or advisory work. Longer engagements are also welcome. Reach out via the contact page."
+        ]
+      },
+      "work": {
+        "label": "Work",
+        "questions": [
+          "What kinds of teams do you work best with?",
+          "How do you approach performance work?",
+          "Do you lead or do you prefer to be an IC?"
+        ],
+        "answers": [
+          "Small, senior frontend teams that ship SaaS. I have led teams of 3–5 and worked as a solo lead on a founding team.",
+          "Measure first. Then a mix of lazy hydration, code-splitting, image and font strategy, and cutting client-side work. Recent role lifted LCP ~40% and reduced CLS ~60%.",
+          "Both. I currently lead a frontend team but I still ship code every day — I do not believe in leads who cannot deliver."
+        ]
+      },
+      "process": {
+        "label": "Process",
+        "questions": [
+          "How do you handle accessibility?",
+          "How do you handle internationalization?",
+          "What is your take on tests?"
+        ],
+        "answers": [
+          "As a first-class requirement, not a QA pass. WCAG 2.1 checks in code review, keyboard flow validation, and semantic markup by default.",
+          "First-class from day one when the product needs it. I have shipped fully bilingual RTL/LTR apps in Arabic and English, including this site.",
+          "Types first, unit tests for tricky logic, E2E for critical flows. I do not chase coverage numbers; I chase confidence in the parts that break."
+        ]
+      }
+    }
+  },
+  "hero": {
+    "status": {
+      "available": "Available for new roles",
+      "busy": "Currently booked"
     }
   },
   "about": {
     "eyebrow": "About",
     "title": "Senior Frontend Developer & Team Lead.",
-    "subtitle": "Five years in the trenches. Vue, Nuxt, TypeScript, and real-time systems. Comfortable owning an end-to-end frontend and the team that ships it.",
+    "subtitle": "Six years in the trenches. Vue, Nuxt, TypeScript, and real-time systems. Comfortable owning an end-to-end frontend and the team that ships it.",
     "intro": [
-      "I'm Ali. I've spent the last five years shipping web apps — mostly SaaS, mostly in the Saudi and Egyptian markets, increasingly at the lead / senior level. Recently that's meant owning the frontend of multi-tenant platforms with heavy real-time requirements, building the registries and patterns that let a small team move fast without things getting tangled.",
+      "I'm Ali. I've spent the last six years shipping web apps — mostly SaaS, mostly in the Saudi and Egyptian markets, increasingly at the lead / senior level. Recently that's meant owning the frontend of multi-tenant platforms with heavy real-time requirements, building the registries and patterns that let a small team move fast without things getting tangled.",
       "I care about the boring details — the ones that turn a passable app into something that survives three years of feature churn. Clear types. Honest error states. Pages that load quickly enough that nobody has to apologize for them. Accessibility that isn't an afterthought. Docs that admit what a thing won't do.",
       "I lead by example. I review pull requests carefully, mentor willingly, and push hard on performance and accessibility standards. I've been Employee of the Month twice — which I mention only because it's a decent proxy for 'the work held up under load.'",
       "I'm not married to one framework. I've shipped production apps in React and Angular too — earlier in my career I delivered enterprise Angular apps with Material UI, and I still reach for React on side projects and client work when it's the right fit."
