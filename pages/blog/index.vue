@@ -6,8 +6,8 @@ const { formatDate } = useLocalizedDate();
 const localePath = useLocalePath();
 
 useSiteSeo({
-  title: t('writing.eyebrow'),
-  description: t('writing.subtitle'),
+  title: t('meta.blog.title'),
+  description: t('meta.blog.description'),
 });
 
 const { data: posts } = await useAsyncData('blog-list', () =>

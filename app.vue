@@ -4,7 +4,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { getHtmlAttributes, type Locales } from '~/constants/i18n';
 
 const { handleSetLocale, langCookie } = useI18nHandler();
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 const config = useRuntimeConfig();
 
 const route = useRoute();
@@ -24,34 +24,38 @@ useHead({
 
 const siteUrl = (config.public.siteUrl as string).replace(/\/$/, '');
 const siteName = config.public.siteName as string;
-const siteDescription = config.public.siteDescription as string;
 
 // Global WebSite + Organization schema. Per-page schemas (BlogPosting,
-// Person) are added inside their own pages on top of this.
+// Person) are added inside their own pages on top of this. The description
+// tracks the active locale so Arabic pages don't leak an English string.
+const jsonLd = computed(() =>
+  JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': `${siteUrl}/#website`,
+        url: siteUrl,
+        name: siteName,
+        description: t('meta.site.description'),
+        inLanguage: htmlAttrs.value.lang,
+      },
+      {
+        '@type': 'Organization',
+        '@id': `${siteUrl}/#org`,
+        name: siteName,
+        url: siteUrl,
+        logo: `${siteUrl}/favicon.svg`,
+      },
+    ],
+  })
+);
+
 useHead({
   script: [
     {
       type: 'application/ld+json',
-      innerHTML: JSON.stringify({
-        '@context': 'https://schema.org',
-        '@graph': [
-          {
-            '@type': 'WebSite',
-            '@id': `${siteUrl}/#website`,
-            url: siteUrl,
-            name: siteName,
-            description: siteDescription,
-            inLanguage: htmlAttrs.value.lang,
-          },
-          {
-            '@type': 'Organization',
-            '@id': `${siteUrl}/#org`,
-            name: siteName,
-            url: siteUrl,
-            logo: `${siteUrl}/favicon.svg`,
-          },
-        ],
-      }),
+      innerHTML: () => jsonLd.value,
     },
   ],
 });

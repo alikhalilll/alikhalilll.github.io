@@ -4,8 +4,8 @@ import { Motion } from 'motion-v';
 const { t } = useI18n();
 
 useSiteSeo({
-  title: t('projects.eyebrow'),
-  description: t('projects.subtitle'),
+  title: t('meta.projects.title'),
+  description: t('meta.projects.description'),
 });
 
 const { work, openSource } = useProjects();

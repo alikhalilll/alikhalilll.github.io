@@ -2,10 +2,13 @@
 import { Button } from '@/components/ui/button';
 import { Motion } from 'motion-v';
 
+const { t } = useI18n();
+const localePath = useLocalePath();
+const tmArray = useTmArray();
+
 useSiteSeo({
-  title: 'Ali Khalil — Senior Frontend Developer & Team Lead',
-  description:
-    'Senior Frontend Developer & Team Lead specializing in Vue, Nuxt, and TypeScript. Six years shipping real-time, multi-tenant SaaS across the Saudi and Egyptian markets.',
+  title: t('meta.home.title'),
+  description: t('meta.home.description'),
 });
 
 const config = useRuntimeConfig();
@@ -20,7 +23,7 @@ useHead({
         '@type': 'Person',
         name: 'Ali Khalil',
         url: siteUrl,
-        jobTitle: 'Senior Frontend Developer & Team Lead',
+        jobTitle: t('meta.home.job_title'),
         image: `${siteUrl}/og-image.png`,
         sameAs: [
           'https://www.linkedin.com/in/alikhalilll',
@@ -33,9 +36,7 @@ useHead({
 });
 
 const { featured } = useProjects();
-const { t } = useI18n();
-const localePath = useLocalePath();
-const tmArray = useTmArray();
+const { show: showSearch } = useSearchDialog();
 
 const strengths = computed(() => tmArray('home.strengths'));
 
@@ -93,7 +94,7 @@ const sections = computed(() => [
       </div>
 
       <div class="mt-8 flex flex-wrap justify-center gap-3">
-        <Button as="a" :href="localePath('/projects')" variant="primary">
+        <Button type="button" variant="primary" @click="showSearch">
           {{ t('home.see_work') }}
           <Icon name="lucide:arrow-right" class="rtl-flip" />
         </Button>
@@ -103,7 +104,7 @@ const sections = computed(() => [
       </div>
     </Hero>
 
-    <LandingHeroMarquee />
+    <LandingHeroSearch />
 
     <section class="py-16">
       <h2

@@ -27,18 +27,22 @@ const HREFLANG: Record<string, string> = {
 export function useSiteSeo(input: SeoInput) {
   const route = useRoute();
   const config = useRuntimeConfig();
-  const { locale, locales } = useI18n();
+  const { locale, locales, t, te } = useI18n();
   const switchLocalePath = useSwitchLocalePath();
 
   const siteName = config.public.siteName as string;
+  const localizedSiteName = te('meta.site.name') ? t('meta.site.name') : siteName;
   const siteUrl = (config.public.siteUrl as string).replace(/\/$/, '');
-  const fallbackDesc = config.public.siteDescription as string;
+  const fallbackDesc = te('meta.site.description')
+    ? t('meta.site.description')
+    : (config.public.siteDescription as string);
 
   const path = input.path ?? route.path;
   const url = `${siteUrl}${path}`;
   const image = `${siteUrl}${input.image ?? '/og-image.png'}`;
   const description = input.description ?? fallbackDesc;
-  const fullTitle = input.title.includes(siteName) ? input.title : `${input.title} — ${siteName}`;
+  const alreadyBranded = input.title.includes(siteName) || input.title.includes(localizedSiteName);
+  const fullTitle = alreadyBranded ? input.title : `${input.title} — ${localizedSiteName}`;
 
   const currentLocale = locale.value as keyof typeof OG_LOCALE;
   const availableLocales = locales.value.map((l) => (typeof l === 'string' ? l : l.code));

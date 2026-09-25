@@ -2,8 +2,8 @@
 const { t } = useI18n();
 
 useSiteSeo({
-  title: t('contact.eyebrow'),
-  description: t('contact.subtitle'),
+  title: t('meta.contact.title'),
+  description: t('meta.contact.description'),
 });
 
 const channels = computed(() => [

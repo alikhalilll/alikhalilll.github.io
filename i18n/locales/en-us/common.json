@@ -69,21 +69,6 @@
       "read_more": "Read article",
       "featured": "Featured"
     },
-    "highlights": {
-      "eyebrow": "Highlights",
-      "title": "Highlights",
-      "title_lead": "Featured",
-      "title_accent": "case studies",
-      "subtitle": "Hand-picked writing, shipped products, and open-source work — one swipe through recent highlights.",
-      "explore": "Explore",
-      "read": "Read article",
-      "visit": "View case study",
-      "prev": "Previous highlight",
-      "next": "Next highlight",
-      "article": "Article",
-      "project": "Project",
-      "opensource": "Open source"
-    },
     "testimonials": {
       "title": "What people say"
     },
@@ -134,6 +119,60 @@
     "status": {
       "available": "Available for new roles",
       "busy": "Currently booked"
+    }
+  },
+  "search": {
+    "eyebrow": "featured work",
+    "headline": "Search my work like you'd search anything else.",
+    "input_label": "Search",
+    "placeholder_kinds": [
+      "Search work…",
+      "Try is:project or tag:Nuxt",
+      "Try sort:newest",
+      "Search articles…",
+      "Search pages…"
+    ],
+    "clear": "Clear",
+    "open_search": "Open search",
+    "kind_article": "articles",
+    "kind_project": "projects",
+    "kind_opensource": "open source",
+    "kind_page": "pages",
+    "empty_no_matches": "No matches — try a different query.",
+    "results_count": "{n} result | {n} results",
+    "navigate": "navigate",
+    "open_key": "open",
+    "open": "Open",
+    "read": "read article",
+    "visit": "visit",
+    "dialog_title": "Search",
+    "dialog_description": "Search articles, projects, open-source, and pages. Use is:, tag:, sort:, from:, to: for filters."
+  },
+  "meta": {
+    "site": {
+      "name": "Ali Khalil",
+      "description": "Senior Frontend Developer & Team Lead. Vue, Nuxt, and TypeScript for real-time, multi-tenant SaaS."
+    },
+    "home": {
+      "title": "Ali Khalil — Senior Frontend Developer & Team Lead",
+      "description": "Senior Frontend Developer & Team Lead specializing in Vue, Nuxt, and TypeScript. Six years shipping real-time, multi-tenant SaaS across the Saudi and Egyptian markets.",
+      "job_title": "Senior Frontend Developer & Team Lead"
+    },
+    "about": {
+      "title": "About Ali Khalil",
+      "description": "About Ali Khalil — six years shipping Vue, Nuxt, and TypeScript at senior/lead level. Real-time SaaS, performance work, small-team leadership."
+    },
+    "projects": {
+      "title": "Projects — Ali Khalil",
+      "description": "A catalog of things I've built — real-time SaaS platforms, AI-powered products, and open-source Nuxt modules."
+    },
+    "blog": {
+      "title": "Writing — Ali Khalil",
+      "description": "Short posts on frontend craft, Nuxt, TypeScript, performance, and leading small teams."
+    },
+    "contact": {
+      "title": "Contact — Ali Khalil",
+      "description": "Reach out for roles, collaborations, or open-source requests. Email, LinkedIn, GitHub, or WhatsApp — I read everything."
     }
   },
   "about": {

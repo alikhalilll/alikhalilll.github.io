@@ -2,17 +2,17 @@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-useSiteSeo({
-  title: 'About Ali Khalil',
-  description:
-    'About Ali Khalil — six years shipping Vue, Nuxt, and TypeScript at senior/lead level. Real-time SaaS, performance work, small-team leadership.',
-});
-
-const { roles } = useExperience();
 const { t } = useI18n();
 const localePath = useLocalePath();
 const { formatPeriod } = useLocalizedDate();
 const tmArray = useTmArray();
+
+useSiteSeo({
+  title: t('meta.about.title'),
+  description: t('meta.about.description'),
+});
+
+const { roles } = useExperience();
 
 const introParagraphs = computed(() => tmArray('about.intro'));
 const currentlyItems = computed(() => tmArray('about.currently_items'));
