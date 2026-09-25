@@ -10,7 +10,8 @@
     "theme_settings": "Theme settings",
     "language": "Language",
     "resume": "Resume",
-    "download_resume": "Download résumé (PDF)"
+    "download_resume": "Download résumé (PDF)",
+    "search": "Search"
   },
   "footer": {
     "copyright": "© 2019–{year} Ali Khalil"
@@ -146,7 +147,9 @@
     "read": "read article",
     "visit": "visit",
     "dialog_title": "Search",
-    "dialog_description": "Search articles, projects, open-source, and pages. Use is:, tag:, sort:, from:, to: for filters."
+    "dialog_description": "Search articles, projects, open-source, and pages. Use is:, tag:, sort:, from:, to: for filters.",
+    "shortcut_hint_prefix": "Press",
+    "shortcut_hint_suffix": "from anywhere"
   },
   "meta": {
     "site": {

@@ -16,17 +16,19 @@ const { t } = useI18n();
 const isMobile = useMediaQuery('(max-width: 640px)');
 const paletteRef = ref<{ focus: () => void } | null>(null);
 
-function onOpened() {
-  nextTick(() => paletteRef.value?.focus());
-}
+// Reka's Dialog and vaul-vue's Drawer both auto-focus their content root
+// on open. Wait for that to settle, then move focus into the input so the
+// user can type immediately without a second interaction.
+watch(open, (v) => {
+  if (!v) return;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => paletteRef.value?.focus());
+  });
+});
 
 function onNavigate() {
   open.value = false;
 }
-
-watch(open, (v) => {
-  if (v) onOpened();
-});
 </script>
 
 <template>

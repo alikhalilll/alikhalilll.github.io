@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const { open } = useSearchDialog();
+</script>
+
 <template>
   <div class="flex min-h-screen flex-col">
     <FloatingNav />
@@ -9,6 +13,7 @@
     </div>
     <ClientOnly>
       <ScrollToTop />
+      <LandingSearchDialog v-model:open="open" />
     </ClientOnly>
   </div>
 </template>

@@ -3,6 +3,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 
 const { t } = useI18n();
 const localePath = useLocalePath();
+const { show: showSearch } = useSearchDialog();
 
 const navLinks = computed(() => [
   { to: localePath('/'), label: t('nav.home'), icon: 'lucide:home' },
@@ -31,6 +32,20 @@ const navLinks = computed(() => [
       </NuxtLink>
 
       <span class="mx-0.5 h-5 w-px bg-border sm:mx-1" />
+
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <button
+            type="button"
+            :aria-label="t('nav.search')"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-foreground sm:h-9 sm:w-9"
+            @click="showSearch"
+          >
+            <Icon name="lucide:search" class="size-4" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>{{ t('nav.search') }} (⌘K)</TooltipContent>
+      </Tooltip>
 
       <Tooltip>
         <TooltipTrigger as-child>

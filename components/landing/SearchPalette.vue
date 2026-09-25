@@ -242,8 +242,10 @@ const placeholderKinds = computed<string[]>(() => {
 });
 
 const focused = ref(false);
+// Keep the typewriter running whenever the input is empty — focus alone
+// shouldn't freeze it, the user hasn't typed yet.
 const { display: typedPlaceholder } = useTypewriter(placeholderKinds, {
-  paused: () => focused.value || rawQuery.value.length > 0,
+  paused: () => rawQuery.value.length > 0,
 });
 
 function handleFocus() {
@@ -297,7 +299,7 @@ watch(rawQuery, () => nextTick(syncCaret));
           :placeholder="rawQuery ? '' : typedPlaceholder"
           autocomplete="off"
           spellcheck="false"
-          class="relative w-full bg-transparent font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none ar:font-sans"
+          class="relative w-full bg-transparent font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none ar:font-sans [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden [&::-webkit-search-results-button]:hidden [&::-webkit-search-results-decoration]:hidden"
           @focus="handleFocus"
           @blur="handleBlur"
           @keydown="onKeydown"

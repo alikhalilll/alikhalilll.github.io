@@ -10,7 +10,8 @@
     "theme_settings": "إعدادات المظهر",
     "language": "اللغة",
     "resume": "السيرة الذاتية",
-    "download_resume": "تحميل السيرة الذاتية (PDF)"
+    "download_resume": "تحميل السيرة الذاتية (PDF)",
+    "search": "بحث"
   },
   "footer": {
     "copyright": "© 2019–{year} علي خليل"
@@ -146,7 +147,9 @@
     "read": "اقرأ المقال",
     "visit": "زيارة",
     "dialog_title": "بحث",
-    "dialog_description": "ابحث في المقالات والمشاريع والمفتوح المصدر والصفحات. استخدم ⁦is:⁩ و ⁦tag:⁩ و ⁦sort:⁩ و ⁦from:⁩ و ⁦to:⁩ للتصفية."
+    "dialog_description": "ابحث في المقالات والمشاريع والمفتوح المصدر والصفحات. استخدم ⁦is:⁩ و ⁦tag:⁩ و ⁦sort:⁩ و ⁦from:⁩ و ⁦to:⁩ للتصفية.",
+    "shortcut_hint_prefix": "اضغط",
+    "shortcut_hint_suffix": "من أي مكان"
   },
   "meta": {
     "site": {

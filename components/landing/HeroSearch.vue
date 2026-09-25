@@ -2,7 +2,7 @@
 import { onMounted, onBeforeUnmount } from 'vue';
 
 const { t } = useI18n();
-const { open, show } = useSearchDialog();
+const { show } = useSearchDialog();
 
 function handleShortcut(e: KeyboardEvent) {
   const isK = e.key === 'k' || e.key === 'K';
@@ -45,6 +45,20 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleShortcut));
       </div>
     </div>
 
-    <LandingSearchDialog v-model:open="open" />
+    <p class="mt-3 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+      <span>{{ t('search.shortcut_hint_prefix') }}</span>
+      <kbd
+        class="inline-flex items-center gap-0.5 rounded border border-border bg-background px-1.5 py-0.5 font-mono text-[10px] font-medium text-foreground ar:font-sans"
+      >
+        <span>⌘</span><span>K</span>
+      </kbd>
+      <span aria-hidden="true">·</span>
+      <kbd
+        class="inline-flex items-center rounded border border-border bg-background px-1.5 py-0.5 font-mono text-[10px] font-medium text-foreground ar:font-sans"
+      >
+        Ctrl K
+      </kbd>
+      <span>{{ t('search.shortcut_hint_suffix') }}</span>
+    </p>
   </section>
 </template>
