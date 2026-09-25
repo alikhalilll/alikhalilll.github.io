@@ -6,11 +6,11 @@ const localePath = useLocalePath();
 const { show: showSearch } = useSearchDialog();
 
 const navLinks = computed(() => [
-  { to: localePath('/'), label: t('nav.home'), icon: 'lucide:home' },
-  { to: localePath('/about'), label: t('nav.about'), icon: 'lucide:user' },
-  { to: localePath('/projects'), label: t('nav.projects'), icon: 'lucide:folder-open' },
-  { to: localePath('/blog'), label: t('nav.writing'), icon: 'lucide:pen-line' },
-  { to: localePath('/contact'), label: t('nav.contact'), icon: 'lucide:mail' },
+  { to: localePath('/'), label: t('nav.home'), icon: 'lucide:house' },
+  { to: localePath('/about'), label: t('nav.about'), icon: 'lucide:user-round' },
+  { to: localePath('/projects'), label: t('nav.projects'), icon: 'lucide:briefcase-business' },
+  { to: localePath('/blog'), label: t('nav.writing'), icon: 'lucide:notebook-pen' },
+  { to: localePath('/contact'), label: t('nav.contact'), icon: 'lucide:at-sign' },
 ]);
 </script>
 
@@ -55,7 +55,7 @@ const navLinks = computed(() => [
             :aria-label="t('nav.download_resume')"
             class="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-foreground sm:h-9 sm:w-9"
           >
-            <Icon name="lucide:download" class="size-4" />
+            <Icon name="lucide:file-down" class="size-4" />
           </a>
         </TooltipTrigger>
         <TooltipContent>{{ t('nav.resume') }}</TooltipContent>
