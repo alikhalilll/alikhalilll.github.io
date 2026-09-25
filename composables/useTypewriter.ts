@@ -79,11 +79,13 @@ export function useTypewriter(source: Ref<string[]>, opts: Options = {}) {
     display.value = '';
   }
 
+  // SSR/prerender: don't schedule the setTimeout loop — it would keep the
+  // Node event loop alive and stall `nuxt generate` after prerender finishes.
   watch(
     source,
     () => {
       reset();
-      schedule(typeMs);
+      if (import.meta.client) schedule(typeMs);
     },
     { immediate: true }
   );
