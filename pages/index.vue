@@ -36,7 +36,6 @@ useHead({
 });
 
 const { featured } = useProjects();
-const { show: showSearch } = useSearchDialog();
 
 const strengths = computed(() => tmArray('home.strengths'));
 
@@ -94,7 +93,7 @@ const sections = computed(() => [
       </div>
 
       <div class="mt-8 flex flex-wrap justify-center gap-3">
-        <Button type="button" variant="primary" @click="showSearch">
+        <Button as="a" :href="localePath('/projects')" variant="primary">
           {{ t('home.see_work') }}
           <Icon name="lucide:arrow-right" class="rtl-flip" />
         </Button>
