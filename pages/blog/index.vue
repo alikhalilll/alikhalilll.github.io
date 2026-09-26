@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { Motion } from 'motion-v';
-
 const { t } = useI18n();
 const { formatDate } = useLocalizedDate();
 const localePath = useLocalePath();
@@ -33,15 +31,7 @@ const coverFor = (post: { path: string; image?: string }) => {
 
     <section class="pb-24">
       <ul v-if="posts && posts.length" class="grid gap-8 sm:grid-cols-2 sm:gap-10">
-        <Motion
-          v-for="(post, i) in posts"
-          :key="post.path"
-          as="li"
-          :initial="{ y: 20, opacity: 0 }"
-          :while-in-view="{ y: 0, opacity: 1 }"
-          :in-view-options="{ once: true, amount: 0.2 }"
-          :transition="{ duration: 0.5, delay: 0.08 * i }"
-        >
+        <li v-for="(post, i) in posts" :key="post.path" v-reveal="i * 80">
           <NuxtLink :to="localePath(post.path)" class="group/blog-post block no-underline">
             <div
               class="mb-4 aspect-[4/3] overflow-hidden rounded-lg border-4 border-background shadow-lg ring-2 ring-border transition-transform duration-300 group-hover/blog-post:scale-105"
@@ -72,7 +62,7 @@ const coverFor = (post: { path: string; image?: string }) => {
               {{ formatDate(post.date, { year: 'numeric', month: 'short', day: 'numeric' }) }}
             </time>
           </NuxtLink>
-        </Motion>
+        </li>
       </ul>
       <div v-else class="py-12 text-center text-muted-foreground">
         <p>{{ t('writing.empty') }}</p>

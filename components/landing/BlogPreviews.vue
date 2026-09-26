@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { Motion } from 'motion-v';
-
 const { t } = useI18n();
 const localePath = useLocalePath();
 const { formatDate } = useLocalizedDate();
@@ -23,15 +21,7 @@ const { data: posts } = await useAsyncData('blog-previews', () =>
     </div>
 
     <ul class="mt-6 flex flex-col divide-y divide-border">
-      <Motion
-        v-for="(post, i) in posts"
-        :key="post.path"
-        as="li"
-        :initial="{ y: 10, opacity: 0 }"
-        :while-in-view="{ y: 0, opacity: 1 }"
-        :in-view-options="{ once: true, amount: 0.3 }"
-        :transition="{ duration: 0.5, delay: 0.15 * i }"
-      >
+      <li v-for="(post, i) in posts" :key="post.path" v-reveal="i * 100">
         <NuxtLink
           :to="localePath(post.path)"
           class="group flex items-start justify-between gap-4 py-5 no-underline"
@@ -57,7 +47,7 @@ const { data: posts } = await useAsyncData('blog-previews', () =>
             </div>
           </div>
         </NuxtLink>
-      </Motion>
+      </li>
     </ul>
   </section>
 </template>

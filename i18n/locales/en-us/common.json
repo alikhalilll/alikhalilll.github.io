@@ -11,7 +11,9 @@
     "language": "Language",
     "resume": "Resume",
     "download_resume": "Download résumé (PDF)",
-    "search": "Search"
+    "search": "Search",
+    "more": "More",
+    "more_options": "More options"
   },
   "footer": {
     "copyright": "© 2019–{year} Ali Khalil"

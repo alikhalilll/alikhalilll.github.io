@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { Motion } from 'motion-v';
 
 const { t } = useI18n();
 const localePath = useLocalePath();
@@ -112,15 +111,7 @@ const sections = computed(() => [
         {{ t('common.explore') }}
       </h2>
       <ul class="mt-5 grid gap-2 sm:grid-cols-2">
-        <Motion
-          v-for="(s, i) in sections"
-          :key="s.to"
-          as="li"
-          :initial="{ y: 10, opacity: 0 }"
-          :while-in-view="{ y: 0, opacity: 1 }"
-          :in-view-options="{ once: true, amount: 0.3 }"
-          :transition="{ duration: 0.4, delay: 0.08 * i }"
-        >
+        <li v-for="(s, i) in sections" :key="s.to" v-reveal="i * 80">
           <NuxtLink
             :to="s.to"
             class="group flex items-baseline justify-between gap-4 rounded-lg border border-border p-4 no-underline transition-colors hover:border-foreground/40 hover:bg-foreground/[0.02]"
@@ -134,7 +125,7 @@ const sections = computed(() => [
               class="rtl-flip size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground rtl:group-hover:-translate-x-0.5"
             />
           </NuxtLink>
-        </Motion>
+        </li>
       </ul>
     </section>
 
@@ -152,14 +143,7 @@ const sections = computed(() => [
       </div>
 
       <div class="mt-6 flex flex-col gap-6">
-        <Motion
-          v-for="(project, i) in featured"
-          :key="project.title"
-          :initial="{ y: 20, opacity: 0 }"
-          :while-in-view="{ y: 0, opacity: 1 }"
-          :in-view-options="{ once: true, amount: 0.2 }"
-          :transition="{ duration: 0.5, delay: 0.12 * i }"
-        >
+        <div v-for="(project, i) in featured" :key="project.title" v-reveal="i * 120">
           <ProjectCard
             :title="project.title"
             :description="project.description"
@@ -171,26 +155,17 @@ const sections = computed(() => [
             :horizontal="true"
             :reverse="i % 2 === 1"
           />
-        </Motion>
+        </div>
       </div>
     </section>
 
     <section class="py-16">
       <h2 class="text-xl font-medium sm:text-2xl">{{ t('home.what_i_do_well') }}</h2>
       <ul class="mt-5 space-y-3 text-foreground/90">
-        <Motion
-          v-for="(s, i) in strengths"
-          :key="i"
-          as="li"
-          :initial="{ y: 10, opacity: 0 }"
-          :while-in-view="{ y: 0, opacity: 1 }"
-          :in-view-options="{ once: true, amount: 0.3 }"
-          :transition="{ duration: 0.4, delay: 0.08 * i }"
-          class="flex items-start gap-3"
-        >
+        <li v-for="(s, i) in strengths" :key="i" v-reveal="i * 80" class="flex items-start gap-3">
           <span class="mt-[0.6rem] size-1 shrink-0 rounded-full bg-foreground/40" />
           <span>{{ s }}</span>
-        </Motion>
+        </li>
       </ul>
     </section>
 

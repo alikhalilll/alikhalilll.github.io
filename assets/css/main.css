@@ -263,6 +263,40 @@
     color: var(--muted-foreground);
   }
 
+  /* Hero entrance — same fade + scale-down + de-blur as before, but done as a
+     CSS keyframe animation instead of via motion-v's JS-driven per-frame
+     interpolation. Two wins:
+       1. Runs on first paint, so nothing sits at opacity:0 waiting for
+          hydration ("takes so long to be visible" — fixed).
+       2. Native compositor + GPU handle the filter/transform animation
+          instead of the main thread ("lagging" — fixed).
+     animation-fill-mode: backwards keeps each staggered element in the
+     "from" state during its delay window (mirrors motion-v's initial). */
+  .hero-enter {
+    animation: hero-enter 0.6s ease-out backwards;
+    animation-delay: var(--hero-delay, 0ms);
+    will-change: transform, filter, opacity;
+  }
+
+  @keyframes hero-enter {
+    from {
+      opacity: 0;
+      transform: scale(1.1);
+      filter: blur(20px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+      filter: blur(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-enter {
+      animation: none;
+    }
+  }
+
   /* Scroll reveal — per-item, subtle. The goal is "I didn't notice an
      animation, the page just felt alive", not "look at my animation".
      Implemented as an animation (not a transition) so a Tailwind

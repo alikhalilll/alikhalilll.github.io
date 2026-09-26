@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { refDebounced } from '@vueuse/core';
-import { Motion } from 'motion-v';
 import type { SearchItem, SearchKind, SearchResult } from '@/composables/useSearchIndex';
 
 interface Props {
@@ -341,15 +340,11 @@ watch(rawQuery, () => nextTick(syncCaret));
             {{ group.label }}
           </div>
           <ul>
-            <Motion
+            <li
               v-for="(item, i) in group.items"
               :key="item.id"
-              as="li"
-              :initial="{ scale: 1.1, opacity: 0, filter: 'blur(20px)' }"
-              :animate="{ scale: 1, opacity: 1, filter: 'blur(0px)' }"
-              :exit="{ scale: 1.1, opacity: 0, filter: 'blur(20px)' }"
-              :transition="{ duration: 0.6, delay: 0.05 * i }"
-              layout
+              class="hero-enter"
+              :style="{ '--hero-delay': `${i * 40}ms` }"
             >
               <NuxtLink
                 v-if="!item.external"
@@ -455,7 +450,7 @@ watch(rawQuery, () => nextTick(syncCaret));
                   aria-hidden="true"
                 />
               </a>
-            </Motion>
+            </li>
           </ul>
         </div>
       </template>

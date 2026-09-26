@@ -11,7 +11,9 @@
     "language": "اللغة",
     "resume": "السيرة الذاتية",
     "download_resume": "تحميل السيرة الذاتية (PDF)",
-    "search": "بحث"
+    "search": "بحث",
+    "more": "المزيد",
+    "more_options": "المزيد من الخيارات"
   },
   "footer": {
     "copyright": "© 2019–{year} علي خليل"
