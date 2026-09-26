@@ -10,6 +10,7 @@ const props = defineProps<{
   links?: TocLink[];
 }>();
 
+const { t } = useI18n();
 const isOpen = ref(false);
 
 const flat = computed(() => {
@@ -49,21 +50,23 @@ function scrollTo(id: string, e: MouseEvent) {
   <div
     v-if="flat.length"
     data-mobile-toc-bar
-    class="sticky top-14 z-20 -mx-6 mb-8 border-y border-border bg-background/85 backdrop-blur-xl xl:hidden"
+    class="sticky top-16 z-20 -mx-6 my-8 border-y border-border bg-background/85 backdrop-blur-xl lg:hidden"
   >
     <button
       type="button"
-      class="flex w-full items-center justify-between gap-3 px-6 py-3 text-left hover:bg-accent/60 hover:text-accent-foreground"
+      class="flex w-full items-center justify-between gap-3 px-6 py-3 text-start transition-colors hover:bg-accent/60 hover:text-accent-foreground"
       :aria-expanded="isOpen"
-      aria-label="Toggle on-this-page navigation"
+      :aria-label="t('blog.toc.toggle')"
       @click="isOpen = !isOpen"
     >
       <span class="flex min-w-0 items-center gap-3">
-        <span class="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-          On this page
+        <span
+          class="font-mono text-[11px] font-semibold tracking-widest text-muted-foreground uppercase ar:font-sans ar:text-xs ar:tracking-normal ar:normal-case"
+        >
+          {{ t('common.on_this_page') }}
         </span>
         <span class="truncate text-sm font-medium text-primary">
-          {{ activeSection?.text ?? 'Overview' }}
+          {{ activeSection?.text ?? t('common.overview') }}
         </span>
       </span>
       <Icon
@@ -76,16 +79,16 @@ function scrollTo(id: string, e: MouseEvent) {
     </button>
 
     <div v-if="isOpen" class="max-h-[60vh] overflow-y-auto border-t border-border px-6 py-3">
-      <ul class="m-0 list-none border-l border-border p-0">
+      <ul class="m-0 list-none border-s border-border p-0">
         <li
           v-for="section in flat"
           :key="section.id"
-          :class="['-ml-px', section.depth === 3 ? 'pl-3' : '']"
+          :class="['-ms-px', section.depth === 3 ? 'ps-3' : '']"
         >
           <a
             :href="`#${section.id}`"
             :class="[
-              'block border-l-2 px-3 py-1.5 text-[13px] leading-snug no-underline transition-colors',
+              'block border-s-2 px-3 py-1.5 text-[13px] leading-snug no-underline transition-colors',
               activeId === section.id
                 ? 'border-primary bg-primary/10 font-medium text-primary'
                 : 'border-transparent text-muted-foreground hover:text-foreground',

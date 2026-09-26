@@ -236,6 +236,11 @@
       "pause": "Pause",
       "speed": "Playback speed",
       "progress": "Playback progress"
+    },
+    "toc": {
+      "on_this_page": "On this page",
+      "overview": "Overview",
+      "toggle": "Toggle on-this-page navigation"
     }
   },
   "theme": {

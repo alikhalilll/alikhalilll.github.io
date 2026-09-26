@@ -10,6 +10,8 @@ const props = defineProps<{
   links?: TocLink[];
 }>();
 
+const { t } = useI18n();
+
 function flatten(nodes: TocLink[] = []): TocLink[] {
   const out: TocLink[] = [];
   for (const n of nodes) {
@@ -32,20 +34,22 @@ function scrollTo(id: string, e: MouseEvent) {
 <template>
   <aside
     v-if="flat.length"
-    class="sticky top-24 hidden max-h-[calc(100vh-8rem)] self-start overflow-y-auto xl:block"
+    class="sticky top-24 hidden max-h-[calc(100vh-8rem)] self-start overflow-y-auto lg:block"
   >
-    <p class="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-      On this page
+    <p
+      class="mb-4 font-mono text-[11px] font-semibold tracking-widest text-muted-foreground uppercase ar:font-sans ar:text-xs ar:tracking-normal ar:normal-case"
+    >
+      {{ t('common.on_this_page') }}
     </p>
-    <ul class="m-0 list-none border-l border-border p-0">
-      <li v-for="link in flat" :key="link.id" :class="['-ml-px', link.depth === 3 ? 'pl-3' : '']">
+    <ul class="m-0 list-none border-s border-border p-0">
+      <li v-for="link in flat" :key="link.id" :class="['-ms-px', link.depth === 3 ? 'ps-3' : '']">
         <a
           :href="`#${link.id}`"
           :class="[
-            'block rounded-r-md border-l-2 px-3 py-1 text-[13px] leading-snug no-underline transition-colors',
+            'block rounded-e-md border-s-2 px-3 py-1.5 text-[13px] leading-snug no-underline transition-colors',
             activeId === link.id
               ? 'border-primary bg-accent font-medium text-primary'
-              : 'border-transparent text-muted-foreground hover:bg-accent/60 hover:text-accent-foreground',
+              : 'border-transparent text-muted-foreground hover:bg-accent/60 hover:text-foreground',
           ]"
           @click="scrollTo(link.id, $event)"
         >
