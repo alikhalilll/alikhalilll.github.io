@@ -212,7 +212,8 @@
     "education_meta": "Mansoura University, Egypt · 10/2018 — 10/2022",
     "education_blurb": "Focus on software engineering, web development, and algorithms. Final-year projects centered on frontend architecture and RESTful API design.",
     "languages_label": "Languages",
-    "languages_value": "Arabic (native) · English (advanced, B2–C1)"
+    "languages_value": "Arabic (native) · English (advanced, B2–C1)",
+    "primary_stack": "Primary stack"
   },
   "projects": {
     "eyebrow": "Projects",
@@ -221,7 +222,8 @@
     "product_work": "Product work",
     "product_work_blurb": "Products I have led or shipped major features for.",
     "open_source": "Open source",
-    "open_source_blurb": "Nuxt modules I maintain. All free, MIT-licensed, and published on npm."
+    "open_source_blurb": "Nuxt modules I maintain. All free, MIT-licensed, and published on npm.",
+    "count": "{n} project | {n} projects"
   },
   "writing": {
     "eyebrow": "Writing",
@@ -244,7 +246,8 @@
     },
     "min_read": "{n} min read | {n} min read",
     "updated": "Updated",
-    "related": "Continue reading"
+    "related": "Continue reading",
+    "entries_count": "{n} entry | {n} entries"
   },
   "theme": {
     "mode": "Mode",
@@ -274,7 +277,13 @@
       "linkedin": { "label": "LinkedIn", "hint": "Work inquiries and professional hellos." },
       "github": { "label": "GitHub", "hint": "Code, issues, and the usual." },
       "npm": { "label": "npm", "hint": "Published packages and releases." }
-    }
+    },
+    "primary_label": "Best way to reach me",
+    "primary_action": "Send an email",
+    "primary_hint": "I usually reply within a day.",
+    "secondary_label": "Or, elsewhere online",
+    "availability_label": "Availability",
+    "availability_value": "Based in Mansoura · Ready to relocate to Riyadh · UTC+2"
   },
   "error": {
     "label": "Error {code}",
