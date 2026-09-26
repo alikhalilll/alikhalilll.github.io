@@ -292,7 +292,7 @@ const coverFor = (p: { path: string; image?: string }) => {
             </p>
           </div>
           <div class="flex gap-0.5">
-            <a
+            <NuxtLink
               v-for="s in [
                 { href: 'https://github.com/alikhalilll', icon: 'lucide:github', label: 'GitHub' },
                 {
@@ -307,14 +307,15 @@ const coverFor = (p: { path: string; image?: string }) => {
                 },
               ]"
               :key="s.href"
-              :href="s.href"
+              :to="s.href"
+              external
               target="_blank"
               rel="noopener"
               :aria-label="s.label"
               class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-foreground"
             >
               <Icon :name="s.icon" class="size-4" />
-            </a>
+            </NuxtLink>
           </div>
         </div>
       </footer>

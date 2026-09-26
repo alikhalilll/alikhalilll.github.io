@@ -67,9 +67,10 @@ function primaryHref(p: { href?: string; repo?: string }) {
       <ul class="flex flex-col divide-y divide-border">
         <li v-for="project in section.items" :key="project.title">
           <article class="group/proj relative">
-            <a
+            <NuxtLink
               v-if="primaryHref(project)"
-              :href="primaryHref(project)"
+              :to="primaryHref(project)"
+              external
               target="_blank"
               rel="noopener"
               :aria-label="project.title"
@@ -127,9 +128,10 @@ function primaryHref(p: { href?: string; repo?: string }) {
                       class="size-3.5 transition-transform group-hover/proj:translate-x-0.5 group-hover/proj:-translate-y-0.5"
                     />
                   </span>
-                  <a
+                  <NuxtLink
                     v-if="project.repo && project.href"
-                    :href="project.repo"
+                    :to="project.repo"
+                    external
                     target="_blank"
                     rel="noopener"
                     class="pointer-events-auto inline-flex items-center gap-1.5 text-sm text-muted-foreground no-underline transition-colors hover:text-foreground"
@@ -138,7 +140,7 @@ function primaryHref(p: { href?: string; repo?: string }) {
                   >
                     <Icon name="lucide:github" class="size-3.5" />
                     {{ t('common.source') }}
-                  </a>
+                  </NuxtLink>
                 </div>
               </div>
             </div>

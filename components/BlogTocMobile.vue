@@ -85,8 +85,8 @@ function scrollTo(id: string, e: MouseEvent) {
           :key="section.id"
           :class="['-ms-px', section.depth === 3 ? 'ps-3' : '']"
         >
-          <a
-            :href="`#${section.id}`"
+          <NuxtLink
+            :to="`#${section.id}`"
             :class="[
               'block border-s-2 px-3 py-1.5 text-[13px] leading-snug no-underline transition-colors',
               activeId === section.id
@@ -96,7 +96,7 @@ function scrollTo(id: string, e: MouseEvent) {
             @click="scrollTo(section.id, $event)"
           >
             {{ section.text }}
-          </a>
+          </NuxtLink>
         </li>
       </ul>
     </div>

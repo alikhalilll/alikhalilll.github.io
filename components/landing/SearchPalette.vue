@@ -397,9 +397,10 @@ watch(rawQuery, () => nextTick(syncCaret));
                   aria-hidden="true"
                 />
               </NuxtLink>
-              <a
+              <NuxtLink
                 v-else
-                :href="item.href"
+                :to="item.href"
+                external
                 target="_blank"
                 rel="noopener noreferrer"
                 class="group/row relative mx-2 flex items-start gap-3 rounded-md px-3 py-2.5 no-underline transition-[background-color,color] duration-150 ease-out"
@@ -449,7 +450,7 @@ watch(rawQuery, () => nextTick(syncCaret));
                   "
                   aria-hidden="true"
                 />
-              </a>
+              </NuxtLink>
             </li>
           </ul>
         </div>

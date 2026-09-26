@@ -77,9 +77,10 @@ const primaryHref = computed(() => props.href ?? props.repo);
       </div>
 
       <div v-if="primaryHref || repo" class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1">
-        <a
+        <NuxtLink
           v-if="primaryHref"
-          :href="primaryHref"
+          :to="primaryHref"
+          external
           target="_blank"
           rel="noopener"
           class="inline-flex items-center gap-1.5 text-sm text-foreground no-underline hover:text-primary"
@@ -89,16 +90,17 @@ const primaryHref = computed(() => props.href ?? props.repo);
             name="lucide:arrow-right"
             class="rtl-flip size-3.5 opacity-0 -translate-x-1 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100"
           />
-        </a>
-        <a
+        </NuxtLink>
+        <NuxtLink
           v-if="repo && href"
-          :href="repo"
+          :to="repo"
+          external
           target="_blank"
           rel="noopener"
           class="inline-flex items-center gap-1 text-sm text-muted-foreground no-underline hover:text-foreground"
         >
           {{ t('common.source') }} <Icon name="lucide:github" class="size-3.5" />
-        </a>
+        </NuxtLink>
       </div>
     </div>
   </article>

@@ -69,16 +69,17 @@ const secondary = computed(() => [
               <p class="text-sm text-muted-foreground ar:text-base">
                 {{ t('contact.channels.email.hint') }}
               </p>
-              <a
-                :href="primaryHref"
+              <NuxtLink
+                :to="primaryHref"
+                external
                 class="mt-2 block truncate font-mono text-lg font-semibold text-foreground no-underline hover:text-primary sm:text-2xl ar:font-sans"
                 dir="ltr"
               >
                 {{ primaryEmail }}
-              </a>
+              </NuxtLink>
             </div>
 
-            <Button as="a" :href="primaryHref" variant="primary" class="shrink-0">
+            <Button :to="primaryHref" external variant="primary" class="shrink-0">
               <Icon name="lucide:mail" class="size-4" />
               {{ t('contact.primary_action') }}
             </Button>
@@ -102,8 +103,9 @@ const secondary = computed(() => [
 
         <ul class="flex flex-col divide-y divide-border">
           <li v-for="(c, i) in secondary" :key="c.key" v-reveal="i * 50">
-            <a
-              :href="c.href"
+            <NuxtLink
+              :to="c.href"
+              external
               target="_blank"
               rel="noopener"
               class="group/row flex items-center gap-4 py-4 no-underline"
@@ -133,7 +135,7 @@ const secondary = computed(() => [
                 name="lucide:arrow-up-right"
                 class="size-4 shrink-0 text-muted-foreground transition-all group-hover/row:-translate-y-0.5 group-hover/row:translate-x-0.5 group-hover/row:text-foreground"
               />
-            </a>
+            </NuxtLink>
           </li>
         </ul>
       </div>

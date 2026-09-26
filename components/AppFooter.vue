@@ -22,17 +22,18 @@ const socials = [
       <p>{{ t('footer.copyright', { year }) }}</p>
 
       <div class="flex items-center gap-1">
-        <a
+        <NuxtLink
           v-for="s in socials"
           :key="s.label"
-          :href="s.href"
+          :to="s.href"
+          external
           target="_blank"
           rel="noopener"
           :aria-label="s.label"
           class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-foreground"
         >
           <Icon :name="s.icon" class="size-4" />
-        </a>
+        </NuxtLink>
       </div>
     </div>
   </footer>

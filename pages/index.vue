@@ -92,11 +92,11 @@ const sections = computed(() => [
       </div>
 
       <div class="mt-8 flex flex-wrap justify-center gap-3">
-        <Button as="a" :href="localePath('/projects')" variant="primary">
+        <Button :to="localePath('/projects')" variant="primary">
           {{ t('home.see_work') }}
           <Icon name="lucide:arrow-right" class="rtl-flip" />
         </Button>
-        <Button as="a" :href="localePath('/contact')" variant="outline">
+        <Button :to="localePath('/contact')" variant="outline">
           {{ t('common.get_in_touch') }}
         </Button>
       </div>
@@ -179,7 +179,7 @@ const sections = computed(() => [
       >
         <h3 class="text-lg font-semibold">{{ t('home.cta.title') }}</h3>
         <p class="mt-2 text-sm text-muted-foreground">{{ t('home.cta.body') }}</p>
-        <Button as="a" :href="localePath('/contact')" variant="primary" class="mt-5">
+        <Button :to="localePath('/contact')" variant="primary" class="mt-5">
           {{ t('common.get_in_touch') }}
           <Icon name="lucide:arrow-right" class="rtl-flip" />
         </Button>

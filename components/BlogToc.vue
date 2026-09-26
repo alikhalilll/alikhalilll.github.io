@@ -43,8 +43,8 @@ function scrollTo(id: string, e: MouseEvent) {
     </p>
     <ul class="m-0 list-none border-s border-border p-0">
       <li v-for="link in flat" :key="link.id" :class="['-ms-px', link.depth === 3 ? 'ps-3' : '']">
-        <a
-          :href="`#${link.id}`"
+        <NuxtLink
+          :to="`#${link.id}`"
           :class="[
             'block rounded-e-md border-s-2 px-3 py-1.5 text-[13px] leading-snug no-underline transition-colors',
             activeId === link.id
@@ -54,7 +54,7 @@ function scrollTo(id: string, e: MouseEvent) {
           @click="scrollTo(link.id, $event)"
         >
           {{ link.text }}
-        </a>
+        </NuxtLink>
       </li>
     </ul>
   </aside>

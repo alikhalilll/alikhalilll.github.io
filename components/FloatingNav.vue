@@ -84,14 +84,15 @@ async function chooseLocale(code: Locales) {
 
       <Tooltip>
         <TooltipTrigger as-child>
-          <a
-            href="/ALI_KHALIL_FRONTEND.pdf"
+          <NuxtLink
+            to="/ALI_KHALIL_FRONTEND.pdf"
+            external
             download
             :aria-label="t('nav.download_resume')"
             class="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-foreground"
           >
             <Icon name="lucide:file-down" class="size-4" />
-          </a>
+          </NuxtLink>
         </TooltipTrigger>
         <TooltipContent>{{ t('nav.resume') }}</TooltipContent>
       </Tooltip>
@@ -153,8 +154,9 @@ async function chooseLocale(code: Locales) {
           </kbd>
         </button>
 
-        <a
-          href="/ALI_KHALIL_FRONTEND.pdf"
+        <NuxtLink
+          to="/ALI_KHALIL_FRONTEND.pdf"
+          external
           download
           class="flex items-center gap-3 rounded-lg px-3 py-3 text-sm text-foreground no-underline transition-colors hover:bg-accent"
           @click="moreOpen = false"
@@ -162,7 +164,7 @@ async function chooseLocale(code: Locales) {
           <Icon name="lucide:file-down" class="size-4 text-muted-foreground" />
           <span class="flex-1">{{ t('nav.resume') }}</span>
           <Icon name="lucide:arrow-down-to-line" class="size-4 text-muted-foreground" />
-        </a>
+        </NuxtLink>
 
         <div class="mt-2 border-t border-border pt-3">
           <p

@@ -236,15 +236,16 @@ const stack: StackGroup[] = [
                 <bdi>{{ role.title }}</bdi>
               </h3>
               <p class="mt-1 flex flex-wrap items-baseline gap-x-2 text-sm text-muted-foreground">
-                <a
+                <NuxtLink
                   v-if="role.link"
-                  :href="role.link"
+                  :to="role.link"
+                  external
                   target="_blank"
                   rel="noopener"
-                  class="min-w-0 truncate hover:text-foreground"
+                  class="min-w-0 truncate no-underline hover:text-foreground"
                 >
                   <bdi>{{ role.company }}</bdi>
-                </a>
+                </NuxtLink>
                 <span v-else class="min-w-0"
                   ><bdi>{{ role.company }}</bdi></span
                 >
@@ -380,7 +381,7 @@ const stack: StackGroup[] = [
             {{ t('home.cta.body') }}
           </p>
         </div>
-        <Button as="a" :href="localePath('/contact')" variant="primary" class="shrink-0">
+        <Button :to="localePath('/contact')" variant="primary" class="shrink-0">
           {{ t('common.get_in_touch') }}
           <Icon name="lucide:arrow-right" class="rtl-flip" />
         </Button>

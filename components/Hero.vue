@@ -99,17 +99,18 @@ const socials = [
       class="hero-enter mt-6 flex flex-wrap items-center justify-center gap-1"
       style="--hero-delay: 600ms"
     >
-      <a
+      <NuxtLink
         v-for="s in socials"
         :key="s.href"
-        :href="s.href"
+        :to="s.href"
+        external
         target="_blank"
         rel="noopener"
         :aria-label="s.label"
         class="inline-flex size-9 items-center justify-center rounded-full text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-foreground"
       >
         <Icon :name="s.icon" class="size-4" />
-      </a>
+      </NuxtLink>
     </div>
   </section>
 </template>
