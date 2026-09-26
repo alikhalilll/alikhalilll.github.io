@@ -50,11 +50,11 @@ function scrollTo(id: string, e: MouseEvent) {
   <div
     v-if="flat.length"
     data-mobile-toc-bar
-    class="sticky top-16 z-20 -mx-6 my-8 border-y border-border bg-background/85 backdrop-blur-xl lg:hidden"
+    class="sticky top-16 z-20 my-8 rounded-lg border border-border bg-background/85 backdrop-blur-xl"
   >
     <button
       type="button"
-      class="flex w-full items-center justify-between gap-3 px-6 py-3 text-start transition-colors hover:bg-accent/60 hover:text-accent-foreground"
+      class="flex w-full items-center justify-between gap-3 rounded-lg px-4 py-3 text-start transition-colors hover:bg-accent/60 hover:text-accent-foreground"
       :aria-expanded="isOpen"
       :aria-label="t('blog.toc.toggle')"
       @click="isOpen = !isOpen"
@@ -78,7 +78,7 @@ function scrollTo(id: string, e: MouseEvent) {
       />
     </button>
 
-    <div v-if="isOpen" class="max-h-[60vh] overflow-y-auto border-t border-border px-6 py-3">
+    <div v-if="isOpen" class="max-h-[60vh] overflow-y-auto border-t border-border px-4 py-3">
       <ul class="m-0 list-none border-s border-border p-0">
         <li
           v-for="section in flat"

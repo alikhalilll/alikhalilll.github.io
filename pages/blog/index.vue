@@ -18,7 +18,21 @@ const coverFor = (post: { path: string; image?: string }) => {
   return `/blog-covers/${slug}.png`;
 };
 
-const [featured, ...rest] = posts.value ?? [];
+// Reading time estimate — walks the content AST to sum text nodes, then
+// divides by 220 wpm. Server-rendered so the number is in the HTML on
+// first paint (no post-hydration flicker).
+type AstNode = { type?: string; value?: string; children?: AstNode[] };
+function collectText(node: AstNode | undefined): string {
+  if (!node) return '';
+  if (node.type === 'text' && typeof node.value === 'string') return node.value;
+  if (node.children?.length) return node.children.map(collectText).join(' ');
+  return '';
+}
+function readingTime(body: unknown): number {
+  const text = collectText(body as AstNode | undefined);
+  const words = text.split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 220));
+}
 </script>
 
 <template>
@@ -30,98 +44,70 @@ const [featured, ...rest] = posts.value ?? [];
     />
 
     <section class="pb-24">
-      <template v-if="featured">
-        <!-- Featured post — full-width editorial card, image + text side by
-             side on desktop, stacked on mobile. Sets the tone for the page. -->
-        <NuxtLink
-          :to="localePath(featured.path)"
-          class="group/feat mb-14 grid gap-6 no-underline sm:mb-20 sm:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] sm:items-center sm:gap-10"
-        >
-          <div class="aspect-[16/10] overflow-hidden rounded-xl bg-muted ring-1 ring-border">
-            <img
-              :src="coverFor(featured)"
-              :alt="featured.title"
-              class="size-full object-cover transition-transform duration-500 group-hover/feat:scale-[1.03]"
-              loading="eager"
-              width="960"
-              height="600"
-            />
-          </div>
-
-          <div class="min-w-0">
-            <p
-              class="mb-3 flex items-center gap-2 font-mono text-[11px] tracking-widest text-muted-foreground uppercase ar:font-sans ar:text-xs ar:tracking-normal ar:normal-case"
+      <!-- Editorial index — one full-width row per post. Cover thumbnail on
+           the start side (stacked above the text on mobile), then a mono
+           meta line, a serif title, and a short excerpt. No cards, no
+           borders — just typography and generous rhythm. -->
+      <ul v-if="posts && posts.length" class="flex flex-col divide-y divide-border">
+        <li v-for="(post, i) in posts" :key="post.path" v-reveal="i * 60">
+          <NuxtLink
+            :to="localePath(post.path)"
+            class="group/post grid gap-5 py-8 no-underline sm:grid-cols-[16rem_minmax(0,1fr)] sm:gap-8 sm:py-10"
+          >
+            <div
+              class="aspect-[16/10] overflow-hidden rounded-xl bg-muted ring-1 ring-border sm:aspect-[4/3]"
             >
-              <span
-                class="inline-flex items-center rounded-full bg-accent px-2 py-0.5 text-[10px] font-semibold text-accent-foreground"
-              >
-                {{ t('writing.eyebrow') }}
-              </span>
-              <time v-if="featured.date" :datetime="featured.date">
-                {{ formatDate(featured.date, { year: 'numeric', month: 'short', day: 'numeric' }) }}
-              </time>
-            </p>
-
-            <h2
-              class="text-2xl leading-tight font-semibold text-foreground transition-colors group-hover/feat:text-primary sm:text-3xl md:text-4xl"
-            >
-              {{ featured.title }}
-            </h2>
-            <p
-              v-if="featured.description"
-              class="mt-3 line-clamp-3 text-sm leading-relaxed text-muted-foreground sm:text-base"
-            >
-              {{ featured.description }}
-            </p>
-            <span class="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
-              {{ t('home.blog_previews.read_more') }}
-              <Icon
-                name="lucide:arrow-right"
-                class="rtl-flip size-4 transition-transform group-hover/feat:translate-x-1 rtl:group-hover/feat:-translate-x-1"
-              />
-            </span>
-          </div>
-        </NuxtLink>
-      </template>
-
-      <ul v-if="rest.length" class="grid gap-10 sm:grid-cols-2 sm:gap-x-10 sm:gap-y-14">
-        <li v-for="(post, i) in rest" :key="post.path" v-reveal="i * 80">
-          <NuxtLink :to="localePath(post.path)" class="group/post block no-underline">
-            <div class="aspect-[16/10] overflow-hidden rounded-xl bg-muted ring-1 ring-border">
               <img
                 :src="coverFor(post)"
                 :alt="post.title"
                 class="size-full object-cover transition-transform duration-500 group-hover/post:scale-[1.04]"
-                loading="lazy"
-                width="640"
-                height="400"
+                :loading="i === 0 ? 'eager' : 'lazy'"
+                width="512"
+                height="384"
               />
             </div>
-            <div class="mt-4">
-              <time
-                v-if="post.date"
-                class="block font-mono text-[11px] tracking-widest text-muted-foreground uppercase ar:font-sans ar:text-xs ar:tracking-normal ar:normal-case"
-                :datetime="post.date"
+
+            <div class="min-w-0 self-center">
+              <div
+                class="flex flex-wrap items-center gap-2 font-mono text-[11px] tracking-widest text-muted-foreground uppercase ar:font-sans ar:text-xs ar:tracking-normal ar:normal-case"
               >
-                {{ formatDate(post.date, { year: 'numeric', month: 'short', day: 'numeric' }) }}
-              </time>
-              <h3
-                class="mt-2 text-lg leading-snug font-semibold text-foreground transition-colors group-hover/post:text-primary sm:text-xl"
+                <time v-if="post.date" :datetime="post.date" dir="ltr">
+                  {{ formatDate(post.date, { year: 'numeric', month: 'short', day: 'numeric' }) }}
+                </time>
+                <span aria-hidden="true" class="size-0.5 rounded-full bg-muted-foreground/60" />
+                <span>
+                  {{ t('blog.min_read', { n: readingTime(post.body) }, readingTime(post.body)) }}
+                </span>
+              </div>
+
+              <h2
+                class="mt-3 font-serif text-2xl leading-[1.15] font-semibold tracking-tight text-balance text-foreground transition-colors group-hover/post:text-primary sm:text-3xl md:text-[2rem]"
               >
                 {{ post.title }}
-              </h3>
+              </h2>
+
               <p
                 v-if="post.description"
-                class="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground"
+                class="mt-3 line-clamp-2 text-sm leading-relaxed text-muted-foreground sm:text-base"
               >
                 {{ post.description }}
               </p>
+
+              <span
+                class="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-foreground"
+              >
+                {{ t('home.blog_previews.read_more') }}
+                <Icon
+                  name="lucide:arrow-right"
+                  class="rtl-flip size-3.5 transition-transform group-hover/post:translate-x-1 rtl:group-hover/post:-translate-x-1"
+                />
+              </span>
             </div>
           </NuxtLink>
         </li>
       </ul>
 
-      <div v-if="!posts || !posts.length" class="py-16 text-center text-muted-foreground">
+      <div v-else class="py-16 text-center text-muted-foreground">
         <p>{{ t('writing.empty') }}</p>
       </div>
     </section>

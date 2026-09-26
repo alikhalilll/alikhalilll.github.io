@@ -241,7 +241,10 @@
       "on_this_page": "On this page",
       "overview": "Overview",
       "toggle": "Toggle on-this-page navigation"
-    }
+    },
+    "min_read": "{n} min read | {n} min read",
+    "updated": "Updated",
+    "related": "Continue reading"
   },
   "theme": {
     "mode": "Mode",
