@@ -547,6 +547,8 @@ const coverFor = (p: { path: string; image?: string }) => {
   font-family:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
     monospace;
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 .post-body pre {
@@ -562,6 +564,9 @@ const coverFor = (p: { path: string; image?: string }) => {
   font-family:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
     monospace;
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: isolate;
 }
 
 .dark .post-body .shiki,
