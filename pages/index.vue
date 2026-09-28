@@ -51,7 +51,7 @@ const sections = computed(() => [
   },
   {
     title: t('nav.writing'),
-    to: localePath('/blog'),
+    to: localePath('/writes'),
     blurb: t('home.explore_sections.writing_blurb'),
   },
   {

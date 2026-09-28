@@ -5,8 +5,8 @@ import sharp from 'sharp';
 import matter from 'gray-matter';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const contentDir = resolve(here, '..', 'content', 'blog');
-const outDir = resolve(here, '..', 'public', 'blog-covers');
+const contentDir = resolve(here, '..', 'content', 'writes');
+const outDir = resolve(here, '..', 'public', 'writes-covers');
 
 const W = 720;
 const H = 960;
@@ -246,5 +246,5 @@ for (const file of files) {
 
   const outPath = resolve(outDir, `${slug}.png`);
   await writeFile(outPath, png);
-  console.log(`✓ blog-covers/${slug}.png (${png.length} bytes)`);
+  console.log(`✓ writes-covers/${slug}.png (${png.length} bytes)`);
 }

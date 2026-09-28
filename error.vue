@@ -79,7 +79,7 @@ const handleHome = () => clearError({ redirect: localePath('/') });
           </li>
           <li>
             <NuxtLink
-              :to="localePath('/blog')"
+              :to="localePath('/writes')"
               class="inline-flex items-center gap-1.5 text-foreground no-underline hover:underline"
             >
               {{ t('nav.writing') }}

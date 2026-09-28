@@ -3,8 +3,8 @@ const { t } = useI18n();
 const localePath = useLocalePath();
 const { formatDate } = useLocalizedDate();
 
-const { data: posts } = await useAsyncData('blog-previews', () =>
-  queryCollection('blog').order('date', 'DESC').limit(3).all()
+const { data: posts } = await useAsyncData('writes-previews', () =>
+  queryCollection('writes').order('date', 'DESC').limit(3).all()
 );
 </script>
 
@@ -13,7 +13,7 @@ const { data: posts } = await useAsyncData('blog-previews', () =>
     <div class="flex items-baseline justify-between gap-4">
       <h2 class="text-xl font-medium sm:text-2xl">{{ t('home.blog_previews.title') }}</h2>
       <NuxtLink
-        :to="localePath('/blog')"
+        :to="localePath('/writes')"
         class="text-sm text-muted-foreground no-underline hover:text-foreground"
       >
         {{ t('common.all_writing') }} →

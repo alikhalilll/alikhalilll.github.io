@@ -15,7 +15,7 @@ const navLinks = computed(() => [
   { to: localePath('/'), label: t('nav.home'), icon: 'lucide:house' },
   { to: localePath('/about'), label: t('nav.about'), icon: 'lucide:user-round' },
   { to: localePath('/projects'), label: t('nav.projects'), icon: 'lucide:briefcase-business' },
-  { to: localePath('/blog'), label: t('nav.writing'), icon: 'lucide:notebook-pen' },
+  { to: localePath('/writes'), label: t('nav.writing'), icon: 'lucide:notebook-pen' },
   { to: localePath('/contact'), label: t('nav.contact'), icon: 'lucide:at-sign' },
 ]);
 

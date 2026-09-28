@@ -1,4 +1,4 @@
-// Generate narration MP3s + per-block cue timings for every content/blog/*.md.
+// Generate narration MP3s + per-block cue timings for every content/writes/*.md.
 // Kokoro (ONNX) → Float32 PCM → lamejs MP3. Cues are block-indexed so the UI
 // can highlight the matching rendered element while audio plays.
 //
@@ -24,7 +24,7 @@ import { KokoroTTS } from 'kokoro-js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '..');
-const blogDir = resolve(root, 'content/blog');
+const writesDir = resolve(root, 'content/writes');
 const audioDir = resolve(root, 'public/audio');
 const manifestPath = resolve(audioDir, 'manifest.json');
 
@@ -167,12 +167,12 @@ async function loadManifest() {
 async function main() {
   await mkdir(audioDir, { recursive: true });
   const manifest = await loadManifest();
-  const files = (await readdir(blogDir)).filter((f) => f.endsWith('.md'));
+  const files = (await readdir(writesDir)).filter((f) => f.endsWith('.md'));
 
   const plan = [];
   for (const file of files) {
     const slug = basename(file, extname(file));
-    const raw = await readFile(resolve(blogDir, file), 'utf8');
+    const raw = await readFile(resolve(writesDir, file), 'utf8');
     const { content, data } = matter(raw);
     if (data.draft) continue;
     const blocks = splitBlocks(content);

@@ -14,8 +14,8 @@ const lookupPath = computed(() => {
   return route.path;
 });
 
-const { data: post } = await useAsyncData(`blog-${lookupPath.value}`, () =>
-  queryCollection('blog').path(lookupPath.value).first()
+const { data: post } = await useAsyncData(`writes-${lookupPath.value}`, () =>
+  queryCollection('writes').path(lookupPath.value).first()
 );
 
 if (!post.value) {
@@ -26,7 +26,7 @@ const tocLinks = computed(() => post.value?.body?.toc?.links ?? []);
 
 const slug = computed(() => {
   const path = post.value?.path ?? lookupPath.value;
-  return path.replace(/^\/blog\//, '').replace(/\/$/, '');
+  return path.replace(/^\/writes\//, '').replace(/\/$/, '');
 });
 
 // Walk the content AST and count words for a reading-time estimate.
@@ -49,7 +49,7 @@ const readingTime = computed(() => {
 // newest. Cached by `related-<slug>` so navigating between posts reuses it.
 const { data: relatedPosts } = await useAsyncData(
   `related-${lookupPath.value}`,
-  () => queryCollection('blog').order('date', 'DESC').all(),
+  () => queryCollection('writes').order('date', 'DESC').all(),
   { transform: (rows) => rows.filter((r) => r.path !== lookupPath.value).slice(0, 2) }
 );
 
@@ -193,8 +193,8 @@ useHead({
 
 const coverFor = (p: { path: string; image?: string }) => {
   if (p.image) return p.image;
-  const s = p.path.replace(/^\/blog\//, '').replace(/\/$/, '');
-  return `/blog-covers/${s}.png`;
+  const s = p.path.replace(/^\/writes\//, '').replace(/\/$/, '');
+  return `/writes-covers/${s}.png`;
 };
 </script>
 
@@ -212,7 +212,7 @@ const coverFor = (p: { path: string; image?: string }) => {
 
     <div class="mx-auto max-w-[42rem]">
       <NuxtLink
-        :to="localePath('/blog')"
+        :to="localePath('/writes')"
         class="mb-10 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground no-underline transition-colors hover:text-foreground"
       >
         <Icon name="lucide:chevron-left" class="rtl-flip size-3.5" />

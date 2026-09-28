@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { t } = useI18n();
-const { formatDate } = useLocalizedDate();
+const { formatDate, formatYear } = useLocalizedDate();
 const localePath = useLocalePath();
 
 useSiteSeo({
@@ -8,12 +8,10 @@ useSiteSeo({
   description: t('meta.blog.description'),
 });
 
-const { data: posts } = await useAsyncData('blog-list', () =>
-  queryCollection('blog').order('date', 'DESC').all()
+const { data: posts } = await useAsyncData('writes-list', () =>
+  queryCollection('writes').order('date', 'DESC').all()
 );
 
-// Reading-time estimate from the content AST (word count / 220 wpm).
-// Server-rendered so the number is present on first paint.
 type AstNode = { type?: string; value?: string; children?: AstNode[] };
 function collectText(node: AstNode | undefined): string {
   if (!node) return '';
@@ -27,18 +25,20 @@ function readingTime(body: unknown): number {
   return Math.max(1, Math.round(words / 220));
 }
 
-// Group posts by publication year, preserving the DESC order within each
-// year. `Map` keeps insertion order, so iterating rebuilds a newest-first
-// list of [year, posts] pairs.
+// Group posts by publication year (stable Latin-digit key for grouping);
+// the display year is localized separately via formatYear.
+const UNDATED = '__undated__';
 const yearGroups = computed(() => {
   const groups = new Map<string, typeof posts.value>();
   for (const p of posts.value ?? []) {
-    const y = p.date ? new Date(p.date).getFullYear().toString() : 'Undated';
+    const y = p.date ? new Date(p.date).getFullYear().toString() : UNDATED;
     if (!groups.has(y)) groups.set(y, []);
     groups.get(y)!.push(p);
   }
   return Array.from(groups.entries());
 });
+
+const yearLabel = (key: string) => (key === UNDATED ? t('blog.undated') : formatYear(key));
 </script>
 
 <template>
@@ -50,16 +50,13 @@ const yearGroups = computed(() => {
     />
 
     <section class="pb-24">
-      <!-- Typography-forward timeline. No cover images — the design lives
-           entirely in serif titles, mono meta, and the year rules. -->
       <div v-if="posts && posts.length" class="flex flex-col gap-14 sm:gap-16">
         <div v-for="([year, group], gi) in yearGroups" :key="year" v-reveal="gi * 100">
           <div class="mb-6 flex items-baseline gap-4">
             <h2
               class="font-serif text-4xl leading-none font-semibold tracking-tight text-foreground sm:text-5xl"
-              dir="ltr"
             >
-              {{ year }}
+              {{ yearLabel(year) }}
             </h2>
             <span
               class="font-mono text-[11px] tracking-widest text-muted-foreground uppercase ar:font-sans ar:text-xs ar:tracking-normal ar:normal-case"
@@ -75,12 +72,10 @@ const yearGroups = computed(() => {
                 :to="localePath(post.path)"
                 class="group/post grid gap-2 py-6 no-underline sm:grid-cols-[8rem_minmax(0,1fr)] sm:items-baseline sm:gap-8"
               >
-                <!-- Date column — narrow, mono, uppercase. On mobile it sits
-                     inline as an eyebrow above the title. -->
                 <div
                   class="flex items-center gap-2 font-mono text-[11px] tracking-widest text-muted-foreground uppercase ar:font-sans ar:text-xs ar:tracking-normal ar:normal-case sm:justify-start"
                 >
-                  <time v-if="post.date" :datetime="post.date" dir="ltr">
+                  <time v-if="post.date" :datetime="post.date">
                     {{ formatDate(post.date, { month: 'short', day: '2-digit' }) }}
                   </time>
                   <span aria-hidden="true" class="size-0.5 rounded-full bg-muted-foreground/60" />

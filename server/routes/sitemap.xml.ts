@@ -1,4 +1,4 @@
-const STATIC_PATHS = ['/', '/about', '/projects', '/blog', '/contact'];
+const STATIC_PATHS = ['/', '/about', '/projects', '/writes', '/contact'];
 
 function isoDate(d?: string) {
   if (!d) return new Date().toISOString();
@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   const siteUrl = (config.public.siteUrl as string).replace(/\/$/, '');
 
-  const posts = await queryCollection(event, 'blog').order('date', 'DESC').all();
+  const posts = await queryCollection(event, 'writes').order('date', 'DESC').all();
   const now = new Date().toISOString();
 
   const urls = [

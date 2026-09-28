@@ -247,7 +247,8 @@
     "min_read": "{n} min read | {n} min read",
     "updated": "Updated",
     "related": "Continue reading",
-    "entries_count": "{n} entry | {n} entries"
+    "entries_count": "{n} entry | {n} entries",
+    "undated": "Undated"
   },
   "theme": {
     "mode": "Mode",

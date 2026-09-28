@@ -33,7 +33,7 @@ export async function useSearchIndex() {
   const { work, openSource } = useProjects();
 
   const { data: posts } = await useAsyncData('search-index-posts', () =>
-    queryCollection('blog').order('date', 'DESC').all()
+    queryCollection('writes').order('date', 'DESC').all()
   );
 
   const items = computed<SearchItem[]>(() => {
@@ -86,7 +86,7 @@ export async function useSearchIndex() {
     const staticPages: Array<{ key: 'about' | 'projects' | 'blog' | 'contact'; path: string }> = [
       { key: 'about', path: '/about' },
       { key: 'projects', path: '/projects' },
-      { key: 'blog', path: '/blog' },
+      { key: 'blog', path: '/writes' },
       { key: 'contact', path: '/contact' },
     ];
 
