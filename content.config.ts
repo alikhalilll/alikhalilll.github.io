@@ -1,22 +1,29 @@
 import { defineCollection, defineContentConfig, z } from '@nuxt/content';
 
+const writesSchema = z.object({
+  title: z.string(),
+  title_ar: z.string().optional(),
+  description: z.string().optional(),
+  description_ar: z.string().optional(),
+  date: z.string(),
+  updatedAt: z.string().optional(),
+  draft: z.boolean().optional(),
+  lang: z.string().optional(),
+  keywords: z.array(z.string()).optional(),
+  image: z.string().optional(),
+});
+
 export default defineContentConfig({
   collections: {
     writes: defineCollection({
       type: 'page',
       source: 'writes/*.md',
-      schema: z.object({
-        title: z.string(),
-        title_ar: z.string().optional(),
-        description: z.string().optional(),
-        description_ar: z.string().optional(),
-        date: z.string(),
-        updatedAt: z.string().optional(),
-        draft: z.boolean().optional(),
-        lang: z.string().optional(),
-        keywords: z.array(z.string()).optional(),
-        image: z.string().optional(),
-      }),
+      schema: writesSchema,
+    }),
+    writesAr: defineCollection({
+      type: 'page',
+      source: 'writes-ar/*.md',
+      schema: writesSchema,
     }),
   },
 });

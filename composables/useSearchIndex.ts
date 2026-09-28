@@ -32,27 +32,26 @@ export async function useSearchIndex() {
   const localePath = useLocalePath();
   const { work, openSource } = useProjects();
 
-  const { data: posts } = await useAsyncData('search-index-posts', () =>
-    queryCollection('writes').order('date', 'DESC').all()
-  );
+  const isArabicLocaleInitial = locale.value.toLowerCase().startsWith('ar');
+  const initialCollection = isArabicLocaleInitial ? 'writesAr' : 'writes';
 
-  const isArabicLocale = computed(() => locale.value.toLowerCase().startsWith('ar'));
+  const { data: posts } = await useAsyncData(`search-index-${initialCollection}`, () =>
+    queryCollection(initialCollection).order('date', 'DESC').all()
+  );
 
   const items = computed<SearchItem[]>(() => {
     const list: SearchItem[] = [];
-    const arabic = isArabicLocale.value;
 
     posts.value?.forEach((p) => {
-      const title = (arabic && p.title_ar) || p.title;
-      const description = (arabic && p.description_ar) || p.description || '';
+      const externalPath = (p.path ?? '').replace(/^\/writes-ar\//, '/writes/');
       list.push({
-        id: `article:${p.path}`,
+        id: `article:${externalPath}`,
         kind: 'article',
-        title,
-        description,
+        title: p.title,
+        description: p.description ?? '',
         tags: p.keywords ?? [],
         date: p.date,
-        href: localePath(p.path),
+        href: localePath(externalPath),
         external: false,
         icon: 'lucide:pen-line',
       });

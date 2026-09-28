@@ -3,26 +3,18 @@ const { t, locale } = useI18n();
 const localePath = useLocalePath();
 const { formatDate } = useLocalizedDate();
 
-const { data: posts } = await useAsyncData('writes-previews', () =>
-  queryCollection('writes').order('date', 'DESC').limit(3).all()
+const isArabicLocaleInitial = locale.value.toLowerCase().startsWith('ar');
+const initialCollection = isArabicLocaleInitial ? 'writesAr' : 'writes';
+
+const { data: posts } = await useAsyncData(`${initialCollection}-previews`, () =>
+  queryCollection(initialCollection).order('date', 'DESC').limit(3).all()
 );
 
-const isArabicLocale = computed(() => locale.value.toLowerCase().startsWith('ar'));
-
-type PostRow = {
-  title?: string;
-  title_ar?: string;
-  description?: string;
-  description_ar?: string;
-  lang?: string;
-};
-const localizedTitle = (p: PostRow) => (isArabicLocale.value && p.title_ar) || p.title || '';
-const localizedDescription = (p: PostRow) =>
-  (isArabicLocale.value && p.description_ar) || p.description || '';
-const localizedLang = (p: PostRow) =>
-  isArabicLocale.value && p.title_ar ? 'ar' : (p.lang ?? 'en');
+type PostRow = { title?: string; description?: string; lang?: string; path?: string };
+const localizedLang = (p: PostRow) => p.lang ?? 'en';
 const localizedDir = (p: PostRow) =>
   localizedLang(p).toLowerCase().startsWith('ar') ? 'rtl' : 'ltr';
+const externalPath = (p: PostRow) => (p.path ?? '').replace(/^\/writes-ar\//, '/writes/');
 </script>
 
 <template>
@@ -40,7 +32,7 @@ const localizedDir = (p: PostRow) =>
     <ul class="mt-6 flex flex-col divide-y divide-border">
       <li v-for="(post, i) in posts" :key="post.path" v-reveal="i * 100">
         <NuxtLink
-          :to="localePath(post.path)"
+          :to="localePath(externalPath(post))"
           class="group flex items-start justify-between gap-4 py-5 no-underline"
         >
           <div class="min-w-0 flex-1">
@@ -49,15 +41,15 @@ const localizedDir = (p: PostRow) =>
               :dir="localizedDir(post)"
               class="text-base font-medium text-foreground group-hover:text-primary"
             >
-              {{ localizedTitle(post) }}
+              {{ post.title }}
             </p>
             <p
-              v-if="localizedDescription(post)"
+              v-if="post.description"
               :lang="localizedLang(post)"
               :dir="localizedDir(post)"
               class="mt-1 line-clamp-2 text-sm text-muted-foreground"
             >
-              {{ localizedDescription(post) }}
+              {{ post.description }}
             </p>
             <div class="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
               <time v-if="post.date" :datetime="post.date">

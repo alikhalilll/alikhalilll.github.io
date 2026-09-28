@@ -14,9 +14,21 @@ const lookupPath = computed(() => {
   return route.path;
 });
 
-const { data: post } = await useAsyncData(`writes-${lookupPath.value}`, () =>
-  queryCollection('writes').path(lookupPath.value).first()
-);
+const isArabicLocaleInitial = locale.value.toLowerCase().startsWith('ar');
+const initialCollection = isArabicLocaleInitial ? 'writesAr' : 'writes';
+const initialCollectionPath = isArabicLocaleInitial
+  ? lookupPath.value.replace(/^\/writes\//, '/writes-ar/')
+  : lookupPath.value;
+
+const { data: post } = await useAsyncData(`${initialCollection}-${lookupPath.value}`, async () => {
+  const primary = await queryCollection(initialCollection).path(initialCollectionPath).first();
+  if (primary) return primary;
+  // Fallback to the English post if the current locale's translation is missing
+  if (isArabicLocaleInitial) {
+    return queryCollection('writes').path(lookupPath.value).first();
+  }
+  return null;
+});
 
 if (!post.value) {
   throw createError({ statusCode: 404, statusMessage: 'Post not found', fatal: true });
@@ -26,7 +38,7 @@ const tocLinks = computed(() => post.value?.body?.toc?.links ?? []);
 
 const slug = computed(() => {
   const path = post.value?.path ?? lookupPath.value;
-  return path.replace(/^\/writes\//, '').replace(/\/$/, '');
+  return path.replace(/^\/writes(-ar)?\//, '').replace(/\/$/, '');
 });
 
 // Walk the content AST and count words for a reading-time estimate.
@@ -48,9 +60,11 @@ const readingTime = computed(() => {
 // Related posts — grab everything then filter out the current one; take 2
 // newest. Cached by `related-<slug>` so navigating between posts reuses it.
 const { data: relatedPosts } = await useAsyncData(
-  `related-${lookupPath.value}`,
-  () => queryCollection('writes').order('date', 'DESC').all(),
-  { transform: (rows) => rows.filter((r) => r.path !== lookupPath.value).slice(0, 2) }
+  `related-${initialCollection}-${lookupPath.value}`,
+  () => queryCollection(initialCollection).order('date', 'DESC').all(),
+  {
+    transform: (rows) => rows.filter((r) => r.path !== initialCollectionPath).slice(0, 2),
+  }
 );
 
 const AUDIO_BLOCK_TAGS = new Set([
@@ -215,7 +229,7 @@ useHead({
 
 const coverFor = (p: { path: string; image?: string }) => {
   if (p.image) return p.image;
-  const s = p.path.replace(/^\/writes\//, '').replace(/\/$/, '');
+  const s = p.path.replace(/^\/writes(-ar)?\//, '').replace(/\/$/, '');
   return `/writes-covers/${s}.png`;
 };
 </script>

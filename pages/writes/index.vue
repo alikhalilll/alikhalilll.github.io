@@ -3,24 +3,25 @@ const { t, locale } = useI18n();
 const { formatDate, formatYear } = useLocalizedDate();
 const localePath = useLocalePath();
 
-const isArabicLocale = computed(() => locale.value.toLowerCase().startsWith('ar'));
+const isArabicLocaleInitial = locale.value.toLowerCase().startsWith('ar');
+const initialCollection = isArabicLocaleInitial ? 'writesAr' : 'writes';
 
-type PostRow = { title?: string; title_ar?: string; description?: string; description_ar?: string };
-const localizedTitle = (p: PostRow) => (isArabicLocale.value && p.title_ar) || p.title || '';
-const localizedDescription = (p: PostRow) =>
-  (isArabicLocale.value && p.description_ar) || p.description || '';
-const localizedLang = (p: { lang?: string }) =>
-  isArabicLocale.value && (p as PostRow).title_ar ? 'ar' : (p.lang ?? 'en');
-const localizedDir = (p: { lang?: string }) =>
+type PostRow = { title?: string; description?: string; lang?: string; path?: string };
+const localizedTitle = (p: PostRow) => p.title || '';
+const localizedDescription = (p: PostRow) => p.description || '';
+const localizedLang = (p: PostRow) => p.lang ?? 'en';
+const localizedDir = (p: PostRow) =>
   localizedLang(p).toLowerCase().startsWith('ar') ? 'rtl' : 'ltr';
+// External URL is always /writes/<slug> regardless of which collection served it
+const externalPath = (p: PostRow) => (p.path ?? '').replace(/^\/writes-ar\//, '/writes/');
 
 useSiteSeo({
   title: t('meta.blog.title'),
   description: t('meta.blog.description'),
 });
 
-const { data: posts } = await useAsyncData('writes-list', () =>
-  queryCollection('writes').order('date', 'DESC').all()
+const { data: posts } = await useAsyncData(`${initialCollection}-list`, () =>
+  queryCollection(initialCollection).order('date', 'DESC').all()
 );
 
 type AstNode = { type?: string; value?: string; children?: AstNode[] };
@@ -80,7 +81,7 @@ const yearLabel = (key: string) => (key === UNDATED ? t('blog.undated') : format
           <ul class="flex flex-col divide-y divide-border">
             <li v-for="post in group" :key="post.path">
               <NuxtLink
-                :to="localePath(post.path)"
+                :to="localePath(externalPath(post))"
                 class="group/post grid gap-2 py-6 no-underline sm:grid-cols-[8rem_minmax(0,1fr)] sm:items-baseline sm:gap-8"
               >
                 <div
