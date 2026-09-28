@@ -1,6 +1,8 @@
 ---
 title: Validating image URLs without complex error handling
+title_ar: التحقق من روابط الصور دون معالجة أخطاء معقّدة
 description: A small async helper that uses the browser's Image object to tell you whether a URL actually resolves to a loadable image, without a fetch and without CORS concerns.
+description_ar: مساعد صغير غير متزامن يستخدم كائن Image في المتصفح ليخبرك ما إذا كان الرابط ينتهي فعلاً إلى صورة قابلة للتحميل، بدون fetch وبدون القلق بشأن CORS.
 date: 2023-07-11
 lang: en
 keywords:

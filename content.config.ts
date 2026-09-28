@@ -7,7 +7,9 @@ export default defineContentConfig({
       source: 'writes/*.md',
       schema: z.object({
         title: z.string(),
+        title_ar: z.string().optional(),
         description: z.string().optional(),
+        description_ar: z.string().optional(),
         date: z.string(),
         updatedAt: z.string().optional(),
         draft: z.boolean().optional(),

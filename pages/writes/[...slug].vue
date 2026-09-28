@@ -138,13 +138,29 @@ const postDir = computed(() => (postLang.value.toLowerCase().startsWith('ar') ? 
 const localeLangRoot = computed(() => locale.value.split('-')[0]?.toLowerCase() ?? 'en');
 const postLangRoot = computed(() => postLang.value.split('-')[0]?.toLowerCase() ?? 'en');
 const isEnglishLocale = computed(() => localeLangRoot.value === 'en');
+const isArabicLocale = computed(() => localeLangRoot.value === 'ar');
 const audioEnabled = computed(() => isEnglishLocale.value && postLangRoot.value === 'en');
+
+const displayTitle = computed(
+  () => (isArabicLocale.value && post.value?.title_ar) || post.value?.title || ''
+);
+const displayDescription = computed(
+  () => (isArabicLocale.value && post.value?.description_ar) || post.value?.description || ''
+);
+const displayLang = computed(() =>
+  isArabicLocale.value && post.value?.title_ar ? 'ar' : postLang.value
+);
+const displayDir = computed(() =>
+  displayLang.value.toLowerCase().startsWith('ar') ? 'rtl' : 'ltr'
+);
+// Notice only when the article body is not in the site locale. Since bodies
+// are English-only for now, this fires on any Arabic locale.
 const showLangNotice = computed(() => postLangRoot.value !== localeLangRoot.value);
 
 const siteUrl = (config.public.siteUrl as string).replace(/\/$/, '');
 const url = `${siteUrl}${route.path}`;
-const title = post.value?.title ?? '';
-const description = post.value?.description ?? '';
+const title = displayTitle.value;
+const description = displayDescription.value;
 const keywords = post.value?.keywords ?? [];
 const publishedAt = post.value?.date;
 const modifiedAt = post.value?.updatedAt ?? post.value?.date;
@@ -223,19 +239,19 @@ const coverFor = (p: { path: string; image?: string }) => {
       </NuxtLink>
 
       <article :dir="postDir" :lang="postLang">
-        <header>
+        <header :dir="displayDir" :lang="displayLang">
           <h1
             class="text-4xl leading-[1.05] font-semibold tracking-tight text-balance sm:text-5xl md:text-[3.25rem]"
             style="text-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 8%, transparent)"
           >
-            {{ post?.title }}
+            {{ displayTitle }}
           </h1>
 
           <p
-            v-if="post?.description"
+            v-if="displayDescription"
             class="mt-6 text-lg leading-relaxed text-muted-foreground text-pretty sm:text-xl"
           >
-            {{ post.description }}
+            {{ displayDescription }}
           </p>
 
           <div
@@ -355,7 +371,7 @@ const coverFor = (p: { path: string; image?: string }) => {
             <div class="aspect-[16/10] overflow-hidden rounded-xl bg-muted ring-1 ring-border">
               <img
                 :src="coverFor(p)"
-                :alt="p.title"
+                :alt="(isArabicLocale && p.title_ar) || p.title"
                 class="size-full object-cover transition-transform duration-500 group-hover/rel:scale-[1.04]"
                 loading="lazy"
                 width="480"
@@ -370,9 +386,17 @@ const coverFor = (p: { path: string; image?: string }) => {
               {{ formatDate(p.date, { year: 'numeric', month: 'short', day: 'numeric' }) }}
             </time>
             <h3
+              :lang="isArabicLocale && p.title_ar ? 'ar' : (p.lang ?? 'en')"
+              :dir="
+                (isArabicLocale && p.title_ar ? 'ar' : (p.lang ?? 'en'))
+                  .toLowerCase()
+                  .startsWith('ar')
+                  ? 'rtl'
+                  : 'ltr'
+              "
               class="mt-1.5 text-base font-semibold leading-snug text-foreground transition-colors group-hover/rel:text-primary sm:text-lg"
             >
-              {{ p.title }}
+              {{ (isArabicLocale && p.title_ar) || p.title }}
             </h3>
           </NuxtLink>
         </li>

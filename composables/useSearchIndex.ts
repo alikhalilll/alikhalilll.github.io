@@ -28,7 +28,7 @@ const staticPageIcons: Record<string, string> = {
 };
 
 export async function useSearchIndex() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const localePath = useLocalePath();
   const { work, openSource } = useProjects();
 
@@ -36,15 +36,20 @@ export async function useSearchIndex() {
     queryCollection('writes').order('date', 'DESC').all()
   );
 
+  const isArabicLocale = computed(() => locale.value.toLowerCase().startsWith('ar'));
+
   const items = computed<SearchItem[]>(() => {
     const list: SearchItem[] = [];
+    const arabic = isArabicLocale.value;
 
     posts.value?.forEach((p) => {
+      const title = (arabic && p.title_ar) || p.title;
+      const description = (arabic && p.description_ar) || p.description || '';
       list.push({
         id: `article:${p.path}`,
         kind: 'article',
-        title: p.title,
-        description: p.description ?? '',
+        title,
+        description,
         tags: p.keywords ?? [],
         date: p.date,
         href: localePath(p.path),

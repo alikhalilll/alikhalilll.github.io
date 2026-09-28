@@ -1,6 +1,8 @@
 ---
 title: Anatomy of ADataTable, a typed generic Vue data table
+title_ar: تشريح ADataTable، جدول بيانات مُعمَّم ومكتوب بأنواع في Vue
 description: A typed generic Vue data table with schema-shaped columns, Map-keyed selection, markRaw per-row actions, and a three-click sort cycle. A full tour.
+description_ar: جولة كاملة في جدول بيانات مُعمَّم ومكتوب بأنواع في Vue، بأعمدة على شكل سكيمة، ومحدَّد صفوف بمفاتيح Map، وأزرار إجراءات لكل صف عبر markRaw، ودورة فرز ثلاثية النقرات.
 date: 2026-04-19
 lang: en
 updatedAt: 2026-04-19

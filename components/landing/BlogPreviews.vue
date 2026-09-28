@@ -1,11 +1,28 @@
 <script setup lang="ts">
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const localePath = useLocalePath();
 const { formatDate } = useLocalizedDate();
 
 const { data: posts } = await useAsyncData('writes-previews', () =>
   queryCollection('writes').order('date', 'DESC').limit(3).all()
 );
+
+const isArabicLocale = computed(() => locale.value.toLowerCase().startsWith('ar'));
+
+type PostRow = {
+  title?: string;
+  title_ar?: string;
+  description?: string;
+  description_ar?: string;
+  lang?: string;
+};
+const localizedTitle = (p: PostRow) => (isArabicLocale.value && p.title_ar) || p.title || '';
+const localizedDescription = (p: PostRow) =>
+  (isArabicLocale.value && p.description_ar) || p.description || '';
+const localizedLang = (p: PostRow) =>
+  isArabicLocale.value && p.title_ar ? 'ar' : (p.lang ?? 'en');
+const localizedDir = (p: PostRow) =>
+  localizedLang(p).toLowerCase().startsWith('ar') ? 'rtl' : 'ltr';
 </script>
 
 <template>
@@ -28,19 +45,19 @@ const { data: posts } = await useAsyncData('writes-previews', () =>
         >
           <div class="min-w-0 flex-1">
             <p
-              :lang="post.lang ?? 'en'"
-              :dir="(post.lang ?? 'en').toLowerCase().startsWith('ar') ? 'rtl' : 'ltr'"
+              :lang="localizedLang(post)"
+              :dir="localizedDir(post)"
               class="text-base font-medium text-foreground group-hover:text-primary"
             >
-              {{ post.title }}
+              {{ localizedTitle(post) }}
             </p>
             <p
-              v-if="post.description"
-              :lang="post.lang ?? 'en'"
-              :dir="(post.lang ?? 'en').toLowerCase().startsWith('ar') ? 'rtl' : 'ltr'"
+              v-if="localizedDescription(post)"
+              :lang="localizedLang(post)"
+              :dir="localizedDir(post)"
               class="mt-1 line-clamp-2 text-sm text-muted-foreground"
             >
-              {{ post.description }}
+              {{ localizedDescription(post) }}
             </p>
             <div class="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
               <time v-if="post.date" :datetime="post.date">

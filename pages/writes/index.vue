@@ -1,7 +1,18 @@
 <script setup lang="ts">
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { formatDate, formatYear } = useLocalizedDate();
 const localePath = useLocalePath();
+
+const isArabicLocale = computed(() => locale.value.toLowerCase().startsWith('ar'));
+
+type PostRow = { title?: string; title_ar?: string; description?: string; description_ar?: string };
+const localizedTitle = (p: PostRow) => (isArabicLocale.value && p.title_ar) || p.title || '';
+const localizedDescription = (p: PostRow) =>
+  (isArabicLocale.value && p.description_ar) || p.description || '';
+const localizedLang = (p: { lang?: string }) =>
+  isArabicLocale.value && (p as PostRow).title_ar ? 'ar' : (p.lang ?? 'en');
+const localizedDir = (p: { lang?: string }) =>
+  localizedLang(p).toLowerCase().startsWith('ar') ? 'rtl' : 'ltr';
 
 useSiteSeo({
   title: t('meta.blog.title'),
@@ -86,19 +97,19 @@ const yearLabel = (key: string) => (key === UNDATED ? t('blog.undated') : format
 
                 <div class="min-w-0">
                   <h3
-                    :lang="post.lang ?? 'en'"
-                    :dir="(post.lang ?? 'en').toLowerCase().startsWith('ar') ? 'rtl' : 'ltr'"
+                    :lang="localizedLang(post)"
+                    :dir="localizedDir(post)"
                     class="font-serif text-xl leading-[1.2] font-semibold tracking-tight text-balance text-foreground transition-colors group-hover/post:text-primary sm:text-2xl md:text-[1.65rem]"
                   >
-                    {{ post.title }}
+                    {{ localizedTitle(post) }}
                   </h3>
                   <p
-                    v-if="post.description"
-                    :lang="post.lang ?? 'en'"
-                    :dir="(post.lang ?? 'en').toLowerCase().startsWith('ar') ? 'rtl' : 'ltr'"
+                    v-if="localizedDescription(post)"
+                    :lang="localizedLang(post)"
+                    :dir="localizedDir(post)"
                     class="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground sm:text-base"
                   >
-                    {{ post.description }}
+                    {{ localizedDescription(post) }}
                   </p>
                   <span
                     class="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors group-hover/post:text-primary"
