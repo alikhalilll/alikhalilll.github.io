@@ -15,7 +15,7 @@ export const useProjects = () => {
     {
       title: 'PAIR AI Chat Platform',
       description:
-        'Enterprise real-time chat built with Nuxt 4, Vue 3, and TypeScript. Registry-based WebSocket layer on Pusher with typing indicators, read receipts, and synchronized multi-tab presence. Local data secured with AES-GCM + PBKDF2 in IndexedDB.',
+        'Enterprise real-time chat built with Nuxt 4, Vue 3, and TypeScript. Uses a registry-based WebSocket layer on Pusher with typing indicators, read receipts, and synchronized multi-tab presence. Local data is secured with AES-GCM and PBKDF2 in IndexedDB.',
       tags: ['Nuxt 4', 'Vue 3', 'TypeScript', 'Pusher', 'WebCrypto'],
       href: 'https://production.trypair.ai',
       year: '2025',
@@ -24,9 +24,9 @@ export const useProjects = () => {
       featured: true,
     },
     {
-      title: 'Ataa SaaS — eDialogue Store',
+      title: 'Ataa SaaS, eDialogue Store',
       description:
-        'Multi-tenant SaaS powering CRM, donations, and real-time communication for charitable organizations across Saudi Arabia. Nuxt 3, Vue 3, TypeScript, a unified Tailwind + ShadCN + UnoCSS design system with full RTL/LTR support, and Apple Pay / Google Pay / Moyasar integrations.',
+        'Multi-tenant SaaS that powers CRM, donations, and real-time communication for charitable organizations across Saudi Arabia. Built with Nuxt 3, Vue 3, and TypeScript, backed by a unified Tailwind, ShadCN, and UnoCSS design system with full RTL and LTR support, and integrated with Apple Pay, Google Pay, and Moyasar.',
       tags: ['Nuxt 3', 'TypeScript', 'ShadCN', 'Payments', 'RTL'],
       href: 'https://store.edialoguec.org.sa',
       year: '2025',
@@ -37,7 +37,7 @@ export const useProjects = () => {
     {
       title: 'Velents ATS',
       description:
-        'AI-driven recruitment platform with video/audio recording modules, drag-and-drop CRUD interfaces, and dashboards. Refactored legacy Vue codebases for accessibility, performance, and maintainability.',
+        'AI-driven recruitment platform with video and audio recording modules, drag-and-drop CRUD interfaces, and analytical dashboards. Refactored legacy Vue codebases for accessibility, performance, and maintainability.',
       tags: ['Vue', 'Nuxt', 'TypeScript', 'AI', 'E2E'],
       href: 'https://crm.velents.com',
       year: '2024',
@@ -48,7 +48,7 @@ export const useProjects = () => {
     {
       title: 'FitXpert Team',
       description:
-        'SaaS fitness and wellness platform with workout and nutrition tracking. Vue 3 + Nuxt 3 + TypeScript with Pinia state management and a responsive, scalable UI.',
+        'SaaS fitness and wellness platform with workout and nutrition tracking. Built with Vue 3, Nuxt 3, and TypeScript, using Pinia for state management and a responsive, scalable UI.',
       tags: ['Nuxt 3', 'Vue 3', 'Pinia', 'SaaS'],
       href: 'https://fitexpert.team',
       year: '2024',
@@ -58,7 +58,7 @@ export const useProjects = () => {
     {
       title: 'Salah Seleem Team (SST)',
       description:
-        'B2C online training website focused on usability and fast-loading pages. Plain HTML5, CSS3, and JavaScript — kept lean on purpose.',
+        'B2C online training website focused on usability and fast-loading pages. Built with plain HTML5, CSS3, and JavaScript, kept intentionally lean.',
       tags: ['HTML', 'CSS', 'JavaScript'],
       href: 'https://salahseleemteam.com',
       year: '2023',
@@ -66,9 +66,9 @@ export const useProjects = () => {
       group: 'work',
     },
     {
-      title: 'E-Commerce App (full-stack learning project)',
+      title: 'E-Commerce Application (full-stack learning project)',
       description:
-        'Full-stack e-commerce backend with Node.js, Express.js, and MongoDB (Mongoose). JWT auth, role-based access control (RBAC), Stripe + PayPal payments, plus search, filtering, pagination, input validation, rate limiting, and bcrypt.js for secure operations.',
+        'Full-stack e-commerce backend with Node.js, Express.js, and MongoDB (Mongoose). Includes JWT authentication, role-based access control (RBAC), Stripe and PayPal payments, search, filtering, pagination, input validation, rate limiting, and bcrypt.js for secure password handling.',
       tags: ['Node.js', 'Express', 'MongoDB', 'JWT', 'Stripe'],
       year: '2023',
       icon: 'lucide:shopping-cart',
@@ -77,7 +77,7 @@ export const useProjects = () => {
     {
       title: '@alikhalilll/nuxt-api-provider',
       description:
-        'Strongly-typed fetch client for Nuxt 3/4 with interceptors, retry/backoff, upload progress, and a framework-agnostic core that also runs outside Nuxt.',
+        'Strongly typed fetch client for Nuxt 3 and 4 with interceptors, retry and backoff, upload progress, and a framework-agnostic core that also runs outside Nuxt.',
       tags: ['Nuxt', 'TypeScript', 'HTTP'],
       href: 'https://alikhalilll.github.io/ali-nuxt-toolkit/api-provider',
       repo: 'https://github.com/alikhalilll/ali-nuxt-toolkit/tree/master/packages/api-provider',
@@ -89,7 +89,7 @@ export const useProjects = () => {
     {
       title: '@alikhalilll/nuxt-crypto',
       description:
-        'AES-256-GCM + PBKDF2 via Web Crypto API for Nuxt. Key caching, pluggable algorithms, optional server-only mode, and device-fingerprint binding.',
+        'AES-256-GCM and PBKDF2 via the Web Crypto API for Nuxt. Includes key caching, pluggable algorithms, an optional server-only mode, and device-fingerprint binding.',
       tags: ['Nuxt', 'Security', 'Web Crypto'],
       href: 'https://alikhalilll.github.io/ali-nuxt-toolkit/crypto',
       repo: 'https://github.com/alikhalilll/ali-nuxt-toolkit/tree/master/packages/crypto',
@@ -101,7 +101,7 @@ export const useProjects = () => {
     {
       title: '@alikhalilll/nuxt-auto-middleware',
       description:
-        'Layout → middleware mapping for Nuxt with glob patterns, named groups, per-page overrides, and a typed middleware-name registry.',
+        'Layout to middleware mapping for Nuxt, with glob patterns, named groups, per-page overrides, and a typed middleware-name registry.',
       tags: ['Nuxt', 'Routing', 'DX'],
       href: 'https://alikhalilll.github.io/ali-nuxt-toolkit/auto-middleware',
       repo: 'https://github.com/alikhalilll/ali-nuxt-toolkit/tree/master/packages/auto-middleware',
@@ -113,7 +113,7 @@ export const useProjects = () => {
     {
       title: '@alikhalilll/ui',
       description:
-        'Headless, shadcn-vue style Vue 3 component library. Every component is its own importable subpath (`/tell-input`, `/popover`, `/drawer`, …) so consumers only ship what they use. Built on reka-ui + vaul-vue, themed via prefixed CSS variables, fully typed.',
+        'Headless, shadcn-vue style Vue 3 component library. Every component is its own importable subpath (`/tell-input`, `/popover`, `/drawer`, and so on) so consumers only ship what they use. Built on reka-ui and vaul-vue, themed via prefixed CSS variables, fully typed.',
       tags: ['Vue 3', 'Nuxt', 'Headless UI', 'Tailwind'],
       href: 'https://alikhalilll.github.io/ali-nuxt-toolkit/ui',
       repo: 'https://github.com/alikhalilll/ali-nuxt-toolkit/tree/master/packages/ui',

@@ -1,6 +1,6 @@
 ---
 title: Validating image URLs without complex error handling
-description: A tiny async helper that uses the browser's Image object to tell you whether a URL actually resolves to a loadable image — no fetch, no CORS.
+description: A small async helper that uses the browser's Image object to tell you whether a URL actually resolves to a loadable image, without a fetch and without CORS concerns.
 date: 2023-07-11
 keywords:
   - JavaScript
@@ -13,9 +13,9 @@ keywords:
   - TypeScript
 ---
 
-If you've ever rendered a list of images from untrusted data, you know the pattern: most URLs are fine, a few are dead, and the broken-image icon ruins the layout. You can wrap everything in `try/catch`, or you can ask the browser directly: _can you load this?_
+If you have ever rendered a list of images from untrusted data, you know the pattern. Most URLs are fine, a few are dead, and the broken-image icon ruins the layout. You can wrap everything in `try/catch`, or you can ask the browser directly: can you load this?
 
-That's what `checkUrl` does. It returns a Promise that resolves when the image loads and rejects when it doesn't — no fetch, no CORS fiddling, no manual HEAD requests.
+That is what `checkUrl` does. It returns a Promise that resolves when the image loads and rejects when it does not. No fetch, no CORS handling, and no manual HEAD requests.
 
 ## The idea
 
@@ -31,7 +31,7 @@ const promise = new Promise<void>((resolve, reject) => { reject() })
 
 ## Using the built-in Image object
 
-Inside the callback, create an `Image`, wire up `onload` and `onerror`, then set `src` to kick off the request.
+Inside the callback, create an `Image`, wire up `onload` and `onerror`, and then set `src` to start the request.
 
 ```javascript
 const img = new Image();
@@ -40,7 +40,7 @@ img.onerror = () => reject();
 img.src = url;
 ```
 
-That's the whole mechanism. The browser does the work; the Promise is just a thin wrapper around two events.
+That is the entire mechanism. The browser does the work, and the Promise is a thin wrapper around two events.
 
 ## Using it with a fallback
 
@@ -53,9 +53,9 @@ let url: string = anonymousOBJECT.image;
 const checkImage = async () => {
   try {
     await checkUrl(url);
-    // valid — keep the original
+    // valid, keep the original
   } catch {
-    // invalid — swap in the fallback
+    // invalid, swap in the fallback
     url = fallbackImage;
   }
 };
@@ -67,6 +67,6 @@ checkImage();
 <img :src="url" />
 ```
 
-No custom error handling in the template, no flicker of a broken image — just a resolved URL by the time it hits the DOM.
+No custom error handling in the template, no flicker of a broken image, and a resolved URL by the time it hits the DOM.
 
 Originally published on [LinkedIn](https://www.linkedin.com/pulse/without-having-write-complex-error-handling-code-image-ali-abdelbaqy/).

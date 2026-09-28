@@ -5,24 +5,24 @@
     "projects": "Projects",
     "writing": "Writing",
     "contact": "Contact",
-    "home_aria": "Ali Khalil — home",
+    "home_aria": "Ali Khalil, home",
     "toggle_menu": "Toggle navigation",
     "theme_settings": "Theme settings",
     "language": "Language",
     "resume": "Resume",
-    "download_resume": "Download résumé (PDF)",
+    "download_resume": "Download resume (PDF)",
     "search": "Search",
     "more": "More",
     "more_options": "More options"
   },
   "footer": {
-    "copyright": "© 2019–{year} Ali Khalil"
+    "copyright": "© 2019 to {year} Ali Khalil"
   },
   "common": {
     "explore": "Explore",
     "all_projects": "All projects",
     "get_in_touch": "Get in touch",
-    "back_home": "Back home",
+    "back_home": "Back to home",
     "try_again": "Try again",
     "on_this_page": "On this page",
     "overview": "Overview",
@@ -34,34 +34,34 @@
     "scroll_to_top": "Back to top"
   },
   "home": {
-    "eyebrow": "Hi, I'm Ali",
-    "title": "Senior Frontend Developer & Team Lead.",
-    "subtitle": "I build scalable, high-performance web apps with Vue, Nuxt, and TypeScript — and lead the teams that ship them. Six years in, most of my recent work has been on real-time, multi-tenant SaaS in the Saudi and Egyptian markets.",
+    "eyebrow": "Hello, I am Ali",
+    "title": "Senior Frontend Developer and Team Lead.",
+    "subtitle": "I build scalable, high-performance web applications with Vue, Nuxt, and TypeScript, and I lead the teams that deliver them. Six years of experience, with recent focus on real-time, multi-tenant SaaS platforms across the Saudi and Egyptian markets.",
     "location": "Mansoura, Egypt",
-    "relocate": "Ready to relocate to Riyadh",
-    "award": "2× Employee of the Month",
+    "relocate": "Open to relocation to Riyadh",
+    "award": "Employee of the Month (twice)",
     "see_work": "See my work",
     "selected_work": "Selected work",
     "what_i_do_well": "What I do well",
     "explore_sections": {
       "about_blurb": "Who I am and how I work.",
-      "projects_blurb": "Products and tools I have shipped.",
-      "writing_blurb": "Notes on frontend craft and leadership.",
-      "contact_blurb": "Say hello — I read everything."
+      "projects_blurb": "Products and tools I have delivered.",
+      "writing_blurb": "Notes on frontend engineering and leadership.",
+      "contact_blurb": "Say hello. I read every message."
     },
     "strengths": [
-      "Performance work that shows up in the numbers — recent role lifted LCP by ~40% and cut CLS by ~60% through lazy hydration and code-splitting.",
-      "Leading small frontend teams: code review, mentorship, and setting the bar for accessibility and DX.",
-      "Real-time systems on Pusher / WebSockets — registry-based event layers, multi-tab presence, message deduplication.",
-      "Client-side security: AES-GCM + PBKDF2 for local data, Apple Pay / Google Pay / Moyasar integrations."
+      "Performance work with measurable results. In my most recent role I improved LCP by roughly 40% and reduced CLS by roughly 60% through lazy hydration and code splitting.",
+      "Leading small frontend teams: code review, mentorship, and setting a high bar for accessibility and developer experience.",
+      "Real-time systems on Pusher and WebSockets, including registry-based event layers, multi-tab presence, and message deduplication.",
+      "Client-side security: AES-GCM and PBKDF2 for local data, plus Apple Pay, Google Pay, and Moyasar integrations."
     ],
     "cta": {
       "title": "Working on something interesting?",
-      "body": "Roles, collaborations, or tricky frontend problems — I'd love to hear about it."
+      "body": "Roles, collaborations, or challenging frontend problems. I would be glad to hear about it."
     },
     "about": {
       "title": "About",
-      "body": "Senior frontend developer and team lead. Six years shipping Vue, Nuxt, and TypeScript at senior/lead level — real-time SaaS, performance work, small-team leadership.",
+      "body": "Senior Frontend Developer and Team Lead. Six years shipping Vue, Nuxt, and TypeScript at a senior and lead level across real-time SaaS, performance work, and small-team leadership.",
       "more": "Read the long version"
     },
     "work": {
@@ -85,9 +85,9 @@
           "Do you take on freelance or contract work?"
         ],
         "answers": [
-          "I am based in Mansoura, Egypt, and ready to relocate to Riyadh, Saudi Arabia for the right role.",
-          "Vue, Nuxt, and TypeScript for frontend; Node.js when a full-stack task requires it. Comfortable in React and Angular too.",
-          "Yes — for shorter engagements or advisory work. Longer engagements are also welcome. Reach out via the contact page."
+          "I am based in Mansoura, Egypt, and open to relocating to Riyadh, Saudi Arabia for the right role.",
+          "Vue, Nuxt, and TypeScript on the frontend, and Node.js when a full-stack task requires it. I am also comfortable working with React and Angular.",
+          "Yes. I take shorter engagements and advisory work, and I am open to longer engagements as well. Reach out via the contact page."
         ]
       },
       "work": {
@@ -95,12 +95,12 @@
         "questions": [
           "What kinds of teams do you work best with?",
           "How do you approach performance work?",
-          "Do you lead or do you prefer to be an IC?"
+          "Do you lead, or do you prefer to be an individual contributor?"
         ],
         "answers": [
-          "Small, senior frontend teams that ship SaaS. I have led teams of 3–5 and worked as a solo lead on a founding team.",
-          "Measure first. Then a mix of lazy hydration, code-splitting, image and font strategy, and cutting client-side work. Recent role lifted LCP ~40% and reduced CLS ~60%.",
-          "Both. I currently lead a frontend team but I still ship code every day — I do not believe in leads who cannot deliver."
+          "Small, senior frontend teams that ship SaaS. I have led teams of three to five and worked as the sole frontend lead on a founding team.",
+          "Measure first. Then a combination of lazy hydration, code splitting, image and font strategy, and reducing client-side work. In my most recent role I improved LCP by roughly 40% and reduced CLS by roughly 60%.",
+          "Both. I currently lead a frontend team, and I still ship code every day. I do not believe in leads who cannot deliver."
         ]
       },
       "process": {
@@ -108,12 +108,12 @@
         "questions": [
           "How do you handle accessibility?",
           "How do you handle internationalization?",
-          "What is your take on tests?"
+          "What is your view on tests?"
         ],
         "answers": [
-          "As a first-class requirement, not a QA pass. WCAG 2.1 checks in code review, keyboard flow validation, and semantic markup by default.",
-          "First-class from day one when the product needs it. I have shipped fully bilingual RTL/LTR apps in Arabic and English, including this site.",
-          "Types first, unit tests for tricky logic, E2E for critical flows. I do not chase coverage numbers; I chase confidence in the parts that break."
+          "As a first-class requirement rather than a QA pass. That means WCAG 2.1 checks during code review, keyboard-flow validation, and semantic markup by default.",
+          "As a first-class concern from day one when the product requires it. I have shipped fully bilingual RTL and LTR applications in Arabic and English, including this website.",
+          "Types first, unit tests for tricky logic, and end-to-end tests for critical flows. I do not chase coverage numbers. I focus on confidence in the parts that are most likely to break."
         ]
       }
     }
@@ -126,14 +126,14 @@
   },
   "search": {
     "eyebrow": "featured work",
-    "headline": "Search my work like you'd search anything else.",
+    "headline": "Search my work the same way you search anything else.",
     "input_label": "Search",
     "placeholder_kinds": [
-      "Search work…",
+      "Search work",
       "Try is:project or tag:Nuxt",
       "Try sort:newest",
-      "Search articles…",
-      "Search pages…"
+      "Search articles",
+      "Search pages"
     ],
     "clear": "Clear",
     "open_search": "Open search",
@@ -141,7 +141,7 @@
     "kind_project": "projects",
     "kind_opensource": "open source",
     "kind_page": "pages",
-    "empty_no_matches": "No matches — try a different query.",
+    "empty_no_matches": "No matches. Try a different query.",
     "results_count": "{n} result | {n} results",
     "navigate": "navigate",
     "open_key": "open",
@@ -149,76 +149,76 @@
     "read": "read article",
     "visit": "visit",
     "dialog_title": "Search",
-    "dialog_description": "Search articles, projects, open-source, and pages. Use is:, tag:, sort:, from:, to: for filters.",
+    "dialog_description": "Search articles, projects, open source, and pages. Use is:, tag:, sort:, from:, and to: to filter.",
     "shortcut_hint_prefix": "Press",
     "shortcut_hint_suffix": "from anywhere"
   },
   "meta": {
     "site": {
       "name": "Ali Khalil",
-      "description": "Senior Frontend Developer & Team Lead. Vue, Nuxt, and TypeScript for real-time, multi-tenant SaaS."
+      "description": "Senior Frontend Developer and Team Lead. Vue, Nuxt, and TypeScript for real-time, multi-tenant SaaS."
     },
     "home": {
-      "title": "Ali Khalil — Senior Frontend Developer & Team Lead",
-      "description": "Senior Frontend Developer & Team Lead specializing in Vue, Nuxt, and TypeScript. Six years shipping real-time, multi-tenant SaaS across the Saudi and Egyptian markets.",
-      "job_title": "Senior Frontend Developer & Team Lead"
+      "title": "Ali Khalil, Senior Frontend Developer and Team Lead",
+      "description": "Senior Frontend Developer and Team Lead specializing in Vue, Nuxt, and TypeScript. Six years delivering real-time, multi-tenant SaaS across the Saudi and Egyptian markets.",
+      "job_title": "Senior Frontend Developer and Team Lead"
     },
     "about": {
       "title": "About Ali Khalil",
-      "description": "About Ali Khalil — six years shipping Vue, Nuxt, and TypeScript at senior/lead level. Real-time SaaS, performance work, small-team leadership."
+      "description": "About Ali Khalil. Six years shipping Vue, Nuxt, and TypeScript at a senior and lead level, focused on real-time SaaS, performance work, and small-team leadership."
     },
     "projects": {
-      "title": "Projects — Ali Khalil",
-      "description": "A catalog of things I've built — real-time SaaS platforms, AI-powered products, and open-source Nuxt modules."
+      "title": "Projects, Ali Khalil",
+      "description": "A catalog of projects I have built, including real-time SaaS platforms, AI-driven products, and open-source Nuxt modules."
     },
     "blog": {
-      "title": "Writing — Ali Khalil",
-      "description": "Short posts on frontend craft, Nuxt, TypeScript, performance, and leading small teams."
+      "title": "Writing, Ali Khalil",
+      "description": "Short posts on frontend engineering, Nuxt, TypeScript, performance, and leading small teams."
     },
     "contact": {
-      "title": "Contact — Ali Khalil",
-      "description": "Reach out for roles, collaborations, or open-source requests. Email, LinkedIn, GitHub, or WhatsApp — I read everything."
+      "title": "Contact, Ali Khalil",
+      "description": "Reach out about roles, collaborations, or open-source requests. Email, LinkedIn, GitHub, or WhatsApp. I read every message."
     }
   },
   "about": {
     "eyebrow": "About",
-    "title": "Senior Frontend Developer & Team Lead.",
-    "subtitle": "Six years in the trenches. Vue, Nuxt, TypeScript, and real-time systems. Comfortable owning an end-to-end frontend and the team that ships it.",
+    "title": "Senior Frontend Developer and Team Lead.",
+    "subtitle": "Six years of professional experience with Vue, Nuxt, TypeScript, and real-time systems. Comfortable owning an end-to-end frontend and leading the team that delivers it.",
     "intro": [
-      "I'm Ali. I've spent the last six years shipping web apps — mostly SaaS, mostly in the Saudi and Egyptian markets, increasingly at the lead / senior level. Recently that's meant owning the frontend of multi-tenant platforms with heavy real-time requirements, building the registries and patterns that let a small team move fast without things getting tangled.",
-      "I care about the boring details — the ones that turn a passable app into something that survives three years of feature churn. Clear types. Honest error states. Pages that load quickly enough that nobody has to apologize for them. Accessibility that isn't an afterthought. Docs that admit what a thing won't do.",
-      "I lead by example. I review pull requests carefully, mentor willingly, and push hard on performance and accessibility standards. I've been Employee of the Month twice — which I mention only because it's a decent proxy for 'the work held up under load.'",
-      "I'm not married to one framework. I've shipped production apps in React and Angular too — earlier in my career I delivered enterprise Angular apps with Material UI, and I still reach for React on side projects and client work when it's the right fit."
+      "I am Ali. Over the past six years I have shipped production web applications, most of them SaaS products in the Saudi and Egyptian markets, and increasingly at a lead and senior level. Recently that has meant owning the frontend of multi-tenant platforms with significant real-time requirements, and building the registries and patterns that allow a small team to move quickly without the code turning into a tangle.",
+      "I care about the details that matter over the long run. Clear types. Honest error states. Pages that load quickly enough that no one has to apologize for them. Accessibility treated as a requirement, not an afterthought. Documentation that is honest about what a piece of code does not do.",
+      "I lead by example. I review pull requests carefully, mentor willingly, and hold a firm line on performance and accessibility standards. I have been Employee of the Month twice, which I mention only because it is a fair proxy for work that held up under real production load.",
+      "I am not tied to a single framework. I have shipped production applications in React and Angular. Earlier in my career I delivered enterprise Angular applications with Material UI, and I still reach for React on side projects and client work when it is the right fit."
     ],
     "currently": "Currently",
     "currently_items": [
-      "Leading the frontend at eDialogue Corner Society on Ataa SaaS.",
+      "Leading the frontend at eDialogue Corner Society on the Ataa SaaS platform.",
       "Publishing open-source Nuxt modules under @alikhalilll.",
-      "Ready to relocate to Riyadh, Saudi Arabia."
+      "Open to relocating to Riyadh, Saudi Arabia."
     ],
     "experience": "Experience",
     "skills": "Technical skills",
     "stack": {
       "frontend": "Frontend Development",
-      "backend": "Backend & APIs",
-      "databases": "Databases & Storage",
+      "backend": "Backend and APIs",
+      "databases": "Databases and Storage",
       "state": "State Management",
-      "realtime": "Real-Time & Performance",
-      "devops": "Build & DevOps",
-      "quality": "Quality & Collaboration"
+      "realtime": "Real-Time and Performance",
+      "devops": "Build and DevOps",
+      "quality": "Quality and Collaboration"
     },
     "education": "Education",
     "education_degree": "BSc in Computer Science",
-    "education_meta": "Mansoura University, Egypt · 10/2018 — 10/2022",
+    "education_meta": "Mansoura University, Egypt. 10/2018 to 10/2022",
     "education_blurb": "Focus on software engineering, web development, and algorithms. Final-year projects centered on frontend architecture and RESTful API design.",
     "languages_label": "Languages",
-    "languages_value": "Arabic (native) · English (advanced, B2–C1)",
+    "languages_value": "Arabic (native). English (advanced, B2 to C1)",
     "primary_stack": "Primary stack"
   },
   "projects": {
     "eyebrow": "Projects",
-    "title": "A catalog of things I've built.",
-    "subtitle": "Real-time SaaS platforms, AI-powered products, and open-source modules. The common thread: solid types, honest docs, and as little ceremony as the problem allows.",
+    "title": "A catalog of projects I have built.",
+    "subtitle": "Real-time SaaS platforms, AI-driven products, and open-source modules. The common thread is solid types, honest documentation, and as little ceremony as the problem allows.",
     "product_work": "Product work",
     "product_work_blurb": "Products I have led or shipped major features for.",
     "open_source": "Open source",
@@ -228,8 +228,8 @@
   "writing": {
     "eyebrow": "Writing",
     "title": "Notes, mostly on the edges.",
-    "subtitle": "Short posts on frontend craft, Nuxt, TypeScript, performance, and leading small teams.",
-    "empty": "Nothing published yet — but ideas are brewing."
+    "subtitle": "Short posts on frontend engineering, Nuxt, TypeScript, performance, and leading small teams.",
+    "empty": "Nothing published yet. New posts are in progress."
   },
   "blog": {
     "audio": {
@@ -270,12 +270,15 @@
   "contact": {
     "eyebrow": "Contact",
     "title": "Let's talk.",
-    "subtitle": "Roles, collaborations, open-source requests, or just a friendly 'I read your docs' — all welcome. I read everything.",
+    "subtitle": "Roles, collaborations, open-source requests, or a friendly note. All are welcome. I read every message.",
     "channels": {
-      "email": { "label": "Email", "hint": "Best for anything longer than a tweet." },
-      "phone": { "label": "Phone / WhatsApp", "hint": "Available on WhatsApp for quick messages." },
-      "linkedin": { "label": "LinkedIn", "hint": "Work inquiries and professional hellos." },
-      "github": { "label": "GitHub", "hint": "Code, issues, and the usual." },
+      "email": { "label": "Email", "hint": "Best for anything longer than a short message." },
+      "phone": {
+        "label": "Phone or WhatsApp",
+        "hint": "Available on WhatsApp for quick messages."
+      },
+      "linkedin": { "label": "LinkedIn", "hint": "Work inquiries and professional introductions." },
+      "github": { "label": "GitHub", "hint": "Code, issues, and pull requests." },
       "npm": { "label": "npm", "hint": "Published packages and releases." }
     },
     "primary_label": "Best way to reach me",
@@ -283,16 +286,16 @@
     "primary_hint": "I usually reply within a day.",
     "secondary_label": "Or, elsewhere online",
     "availability_label": "Availability",
-    "availability_value": "Based in Mansoura · Ready to relocate to Riyadh · UTC+2"
+    "availability_value": "Based in Mansoura. Open to relocating to Riyadh. UTC+2"
   },
   "error": {
     "label": "Error {code}",
     "not_found": "Page not found",
     "forbidden": "Forbidden",
-    "server_error": "Something broke on my end",
+    "server_error": "Something went wrong on my end",
     "generic": "Something went wrong",
-    "not_found_blurb": "The page you were looking for isn't here — it may have moved, or the link is off. Nothing lost, just a detour.",
-    "server_error_blurb": "An unexpected error tripped the server. Try again in a moment, or head back home while I take a look.",
+    "not_found_blurb": "The page you are looking for is not here. It may have moved, or the link may be incorrect.",
+    "server_error_blurb": "An unexpected error occurred on the server. Please try again in a moment, or return home while I look into it.",
     "try_one_of_these": "Or try one of these"
   }
 }

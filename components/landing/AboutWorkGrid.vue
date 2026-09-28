@@ -39,8 +39,8 @@ const topRoles = computed(() => roles.slice(0, 4));
             </div>
             <span class="shrink-0 font-mono text-xs text-muted-foreground ar:font-sans ar:text-sm">
               {{ formatYear(role.start) }}
-              <span v-if="role.end">– {{ formatYear(role.end) }}</span>
-              <span v-else>– {{ t('common.present') }}</span>
+              <span v-if="role.end">to {{ formatYear(role.end) }}</span>
+              <span v-else>to {{ t('common.present') }}</span>
             </span>
           </div>
         </li>

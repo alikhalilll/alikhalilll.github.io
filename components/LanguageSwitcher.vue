@@ -25,7 +25,7 @@ async function choose(code: Locales, event?: Event) {
   <Popover v-model:open="open">
     <span class="group/nav-tt relative inline-flex">
       <PopoverTrigger
-        :aria-label="`${t('nav.language')} · ${currentLabel}`"
+        :aria-label="`${t('nav.language')}: ${currentLabel}`"
         class="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-foreground sm:h-9 sm:w-9"
       >
         <Icon name="lucide:languages" class="size-4" />
@@ -35,7 +35,7 @@ async function choose(code: Locales, event?: Event) {
         class="pointer-events-none absolute top-full left-1/2 mt-2 -translate-x-1/2 rounded-md border border-border bg-popover px-2 py-1 text-xs whitespace-nowrap text-popover-foreground opacity-0 shadow-md transition-opacity delay-200 duration-150 group-hover/nav-tt:opacity-100"
         role="tooltip"
       >
-        {{ t('nav.language') }} · {{ currentLabel }}
+        {{ t('nav.language') }}: {{ currentLabel }}
       </span>
     </span>
 

@@ -1,5 +1,5 @@
 ---
-title: Four bugs every infinite-scroll list has — and their fixes
+title: Four bugs every infinite-scroll list has, and their fixes
 description: The four bugs every infinite-scroll list eventually ships, and the specific lines inside a 230-line Vue component that prevent each one.
 date: 2026-02-28
 updatedAt: 2026-02-28
@@ -19,7 +19,7 @@ Infinite scroll is one of those features that looks trivial on a whiteboard and 
 
 Then the bugs find you. The user changes a filter and the next-page call still returns the old filter's data. Two "load more" requests go out in the same tick because the user scrolled fast. The component unmounts while an observer is still alive and the callback closure keeps the whole page reachable from GC. The handler works in development but not in prod because someone used `fetcher()` instead of `fetcher(page)`.
 
-`ASentinelPagination` is my answer. It's ~230 lines in a single `.vue` file, and it isn't clever. What's worth writing about isn't the architecture — it's the list of specific bugs it avoids and the specific lines that avoid them. That's what this post is.
+`ASentinelPagination` is my answer. It's ~230 lines in a single `.vue` file, and it isn't clever. What's worth writing about isn't the architecture. It's the list of specific bugs it avoids and the specific lines that avoid them. That's what this post is.
 
 I'll frame the whole thing around four bugs I've shipped at least once in earlier attempts.
 
@@ -44,7 +44,7 @@ Before the bugs, here's what a consumer actually writes:
 </ASentinelPagination>
 ```
 
-Four slots, one prop that matters. The handler returns `{ items: T[], pagination?: { current_page, per_page, total, last_page } }`. Pagination is optional — if the backend doesn't return it, the list loads once and stops. That's the degraded-but-honest behavior.
+Four slots, one prop that matters. The handler returns `{ items: T[], pagination?: { current_page, per_page, total, last_page } }`. Pagination is optional. If the backend doesn't return it, the list loads once and stops. That's the degraded-but-honest behavior.
 
 ## `fetchHandler.length`: arity-based dispatch
 
@@ -85,7 +85,7 @@ export type ISPFetchHandler<T> =
   | (() => Promise<ISPPaginationHandlerResult<T>>);
 ```
 
-There's one trap worth naming. Arrow functions that declare a parameter but never use it still count as arity 1. If a consumer writes `(_p) => $api('/products')`, it hits the paged branch. That's fine — the handler ignores the arg — but it's the kind of thing to write down once so the next person asking "why is pagination being passed?" can read the answer.
+There's one trap worth naming. Arrow functions that declare a parameter but never use it still count as arity 1. If a consumer writes `(_p) => $api('/products')`, it hits the paged branch. That's fine (the handler ignores the arg) but it's the kind of thing to write down once so the next person asking "why is pagination being passed?" can read the answer.
 
 ## `inFlight`: one gate, three derived readouts
 
@@ -95,7 +95,7 @@ This is the classic. User hits the bottom, observer fires, fetch starts. User sc
 - One fires with `current_page = 2`, the other with `current_page = 3`; items are interleaved or page 2 is silently skipped.
 - Both return the same page, the consumer's de-dup logic breaks, and the layout shifts.
 
-The naïve fix is one boolean — `isLoading`. It doesn't quite work because there are _two_ logically different loads: the initial one (full-screen skeleton) and the next-page one (small skeleton at the bottom). Two booleans can disagree, and once they do, the gate logic starts branching on "is _this_ kind of load in progress?" which is the wrong question.
+The naïve fix is one boolean (`isLoading`). It doesn't quite work because there are _two_ logically different loads: the initial one (full-screen skeleton) and the next-page one (small skeleton at the bottom). Two booleans can disagree, and once they do, the gate logic starts branching on "is _this_ kind of load in progress?" which is the wrong question.
 
 The right question is "is _anything_ in progress?" One source of truth, two derived readouts:
 
@@ -129,7 +129,7 @@ const fetchData = async (mode: 'init' | 'next') => {
 };
 ```
 
-Two small disciplines keep this honest. The early return checks `inFlight.value !== null`, not any specific boolean — so if init is in flight and a next-page trigger fires, the next fetch is rejected even though `isFetchingMore` is still false. And the release lives in `finally`, not `try` — a fetch that throws still releases the gate, so the component can't silently lock itself into "refusing to load anything" after one network hiccup.
+Two small disciplines keep this honest. The early return checks `inFlight.value !== null`, not any specific boolean, so if init is in flight and a next-page trigger fires, the next fetch is rejected even though `isFetchingMore` is still false. And the release lives in `finally`, not `try`. A fetch that throws still releases the gate, so the component can't silently lock itself into "refusing to load anything" after one network hiccup.
 
 ### The sentinel, and the 0.6 threshold
 
@@ -154,7 +154,7 @@ observer = new IntersectionObserver(
 );
 ```
 
-`threshold: 0.6` instead of `0` — the sentinel is 1px; at `threshold: 0`, jittering one pixel in and out of the viewport during a scroll can fire the callback multiple times. At 0.6, the intersection has to be meaningful (60% of a 1px target is not a lot, but it's stable against jitter). And the state check _inside_ the callback re-confirms the gate: between intersection firing and the callback running, another load might have started. The three-condition guard is the idempotent second line of defense behind `inFlight`.
+`threshold: 0.6` instead of `0`. The sentinel is 1px; at `threshold: 0`, jittering one pixel in and out of the viewport during a scroll can fire the callback multiple times. At 0.6, the intersection has to be meaningful (60% of a 1px target is not a lot, but it's stable against jitter). And the state check _inside_ the callback re-confirms the gate: between intersection firing and the callback running, another load might have started. The three-condition guard is the idempotent second line of defense behind `inFlight`.
 
 ## Resetting when the fetcher's identity changes
 
@@ -187,7 +187,7 @@ watch(
 
 Four things happen, in order, and all four are load-bearing.
 
-Disconnect first. If you don't, the old observer is still alive during the reset, and the sentinel is still intersecting the viewport (nothing scrolled). The old observer can fire `fetchNextPage()` against stale pagination state in the middle of the reset — which means a request goes out with `current_page: 2` against a handler that thinks it's returning the first page. That request is fundamentally wrong; it has to be prevented, not corrected.
+Disconnect first. If you don't, the old observer is still alive during the reset, and the sentinel is still intersecting the viewport (nothing scrolled). The old observer can fire `fetchNextPage()` against stale pagination state in the middle of the reset, which means a request goes out with `current_page: 2` against a handler that thinks it's returning the first page. That request is fundamentally wrong. It has to be prevented, not corrected.
 
 Clear items and pagination next. Keep `per_page` because that's often a user preference the filter shouldn't reset. The other three fields go back to defaults.
 
@@ -195,15 +195,16 @@ Fire `fetchData('init')`. Skeleton shows. Fetch runs with the new handler. Items
 
 Re-attach the observer. The DOM node is the same one; we're binding a fresh observer instance to the post-reset state.
 
-There's a subtlety here worth writing down. The watch is on `props.fetchHandler` — reference identity. If the consumer passes `() => $api('/products', { query: { category } })` inline in the template, a new function is created on every parent re-render, and the watch fires on every re-render. That's almost never what you want. Consumers have to be disciplined: memoize the handler with `computed`, or pull it out of a composable whose identity is stable, or accept that the list will re-fetch on every parent render.
+
+There's a subtlety here worth writing down. The watch is on `props.fetchHandler`: reference identity. If the consumer passes `() => $api('/products', { query: { category } })` inline in the template, a new function is created on every parent re-render, and the watch fires on every re-render. That's almost never what you want. Consumers have to be disciplined: memoize the handler with `computed`, or pull it out of a composable whose identity is stable, or accept that the list will re-fetch on every parent render.
 
 I considered having the component accept a separate `key` prop to trigger resets explicitly instead of using reference identity, but that pushes complexity to every consumer. The reference-watch contract is simpler if you're willing to educate people about function identity once.
 
 ## Observer cleanup, and the leak it prevents
 
-This is the quiet one. A user navigates away from a route that had `ASentinelPagination` on it. Vue unmounts the component. But the IntersectionObserver, if you didn't clean it up, is still alive — it holds a reference to the sentinel DOM node _and_ to the callback closure, which captured the entire `<script setup>` scope: `items`, `pagination`, all the refs, the whole component instance.
+This is the quiet one. A user navigates away from a route that had `ASentinelPagination` on it. Vue unmounts the component. But the IntersectionObserver, if you didn't clean it up, is still alive. It holds a reference to the sentinel DOM node _and_ to the callback closure, which captured the entire `<script setup>` scope: `items`, `pagination`, all the refs, the whole component instance.
 
-None of that gets garbage-collected until the observer releases them. On a route with lots of in-and-out traffic, the leak compounds. I found one in a previous app after a user reported the page getting slower the longer they used it — their session was accumulating dozens of dead components' worth of state.
+None of that gets garbage-collected until the observer releases them. On a route with lots of in-and-out traffic, the leak compounds. I found one in a previous app after a user reported the page getting slower the longer they used it. Their session was accumulating dozens of dead components' worth of state.
 
 The fix is one call:
 
@@ -233,7 +234,7 @@ const vScrollReveal = {
 } as const;
 ```
 
-The directive stashes its observer on the element itself (`el._scrollObserver`) so `unmounted` can find it later. There's also a `observer.unobserve(el)` call inside the mount-time callback — once a card has faded in, there's nothing left to watch for, and leaving the observer attached is just more work per scroll event for no payoff. `unmounted` is the belt-and-braces fallback for cards that were unmounted before they were ever visible (scrolled past fast, navigated away, removed by a filter).
+The directive stashes its observer on the element itself (`el._scrollObserver`) so `unmounted` can find it later. There's also a `observer.unobserve(el)` call inside the mount-time callback. Once a card has faded in, there's nothing left to watch for, and leaving the observer attached is just more work per scroll event for no payoff. `unmounted` is the belt-and-braces fallback for cards that were unmounted before they were ever visible (scrolled past fast, navigated away, removed by a filter).
 
 The type assertion on `_scrollObserver` is uglier than I'd like. A `Symbol` key would avoid the cast but would also break DevTools inspection. I picked the version I can actually read.
 
@@ -261,12 +262,12 @@ function isPaginationMeta(value: unknown): value is ISPPaginationMeta {
 }
 ```
 
-No `zod`, no `yup`. Three functions, thirty lines, no dependency added to a UI component. The point isn't performance; it's that a UI component that depends on a validator library leaks that choice into every consumer. Hand-rolled guards keep the dependency graph clean, and for this shape of check (four fields, all numbers) they're shorter than a schema anyway. The `Number.isFinite` check matters — without it, `NaN` and `Infinity` pass `typeof === 'number'` and you end up with "page 3 of Infinity" behaviour downstream.
+No `zod`, no `yup`. Three functions, thirty lines, no dependency added to a UI component. The point isn't performance; it's that a UI component that depends on a validator library leaks that choice into every consumer. Hand-rolled guards keep the dependency graph clean, and for this shape of check (four fields, all numbers) they're shorter than a schema anyway. The `Number.isFinite` check matters. Without it, `NaN` and `Infinity` pass `typeof === 'number'` and you end up with "page 3 of Infinity" behaviour downstream.
 
 The `void fetchNextPage()` in the observer callback is tiny and deliberate. The callback isn't async, so awaiting does nothing. Floating promises trip most linters. `void` is the honest signal: "I know this is async, I'm intentionally not awaiting, yes I've thought about it." It's one keyword, and it's the difference between a clean lint and a suppress-comment.
 
 ## A summary of the four defenses
 
-At ~230 lines, the whole component is the kind of thing you could rewrite in an afternoon. What makes it work isn't any of the individual pieces — arity dispatch, `inFlight` as a discriminated state, observer cleanup, reference-identity resets, hand-rolled type guards. Each is small enough that if I explained it in isolation you'd nod and move on.
+At ~230 lines, the whole component is the kind of thing you could rewrite in an afternoon. What makes it work isn't any of the individual pieces (arity dispatch, `inFlight` as a discriminated state, observer cleanup, reference-identity resets, hand-rolled type guards). Each is small enough that if I explained it in isolation you'd nod and move on.
 
-The thing that made this component stop being a bug factory was seeing the four failure modes above and writing _specific_ guards for each one. No library, no abstraction. Just a handful of small defenses, each paid for by a bug I shipped in an earlier version. That's most of what "hardening" looks like in practice — not cleverness, just a longer memory.
+The thing that made this component stop being a bug factory was seeing the four failure modes above and writing _specific_ guards for each one. No library, no abstraction. Just a handful of small defenses, each paid for by a bug I shipped in an earlier version. That's most of what "hardening" looks like in practice: not cleverness, just a longer memory.

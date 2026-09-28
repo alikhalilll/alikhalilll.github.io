@@ -135,7 +135,7 @@ function primaryHref(p: { href?: string; repo?: string }) {
                     target="_blank"
                     rel="noopener"
                     class="pointer-events-auto inline-flex items-center gap-1.5 text-sm text-muted-foreground no-underline transition-colors hover:text-foreground"
-                    :aria-label="`${project.title} — ${t('common.source')}`"
+                    :aria-label="`${project.title}, ${t('common.source')}`"
                     @click.stop
                   >
                     <Icon name="lucide:github" class="size-3.5" />

@@ -33,7 +33,7 @@ function readingTime(body: unknown): number {
 const yearGroups = computed(() => {
   const groups = new Map<string, typeof posts.value>();
   for (const p of posts.value ?? []) {
-    const y = p.date ? new Date(p.date).getFullYear().toString() : '—';
+    const y = p.date ? new Date(p.date).getFullYear().toString() : 'Undated';
     if (!groups.has(y)) groups.set(y, []);
     groups.get(y)!.push(p);
   }

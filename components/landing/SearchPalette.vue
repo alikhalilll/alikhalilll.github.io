@@ -237,7 +237,7 @@ function kindAccent(kind: SearchKind) {
 
 const placeholderKinds = computed<string[]>(() => {
   const raw = tm('search.placeholder_kinds') as unknown;
-  return Array.isArray(raw) ? (raw as string[]) : ['Search…'];
+  return Array.isArray(raw) ? (raw as string[]) : ['Search'];
 });
 
 const focused = ref(false);

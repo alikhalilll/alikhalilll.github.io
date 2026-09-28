@@ -42,7 +42,7 @@ export function useSiteSeo(input: SeoInput) {
   const image = `${siteUrl}${input.image ?? '/og-image.png'}`;
   const description = input.description ?? fallbackDesc;
   const alreadyBranded = input.title.includes(siteName) || input.title.includes(localizedSiteName);
-  const fullTitle = alreadyBranded ? input.title : `${input.title} — ${localizedSiteName}`;
+  const fullTitle = alreadyBranded ? input.title : `${input.title} | ${localizedSiteName}`;
 
   const currentLocale = locale.value as keyof typeof OG_LOCALE;
   const availableLocales = locales.value.map((l) => (typeof l === 'string' ? l : l.code));

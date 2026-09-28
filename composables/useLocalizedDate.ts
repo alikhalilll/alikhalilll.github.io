@@ -27,7 +27,7 @@ export function useLocalizedDate() {
     const iso = (s: string) => `\u2066${s}\u2069`;
     const s = iso(formatMonthYear(start));
     const e = end ? iso(formatMonthYear(end)) : t('common.present');
-    return `${s} — ${e}`;
+    return `${s} to ${e}`;
   };
 
   const formatYear = (value: string | number | Date) => {

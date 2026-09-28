@@ -1,6 +1,6 @@
 ---
-title: Building ali-nuxt-toolkit — a tour of the internals
-description: Three Nuxt 4 modules in a pnpm monorepo — a typed fetch client with upload progress, AES-GCM + PBKDF2 crypto, and layout-scoped middleware.
+title: Building ali-nuxt-toolkit, a tour of the internals
+description: Three Nuxt 4 modules in a pnpm monorepo: a typed fetch client with upload progress, AES-GCM + PBKDF2 crypto, and layout-scoped middleware.
 date: 2026-01-12
 keywords:
   - Nuxt 4
@@ -17,7 +17,7 @@ keywords:
   - Changesets
 ---
 
-A while back I decided to pull the patterns I kept rewriting at work into a small set of Nuxt modules. Nothing novel — just the stuff that everyone on every SaaS team eventually writes: a typed HTTP client, layout-scoped middleware, and a crypto service for locally-stored secrets. Packaging them properly turned into its own project: **ali-nuxt-toolkit**.
+A while back I decided to pull the patterns I kept rewriting at work into a small set of Nuxt modules. Nothing novel, just the stuff that everyone on every SaaS team eventually writes: a typed HTTP client, layout-scoped middleware, and a crypto service for locally-stored secrets. Packaging them properly turned into its own project: **ali-nuxt-toolkit**.
 
 This post is a tour of what's inside and why certain pieces are shaped the way they are. I'll skip the obvious parts and spend most of the words on the details I'd want to read if someone else had written it.
 
@@ -25,18 +25,18 @@ This post is a tour of what's inside and why certain pieces are shaped the way t
 
 `ali-nuxt-toolkit` is a pnpm monorepo. The top level is roughly:
 
-- `packages/` — three independently published modules under the `@alikhalilll` scope.
-- `apps/docs/` — a Nuxt 4 + `@nuxt/content` site, prerendered to static HTML.
-- `playgrounds/nuxt/` — a minimal app that wires all three modules together; handy for kicking the tires locally.
-- `.github/workflows/` — CI (lint, typecheck, matrix build on Node 20 + 22) and a Changesets-driven release pipeline.
+- `packages/`: three independently published modules under the `@alikhalilll` scope.
+- `apps/docs/`: a Nuxt 4 + `@nuxt/content` site, prerendered to static HTML.
+- `playgrounds/nuxt/`: a minimal app that wires all three modules together; handy for kicking the tires locally.
+- `.github/workflows/`: CI (lint, typecheck, matrix build on Node 20 + 22) and a Changesets-driven release pipeline.
 
 The three packages:
 
-- **`@alikhalilll/nuxt-api-provider`** — strongly-typed fetch client with an interceptor chain, retry/backoff, timeouts, and upload/download progress.
-- **`@alikhalilll/nuxt-auto-middleware`** — layout-scoped route middleware with glob patterns, named groups, and per-page overrides.
-- **`@alikhalilll/nuxt-crypto`** — AES-256-GCM + PBKDF2 built on Web Crypto, with an LRU key cache and pluggable algorithms.
+- **`@alikhalilll/nuxt-api-provider`**: strongly-typed fetch client with an interceptor chain, retry/backoff, timeouts, and upload/download progress.
+- **`@alikhalilll/nuxt-auto-middleware`**: layout-scoped route middleware with glob patterns, named groups, and per-page overrides.
+- **`@alikhalilll/nuxt-crypto`**: AES-256-GCM + PBKDF2 built on Web Crypto, with an LRU key cache and pluggable algorithms.
 
-They're deliberately small and focused. Each one works standalone. Each one also has a framework-agnostic "core" that can run in Node, Bun, Deno, or a test — no Nuxt required.
+They're deliberately small and focused. Each one works standalone. Each one also has a framework-agnostic "core" that can run in Node, Bun, Deno, or a test. No Nuxt required.
 
 ## The module skeleton
 
@@ -74,7 +74,7 @@ export default defineNuxtModule<Options>({
 
 The interesting part is _what I'm not doing_. I'm not passing the config object through provide/inject at runtime, and I'm not importing user code directly from `module.ts`. Everything flows through generated files in `.nuxt`. This has two benefits:
 
-1. The runtime plugin stays tiny — it just imports a plain JS object from a virtual path. No work at boot.
+1. The runtime plugin stays tiny. It just imports a plain JS object from a virtual path. No work at boot.
 2. Tree-shaking works. If a feature isn't used, its template contents aren't referenced, and the bundle drops it.
 
 ### Virtual modules, and how to keep `tsc` happy
@@ -117,7 +117,7 @@ Each `use*` returns an unsubscribe function, which matters if you register inter
 
 ### Two transports, one API
 
-Most requests go through `fetch`. But `fetch` doesn't expose upload progress — the `ReadableStream` side of the Request body is fine for streams but browsers don't give you byte-level `progress` events the way XHR does. So when a caller passes `onRequestProgress`, the client swaps transports:
+Most requests go through `fetch`. But `fetch` doesn't expose upload progress. The `ReadableStream` side of the Request body is fine for streams but browsers don't give you byte-level `progress` events the way XHR does. So when a caller passes `onRequestProgress`, the client swaps transports:
 
 ```typescript
 const transport = ctx.options.onRequestProgress
@@ -125,7 +125,7 @@ const transport = ctx.options.onRequestProgress
   : defaultFetch;
 ```
 
-The XHR wrapper returns a Response-shaped object so the rest of the pipeline doesn't care how the bytes came back. That kind of "one API, swap the engine under it" has been my favorite pattern for two years — it keeps optional features optional without branching the whole code path.
+The XHR wrapper returns a Response-shaped object so the rest of the pipeline doesn't care how the bytes came back. That kind of "one API, swap the engine under it" has been my favorite pattern for two years. It keeps optional features optional without branching the whole code path.
 
 ### Interceptors by path, not by function
 
@@ -147,7 +147,7 @@ Interceptors are resolved as _file paths_, not inline functions. The generated t
 
 ### Error branding without `instanceof`
 
-`instanceof` fails the moment you have two copies of the same class — which happens with duplicated deps, iframes, web workers, or pnpm hoisting quirks. The client's error type uses a Symbol brand instead:
+`instanceof` fails the moment you have two copies of the same class. This happens with duplicated deps, iframes, web workers, or pnpm hoisting quirks. The client's error type uses a Symbol brand instead:
 
 ```typescript
 const API_ERROR_BRAND: unique symbol = Symbol.for(
@@ -190,13 +190,13 @@ export const rules = [
 ];
 ```
 
-At runtime, the plugin rehydrates the patterns with `new RegExp(source)` and matches against the current layout. The client never sees a glob parser — it's been pre-compiled away. On a typical app this saves a few KB, but more importantly it means adding more rules doesn't cost more bundle size beyond the rule strings themselves.
+At runtime, the plugin rehydrates the patterns with `new RegExp(source)` and matches against the current layout. The client never sees a glob parser; it's been pre-compiled away. On a typical app this saves a few KB, but more importantly it means adding more rules doesn't cost more bundle size beyond the rule strings themselves.
 
 ## `nuxt-crypto`: the LRU that caches promises
 
 The crypto service is the part I'm happiest with. It wraps Web Crypto's AES-GCM + PBKDF2 primitives with a clean encrypt/decrypt API. The trick is the key cache.
 
-PBKDF2 with 100,000 iterations is slow on purpose — that's the whole point. But when your UI tries to decrypt three fields from IndexedDB in parallel, doing three separate key derivations is both wasteful and slow. The cache fixes that, but the detail that actually matters is _what_ it caches:
+PBKDF2 with 100,000 iterations is slow on purpose; that's the whole point. But when your UI tries to decrypt three fields from IndexedDB in parallel, doing three separate key derivations is both wasteful and slow. The cache fixes that, but the detail that actually matters is _what_ it caches:
 
 ```typescript
 const getDerivedKey = async (salt, fingerprint?) => {
@@ -217,7 +217,7 @@ const getDerivedKey = async (salt, fingerprint?) => {
 };
 ```
 
-The cache holds `Promise<CryptoKey>`, not `CryptoKey`. If three `decrypt()` calls arrive in the same tick with the same salt, they all await the _same_ pending promise. PBKDF2 runs once. The naive version — cache the settled key — leaves a window where two calls both see "not cached" and start duplicate work.
+The cache holds `Promise<CryptoKey>`, not `CryptoKey`. If three `decrypt()` calls arrive in the same tick with the same salt, they all await the _same_ pending promise. PBKDF2 runs once. The naive version (cache the settled key) leaves a window where two calls both see "not cached" and start duplicate work.
 
 The LRU itself uses the fact that JavaScript `Map` preserves insertion order:
 
@@ -231,27 +231,27 @@ get(key: string): Promise<CryptoKey> | undefined {
 }
 ```
 
-Eviction is then just `this.map.keys().next().value` — the oldest.
+Eviction is then just `this.map.keys().next().value`: the oldest.
 
 ### Versioned payloads
 
 Encrypt output carries a version byte:
 
 ```
-[version: 1B] [salt: 16B] [iv: 12B] [ciphertext: …]
+[version: 1B] [salt: 16B] [iv: 12B] [ciphertext: ...]
 ```
 
-On decrypt, mismatched versions fail early. This is the kind of thing you add before you need it — the day I want to rotate from AES-GCM to something post-quantum, the old payloads will still decrypt through the old algorithm while new ones use the new one. Without a version byte you'd be stuck guessing.
+On decrypt, mismatched versions fail early. This is the kind of thing you add before you need it. The day I want to rotate from AES-GCM to something post-quantum, the old payloads will still decrypt through the old algorithm while new ones use the new one. Without a version byte you'd be stuck guessing.
 
 ## The docs site as a playground for the modules
 
-`apps/docs` uses all three modules. That sounds obvious, but it's load-bearing — the docs are _how I notice breakage_ before users do. If an update to api-provider breaks the doc site's JSON Placeholder demo, CI fails on the build step. No test suite needed for that particular class of regression.
+`apps/docs` uses all three modules. That sounds obvious, but it's load-bearing: the docs are _how I notice breakage_ before users do. If an update to api-provider breaks the doc site's JSON Placeholder demo, CI fails on the build step. No test suite needed for that particular class of regression.
 
 Other things that earned their keep:
 
-- **`@tailwindcss/vite`** — no PostCSS, no `tailwind.config.js`, just a Vite plugin. One less config file in my life.
-- **Static prerender to GitHub Pages** — Nitro's `github-pages` preset gives you a `/.output/public/` that Actions uploads straight to Pages. No servers, no cache invalidation, no surprises.
-- **`NUXT_PUBLIC_CF_ANALYTICS_TOKEN`** — optional Cloudflare Web Analytics. No cookies, no banner, no opinion.
+- **`@tailwindcss/vite`**: no PostCSS, no `tailwind.config.js`, just a Vite plugin. One less config file in my life.
+- **Static prerender to GitHub Pages**: Nitro's `github-pages` preset gives you a `/.output/public/` that Actions uploads straight to Pages. No servers, no cache invalidation, no surprises.
+- **`NUXT_PUBLIC_CF_ANALYTICS_TOKEN`**: optional Cloudflare Web Analytics. No cookies, no banner, no opinion.
 
 ## Release: Changesets all the way down
 
@@ -272,4 +272,4 @@ If I were starting a new Nuxt module from scratch, I'd lift these patterns witho
 - **Promise-keyed caches.** Any time the underlying operation is async and expensive, cache the promise, not the result.
 - **Framework-agnostic core + thin Nuxt wrapper.** Makes the code easier to test, easier to reuse, and easier to delete.
 
-The repo is MIT-licensed and lives on [GitHub](https://github.com/alikhalilll). If you spot something that could be better, open an issue — I'd genuinely rather be corrected than comfortable.
+The repo is MIT-licensed and lives on [GitHub](https://github.com/alikhalilll). If you spot something that could be better, open an issue. I'd genuinely rather be corrected than comfortable.

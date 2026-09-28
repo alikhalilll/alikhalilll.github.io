@@ -1,5 +1,5 @@
 ---
-title: Anatomy of ADataTable — a typed generic Vue data table
+title: Anatomy of ADataTable, a typed generic Vue data table
 description: A typed generic Vue data table with schema-shaped columns, Map-keyed selection, markRaw per-row actions, and a three-click sort cycle. A full tour.
 date: 2026-04-19
 updatedAt: 2026-04-19
@@ -16,9 +16,9 @@ keywords:
   - Nuxt
 ---
 
-I've written the same data table three times. Once as a ball of JSX, once as a class-based configuration object called `IColumn`, and once — the one that stuck — as a typed generic Vue component with a schema-shaped column type. The third time, it finally stopped being the thing I dreaded touching.
+I've written the same data table three times. Once as a ball of JSX, once as a class-based configuration object called `IColumn`, and once, the one that stuck, as a typed generic Vue component with a schema-shaped column type. The third time, it finally stopped being the thing I dreaded touching.
 
-This post is a tour of the current shape. It lives in my UI package as `ADataTable`, and the interesting thing about it is not any single trick — it's that the component has stopped growing. Every feature request for the last year has fit into the existing abstractions without a new prop. That's the version of "done" I was aiming for.
+This post is a tour of the current shape. It lives in my UI package as `ADataTable`, and the interesting thing about it is not any single trick. It's that the component has stopped growing. Every feature request for the last year has fit into the existing abstractions without a new prop. That's the version of "done" I was aiming for.
 
 I'll walk the files in roughly the order the request flows through them, pausing on the bits worth explaining.
 
@@ -49,7 +49,7 @@ export class IColumn {
 }
 ```
 
-The class normalized props and events — if you passed a static object, it got wrapped in `() => object` so the table could always call it as a function. It was tidy on paper, and fine in JavaScript. The trouble started when TypeScript came in: generic row types didn't flow through a runtime class cleanly, and consumers lost type inference at exactly the spot where they were trying to reach into `row.user.name`.
+The class normalized props and events. If you passed a static object, it got wrapped in `() => object` so the table could always call it as a function. It was tidy on paper, and fine in JavaScript. The trouble started when TypeScript came in: generic row types didn't flow through a runtime class cleanly, and consumers lost type inference at exactly the spot where they were trying to reach into `row.user.name`.
 
 The current shape is a plain typed interface:
 
@@ -73,11 +73,11 @@ export interface IDataTableColumn<T = unknown> {
 
 Three things changed, and all three mattered.
 
-First, no class. A column is just a plain object. TypeScript narrows it, editors autocomplete it, it serializes cleanly if you ever want to drive the table from JSON. The normalization the class used to do at construction time moved to a tiny helper in the renderer (`handleProps`, which we'll hit in a minute) — the cost is one branch per cell render instead of one branch per column _definition_, and the benefit is the column stays a value, not a runtime object.
+First, no class. A column is just a plain object. TypeScript narrows it, editors autocomplete it, it serializes cleanly if you ever want to drive the table from JSON. The normalization the class used to do at construction time moved to a tiny helper in the renderer (`handleProps`, which we'll hit in a minute). The cost is one branch per cell render instead of one branch per column _definition_, and the benefit is the column stays a value, not a runtime object.
 
-Second, the column is generic over `T`. `IDataTableColumn<User>` means `key` typed as `string | (row: User) => ...`, which flows into every downstream callback. The day I added this, three call-sites at work silently picked up type errors for columns that had been quietly broken.
+Second, the column is generic over `T`. `IDataTableColumn<User>` means `key` typed as `string | (row: User) => ...` which flows into every downstream callback. The day I added this, three call-sites at work silently picked up type errors for columns that had been quietly broken.
 
-Third, render responsibilities split cleanly. `headRender` is for the header cell only, `bodyRender` for the body cell. The class version had a single `rowComponent` that did both and branched internally — which meant "custom header, default body" required an undocumented combination of nullish fields.
+Third, render responsibilities split cleanly. `headRender` is for the header cell only; `bodyRender` for the body cell. The class version had a single `rowComponent` that did both and branched internally, which meant "custom header, default body" required an undocumented combination of nullish fields.
 
 None of this is a new idea. The move from runtime classes to schema-shaped types is the story of most UI codebases in the last five years. The only reason it's worth mentioning is that I wrote the class version _first_ and kept shipping it long after the typed version would have been cheaper. The cost of switching wasn't the refactor; it was admitting that the first design had run out.
 
@@ -106,7 +106,7 @@ The table component does not render rows directly. It renders a `<thead>`, a `<t
 </template>
 ```
 
-One `<tr>`. One `<ATCell>` per column, with `head={true}`. The `record` is a synthetic empty object cast to `S` — the header doesn't have a row, but `ATCell` is generic over it, so something has to fill the slot. Casting `{} as S` is the least-bad option; giving it an actual `undefined` would force every cell render to null-check.
+One `<tr>`. One `<ATCell>` per column, with `head={true}`. The `record` is a synthetic empty object cast to `S`. The header doesn't have a row, but `ATCell` is generic over it, so something has to fill the slot. Casting `{} as S` is the least-bad option; giving it an actual `undefined` would force every cell render to null-check.
 
 `ATBody.vue` is the same shape, one level up:
 
@@ -127,9 +127,9 @@ One `<tr>`. One `<ATCell>` per column, with `head={true}`. The `record` is a syn
 </tbody>
 ```
 
-The composed keys (`$index + '_dataItem'`, `collIndex + '_dataItem_' + $index`) aren't paranoia — Vue's reconciler only cares about keys being unique _within their parent list_, so the `$index` alone would be enough. But when I'm scrolling through Vue DevTools trying to figure out which row is which, having the key say "`3_dataItem`" instead of just "`3`" saves me a second. That's the only reason for the suffix.
+The composed keys (`$index + '_dataItem'`, `collIndex + '_dataItem_' + $index`) aren't paranoia. Vue's reconciler only cares about keys being unique _within their parent list_, so the `$index` alone would be enough. But when I'm scrolling through Vue DevTools trying to figure out which row is which, having the key say "`3_dataItem`" instead of just "`3`" saves me a second. That's the only reason for the suffix.
 
-The `<slot />` inside `<tbody>` is where the no-data row lands — the outer component pipes `<tr><td>...</td></tr>` through it. Keeping the empty-state as a slotted row rather than a separate element means `colspan` math works against the same `<tr>` grid, and the border-collapsing styles don't break.
+The `<slot />` inside `<tbody>` is where the no-data row lands. The outer component pipes `<tr><td>...</td></tr>` through it. Keeping the empty-state as a slotted row rather than a separate element means `colspan` math works against the same `<tr>` grid, and the border-collapsing styles don't break.
 
 The real work happens in `ATCell.vue`.
 
@@ -178,13 +178,13 @@ const handleProps = <T,>(val: IDataTableColumn<T>['props'], record: T) => {
 };
 ```
 
-That's the "always callable" contract the old `IColumn` class enforced at construction — moved to the render path, where it's cheaper in the common case (static props don't get wrapped unnecessarily) and still gives consumers the choice.
+That's the "always callable" contract the old `IColumn` class enforced at construction, moved to the render path, where it's cheaper in the common case (static props don't get wrapped unnecessarily) and still gives consumers the choice.
 
-The spread order matters: `props.cell.props` is spread first, `props.binder` second. `binder` is the same as `cell.props` — it's passed in via a separate prop for historical reasons I'd collapse if I rewrote this. Until then, `binder` wins on conflict, which is what callers expect.
+The spread order matters: `props.cell.props` is spread first, `props.binder` second. `binder` is the same as `cell.props`; it's passed in via a separate prop for historical reasons I'd collapse if I rewrote this. Until then, `binder` wins on conflict, which is what callers expect.
 
 ### The `:key="sortValue?.applied"` that looks like a typo
 
-The second thing is that odd `:key="props.cell.sortValue?.applied || 'ATCell'"`. The component's `<component :is>` reacts to changes in the vnode, but the `:key` looks like it's there to force a remount when the sort state flips. That's exactly what it's for. Vue's patching is smart enough to diff two `h()` outputs, but if the cell's props came from a function of the record _and_ the record changed at the same time the sort flipped, the patcher can sometimes hold onto a stale attribute. Keying by sort state forces a clean unmount/remount on exactly the transition where that can matter. It's one line. Removing it hasn't bitten me yet — which either means it's over-cautious, or it's quietly preventing the bug. I'm not sure, and I've stopped trying to prove it either way. The cost of the key is a single render per sort toggle.
+The second thing is that odd `:key="props.cell.sortValue?.applied || 'ATCell'"`. The component's `<component :is>` reacts to changes in the vnode, but the `:key` looks like it's there to force a remount when the sort state flips. That's exactly what it's for. Vue's patching is smart enough to diff two `h()` outputs, but if the cell's props came from a function of the record _and_ the record changed at the same time the sort flipped, the patcher can sometimes hold onto a stale attribute. Keying by sort state forces a clean unmount/remount on exactly the transition where that can matter. It's one line. Removing it hasn't bitten me yet, which either means it's over-cautious or it's quietly preventing the bug. I'm not sure, and I've stopped trying to prove it either way. The cost of the key is a single render per sort toggle.
 
 ## `handleValueBasedOnKey`: dot-paths into rows
 
@@ -222,7 +222,7 @@ const handleValueBasedOnKey = (key: string, receivedData: T): unknown => {
 
 A column with `key: 'user.profile.displayName'` walks the dots and pulls the nested value. This is the single feature that stops consumers from writing a `bodyRender` function 80% of the time. Most tables have three or four columns that are just `row.foo.bar`; giving them a dot-path means the schema-as-data approach wins one more round.
 
-I'm using `innerHTML` for the default renderer. That's deliberate for titles that want to include `<br>` or a small bit of emphasis — and it's a footgun for user-controlled data. The convention I ended up with in code review is "use the default for static titles and sanitized data; for anything user-generated, write a `bodyRender` that uses a child component." I haven't found a cleaner way to express that in the type system, and I'm not sure I want to force everyone through `bodyRender` for every cell.
+I'm using `innerHTML` for the default renderer. That's deliberate for titles that want to include `<br>` or a small bit of emphasis, and it's a footgun for user-controlled data. The convention I ended up with in code review is "use the default for static titles and sanitized data; for anything user-generated, write a `bodyRender` that uses a child component." I haven't found a cleaner way to express that in the type system, and I'm not sure I want to force everyone through `bodyRender` for every cell.
 
 ## Row keys: the fallback when nobody supplies one
 
@@ -259,10 +259,10 @@ function getRowKey(row: T): string {
 Three small calls, each earning its weight:
 
 - **`id` shortcut first.** Most backend records have one. `String(obj.id)` handles numbers, strings, and BigInts without branching. The cast is dishonest in the type system and honest at runtime.
-- **Sort the keys before hashing.** `Object.keys()` returns insertion order. For most objects that order is the same every time, but "most" isn't "all" — an object rebuilt from `JSON.parse` won't necessarily agree with one built from an object literal with the same keys. Sorting kills the whole class.
+- **Sort the keys before hashing.** `Object.keys()` returns insertion order. For most objects that order is the same every time, but "most" isn't "all". An object rebuilt from `JSON.parse` won't necessarily agree with one built from an object literal with the same keys. Sorting kills the whole class.
 - **`String()` over `JSON.stringify`.** `String()` never throws; `JSON.stringify` throws on circular references (which happen when you're careless with Pinia). The goal is a key that's stable, not a serializer.
 
-The key is used both for Vue's reconciliation _and_ for selection. That's the invariant that matters. If the two used different notions of identity — `:key="i"` and selection using `===` — a sort could drop checkboxes while keeping the data. Using `getRowKey` in both places means they can't drift.
+The key is used both for Vue's reconciliation _and_ for selection. That's the invariant that matters. If the two used different notions of identity (`:key="i"` and selection using `===`), a sort could drop checkboxes while keeping the data. Using `getRowKey` in both places means they can't drift.
 
 ## Selection as a `Map<string, T>`
 
@@ -287,13 +287,13 @@ const isAllDataSelected = computed(() => {
 });
 ```
 
-O(n) across the visible items — which is already O(n) to render. Nothing we can do to improve that. But per-row selection checks are O(1):
+O(n) across the visible items, which is already O(n) to render. Nothing we can do to improve that. But per-row selection checks are O(1):
 
 ```typescript
 modelValue: hashedSelectedItems.value.has(getRowKey(rowData)),
 ```
 
-Without the computed Map, each checkbox would do `localSelectedItems.value.find(...)` on render. A 100-row table with 100 selected items would be doing 10,000 comparisons per re-render. The Map turns that into 100 constant-time lookups. You only notice this once you've blown up a table with real data, at which point you learn the pattern and stop writing the naïve version.
+Without the computed Map, each checkbox would do `localSelectedItems.value.find(...)` on render. A 100-row table with 100 selected items would be doing 10,000 comparisons per re-render. The Map turns that into 100 constant-time lookups. You only notice this once you've blown up a table with real data. At which point you learn the pattern and stop writing the naïve version.
 
 The selection column itself is built on demand. The consumer either declares it as a column (`type: 'selection'`) or doesn't:
 
@@ -305,7 +305,7 @@ if (hasSelectColumn) {
 }
 ```
 
-The existing `type: 'selection'` column, if any, is replaced with the internally-built one and forced to position 0. The consumer's instance is a _marker_ — "I want selection in this table" — and the component writes the actual renderers. This gives consumers the API surface of "selection is a column" without requiring them to know how to build checkboxes and wire up the `indeterminate` state.
+The existing `type: 'selection'` column, if any, is replaced with the internally-built one and forced to position 0. The consumer's instance is a _marker_ ("I want selection in this table"), and the component writes the actual renderers. This gives consumers the API surface of "selection is a column" without requiring them to know how to build checkboxes and wire up the `indeterminate` state.
 
 ## Actions, and the `markRaw` that earned its keep
 
@@ -325,13 +325,13 @@ const actionsComponent: IDataTableRenderFunction<T> = (rowData, index) =>
 
 `markRaw(AActionGroup)` is the line I want to isolate.
 
-When you pass a component definition to `h()`, Vue touches it during render. Without `markRaw`, if that component definition ever passes through Vue's reactivity system — a `ref`, a `reactive`, a prop — it gets wrapped in a Proxy. Component definitions aren't meant to be reactive. They're static metadata. Wrapping them doesn't break anything; it just makes every property read go through a handler that does a reactivity-tracking check that never pays off.
+When you pass a component definition to `h()`, Vue touches it during render. Without `markRaw`, if that component definition ever passes through Vue's reactivity system (a `ref`, a `reactive`, a prop) it gets wrapped in a Proxy. Component definitions aren't meant to be reactive. They're static metadata. Wrapping them doesn't break anything; it just makes every property read go through a handler that does a reactivity-tracking check that never pays off.
 
 The render function above runs once per row. For a table with 500 rows, the first render touches `AActionGroup`'s definition 500 times. `markRaw` sets a `__v_skip` flag on the object once, and every subsequent render skips the Proxy path.
 
-The cost of `markRaw` is permanent — you can't un-mark it. That's fine for a component definition: it's a static import. If you wanted to hot-swap the action component at runtime, you'd do that at a different layer (picking _which_ component you pass to `markRaw`), not by making the reference reactive.
+The cost of `markRaw` is permanent. You can't un-mark it. That's fine for a component definition: it's a static import. If you wanted to hot-swap the action component at runtime, you'd do that at a different layer (picking _which_ component you pass to `markRaw`), not by making the reference reactive.
 
-There's also a dev-mode warning — "Vue received a Component that was made a reactive object" — that fires when a reactive component slips into `h()`. I hit that on a 1200-row table where `AActionGroup` was passed through a `shallowRef` for theming. Adding `markRaw` silenced it and dropped the first-paint time noticeably.
+There's also a dev-mode warning ("Vue received a Component that was made a reactive object") that fires when a reactive component slips into `h()`. I hit that on a 1200-row table where `AActionGroup` was passed through a `shallowRef` for theming. Adding `markRaw` silenced it and dropped the first-paint time noticeably.
 
 The visible-action count can be either a number or a function of the row:
 
@@ -371,6 +371,7 @@ function handleToggleSortButton(sorterValue: ISortValue): ISortValue {
 ```
 
 Click once: ascending. Click again: descending. Click a third time: back to the original order. Users expect this on every table they've ever used, and they're always surprised when a table _doesn't_ have the "unsort" click.
+
 
 The actual sorting has two paths: remote and local.
 
@@ -414,9 +415,9 @@ const localActions = shallowRef<IAction<T>[]>(_.cloneDeep(globalProps.actions));
 const localSelectedItems = shallowRef<T[]>(_.cloneDeep(globalProps.selectedItems));
 ```
 
-A `ref` wraps arrays in a reactive proxy that tracks every mutation. For a 1000-row table, that's 1000 proxies (and however many nested proxies per row). Most of it is overhead — the component only ever reassigns `.value` wholesale, never mutates individual rows in place. `shallowRef` says "track when the reference changes, don't recurse." Which is exactly the contract the component needs.
+A `ref` wraps arrays in a reactive proxy that tracks every mutation. For a 1000-row table, that's 1000 proxies (and however many nested proxies per row). Most of it is overhead. The component only ever reassigns `.value` wholesale, never mutates individual rows in place. `shallowRef` says "track when the reference changes, don't recurse." Which is exactly the contract the component needs.
 
-The cloning is the second half of that story. `_.cloneDeep(globalProps.items)` snapshots the parent's data at assignment time; the table operates on its copy. This matters for sort: when the user sorts, the table mutates its `localItems` without affecting the parent's array. Skipping the clone would turn a visual sort into a mutation on the parent's state — which is where the worst class of "the server-side export didn't match what was on screen" bugs come from.
+The cloning is the second half of that story. `_.cloneDeep(globalProps.items)` snapshots the parent's data at assignment time; the table operates on its copy. This matters for sort: when the user sorts, the table mutates its `localItems` without affecting the parent's array. Skipping the clone would turn a visual sort into a mutation on the parent's state, which is where the worst class of "the server-side export didn't match what was on screen" bugs come from.
 
 Re-watching uses `debouncedWatch`:
 
@@ -434,7 +435,7 @@ debouncedWatch(
 );
 ```
 
-Why debounce? Because parent state often thrashes. A filter change at the parent level can trigger three re-renders in quick succession — form update, query string update, fetched response replacing the placeholder. Without a debounce, the table would clone its items three times in a single frame. 100ms for items and 50ms for selection are numbers I landed on by eyeballing the production behavior; they're not hallowed. If I had the appetite I'd make them props.
+Why debounce? Because parent state often thrashes. A filter change at the parent level can trigger three re-renders in quick succession: form update, query string update, fetched response replacing the placeholder. Without a debounce, the table would clone its items three times in a single frame. 100ms for items and 50ms for selection are numbers I landed on by eyeballing the production behavior; they're not hallowed. If I had the appetite I'd make them props.
 
 The columns/actions watcher is _not_ debounced:
 
@@ -450,9 +451,9 @@ watch(
 );
 ```
 
-Column and action changes are rare — usually they're declared once at the top of a `<script setup>` and never touched again. A debounce would introduce perceptible lag for the uncommon case where they do change (e.g. an admin toggling a column visibility). The asymmetry — debounce items, don't debounce columns — maps to how consumers actually use the component.
+Column and action changes are rare. Usually they're declared once at the top of a `<script setup>` and never touched again. A debounce would introduce perceptible lag for the uncommon case where they do change (e.g. an admin toggling a column visibility). The asymmetry (debounce items, don't debounce columns) maps to how consumers actually use the component.
 
-## Loading, empty, paginated — the surrounding chrome
+## Loading, empty, paginated: the surrounding chrome
 
 The surrounding chrome is a small story that nobody writes down.
 
@@ -467,7 +468,7 @@ The loading state is an absolutely-positioned overlay with `pointer-events-none`
 </div>
 ```
 
-`pointer-events-none` is the detail. Without it, the overlay intercepts clicks on the rows underneath — even though it's visually translucent, the user can't interact with the blurred table. The intent is "show that something's happening, don't block the user from selecting a row they can still see." The overlay is just a hint.
+`pointer-events-none` is the detail. Without it, the overlay intercepts clicks on the rows underneath. Even though it's visually translucent, the user can't interact with the blurred table. The intent is "show that something's happening, don't block the user from selecting a row they can still see." The overlay is just a hint.
 
 The empty state is a row inside the table, not a sibling:
 
@@ -497,16 +498,16 @@ Pagination is optional and driven by the `pagination` prop:
 </div>
 ```
 
-Two things worth flagging. The pagination component is hidden during loading — without this, a page-size dropdown would be active during fetch, and a second rapid click could fire a second page request. And the callbacks are passed inside the `pagination` object as fields (`onPageSizeChange`, `onUpdateCurrentPage`) rather than as separate props. I'm not sure that was the right call; emitting would have been more idiomatic Vue. But it keeps the "pagination is a single config blob" story clean.
+Two things worth flagging. The pagination component is hidden during loading. Without this, a page-size dropdown would be active during fetch, and a second rapid click could fire a second page request. And the callbacks are passed inside the `pagination` object as fields (`onPageSizeChange`, `onUpdateCurrentPage`) rather than as separate props. I'm not sure that was the right call; emitting would have been more idiomatic Vue. But it keeps the "pagination is a single config blob" story clean.
 
 ## What I'd change on a fourth rewrite
 
 A few places where today's code isn't the version I'd write fresh:
 
 - **The `binder` vs `cell.props` duplication in `ATCell`.** Two separate props pointing at the same data. Collapsing to one prop would remove one spread and one branch. I left it because old call-sites depend on the name.
-- **`innerHTML` for default cells.** The footgun is real, the ergonomics are worth it. If I did it over I'd either go `textContent` by default and make HTML opt-in via a column field (`unsafe: true`), or commit fully to a slot-based approach. Both are refactors; neither is urgent.
-- **The `{} as S` cast in the header.** Works, but an optional `record?: S` on `ATCell` would be more honest — headers don't have a record, say so in the type.
+- **`innerHTML` for default cells.** The footgun is real; the ergonomics are worth it. If I did it over I'd either go `textContent` by default and make HTML opt-in via a column field (`unsafe: true`), or commit fully to a slot-based approach. Both are refactors; neither is urgent.
+- **The `{} as S` cast in the header.** Works, but an optional `record?: S` on `ATCell` would be more honest. Headers don't have a record; say so in the type.
 - **The hardcoded debounce values (50ms, 100ms).** Should be props. Three minutes of work; I keep not doing it.
 - **The computed `Cell` paired with `<component :is>` keyed on sort state.** Still squinting at this one. Either the key is unnecessary (delete it and watch what happens) or it's hiding a timing bug in the patcher I should reproduce. I owe the code base that investigation.
 
-None of those are the reason I'd recommend this pattern. The reason is smaller and duller: the column-as-data schema, the `shallowRef` + clone + debounce rhythm, the Map-keyed selection, the `markRaw` on the per-row component. Each of them is the kind of thing you write the second time, after the first version has bitten you once. Which is the whole story of `ADataTable` — the shape it landed in is the shape of a thing I stopped rewriting.
+None of those are the reason I'd recommend this pattern. The reason is smaller and duller: the column-as-data schema, the `shallowRef` + clone + debounce rhythm, the Map-keyed selection, the `markRaw` on the per-row component. Each of them is the kind of thing you write the second time, after the first version has bitten you once. Which is the whole story of `ADataTable`. The shape it landed in is the shape of a thing I stopped rewriting.

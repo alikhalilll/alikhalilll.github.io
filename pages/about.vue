@@ -224,7 +224,7 @@ const stack: StackGroup[] = [
               dir="ltr"
             >
               <span>{{ formatYear(role.start) }}</span>
-              <span aria-hidden="true"> — </span>
+              <span aria-hidden="true"> to </span>
               <span v-if="role.end">{{ formatYear(role.end) }}</span>
               <span v-else>{{ t('common.present') }}</span>
             </div>
