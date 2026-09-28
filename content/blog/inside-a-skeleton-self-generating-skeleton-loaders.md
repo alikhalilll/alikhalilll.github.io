@@ -1,6 +1,6 @@
 ---
 title: Inside @alikhalilll/a-skeleton, self-generating skeleton loaders
-description: How a-skeleton derives placeholder UI from the real component. Clone mode, structural mode, mirror mode, and the capture → cache → replay pipeline behind them.
+description: How a-skeleton derives placeholder UI from the real component. Clone mode, structural mode, mirror mode, and the capture, cache, and replay pipeline behind them.
 date: 2026-06-13
 keywords:
   - Vue 3
@@ -164,7 +164,7 @@ The other thing structural mode gives you is persistence. `persist: true` mirror
 
 The three strategies pick different default behaviours from the same primitives. Clone replays absolutely-positioned pixels. Mirror replays vnodes in the original tree. Structural replays containers in normal flow. One cache module, one theming surface, one a11y baseline, three engines.
 
-## The capture → cache → replay pipeline
+## The capture, cache, and replay pipeline
 
 The architectural story is the same across all three modes, even though the implementations diverge. Here's how a single loading cycle plays out, end to end.
 

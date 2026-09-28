@@ -1,6 +1,6 @@
 ---
 title: Building ali-nuxt-toolkit, a tour of the internals
-description: Three Nuxt 4 modules in a pnpm monorepo: a typed fetch client with upload progress, AES-GCM + PBKDF2 crypto, and layout-scoped middleware.
+description: Three Nuxt 4 modules in a pnpm monorepo. A typed fetch client with upload progress, AES-GCM and PBKDF2 crypto, and layout-scoped middleware.
 date: 2026-01-12
 keywords:
   - Nuxt 4

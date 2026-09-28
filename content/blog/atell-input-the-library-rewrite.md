@@ -1,6 +1,6 @@
 ---
-title: ATellInput, the library cut, what changed in the rewrite
-description: Turning an in-app phone input into a published Vue component forced specific changes: detection-first UX, an ISO2 + dial-number split, a responsive popover/drawer picker, and slots for everything.
+title: Notes from rewriting ATellInput as a published library
+description: Turning an in-app phone input into a published Vue component forced specific changes. Detection-first UX, an ISO2 and dial-number split, a responsive popover and drawer picker, and slots for everything.
 date: 2026-05-21
 updatedAt: 2026-05-21
 keywords:
@@ -231,7 +231,7 @@ Four signals, evaluated in cost order: cheap-and-cached first, expensive-and-net
 
 1. `sessionStorage` cache. The user already resolved to a country during this session; we don't redo the work.
 2. IP geolocation via `ipapi.co` (configurable). The most accurate signal but it costs a network call and a tiny bit of privacy. `strategy: 'locale'` skips this step for consumers who don't want the request.
-3. Timezone, via `Intl.DateTimeFormat().resolvedOptions().timeZone`, looked up against a hand-rolled `Africa/Cairo → EG`, `Asia/Riyadh → SA`, `Europe/London → GB` table. The map covers the most-populated zones; it's honest about not covering every one. A miss falls through.
+3. Timezone, via `Intl.DateTimeFormat().resolvedOptions().timeZone`, looked up against a hand-rolled table that maps `Africa/Cairo` to `EG`, `Asia/Riyadh` to `SA`, `Europe/London` to `GB`, and so on. The map covers the most-populated zones; it's honest about not covering every one. A miss falls through.
 4. `navigator.language`, which gives `en-EG` or `ar-SA` and similar. The region suffix is the country. Less reliable (users move; browser locales don't), but free.
 5. The caller-supplied default. `defaultCountry: 'US'` is the library default; consumers can pick their own.
 
