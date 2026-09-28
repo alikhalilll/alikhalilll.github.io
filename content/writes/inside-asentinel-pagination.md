@@ -2,6 +2,7 @@
 title: Four bugs every infinite-scroll list has, and their fixes
 description: The four bugs every infinite-scroll list eventually ships, and the specific lines inside a 230-line Vue component that prevent each one.
 date: 2026-02-28
+lang: en
 updatedAt: 2026-02-28
 keywords:
   - infinite scroll

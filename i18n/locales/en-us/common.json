@@ -248,7 +248,8 @@
     "updated": "Updated",
     "related": "Continue reading",
     "entries_count": "{n} entry | {n} entries",
-    "undated": "Undated"
+    "undated": "Undated",
+    "english_only_notice": "This article is currently available in English only."
   },
   "theme": {
     "mode": "Mode",

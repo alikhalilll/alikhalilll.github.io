@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const route = useRoute();
 const config = useRuntimeConfig();
-const { t, locales } = useI18n();
+const { t, locale, locales } = useI18n();
 const localePath = useLocalePath();
 const { formatDate } = useLocalizedDate();
 
@@ -135,6 +135,12 @@ onBeforeUnmount(() => {
 const postLang = computed(() => post.value?.lang ?? 'en');
 const postDir = computed(() => (postLang.value.toLowerCase().startsWith('ar') ? 'rtl' : 'ltr'));
 
+const localeLangRoot = computed(() => locale.value.split('-')[0]?.toLowerCase() ?? 'en');
+const postLangRoot = computed(() => postLang.value.split('-')[0]?.toLowerCase() ?? 'en');
+const isEnglishLocale = computed(() => localeLangRoot.value === 'en');
+const audioEnabled = computed(() => isEnglishLocale.value && postLangRoot.value === 'en');
+const showLangNotice = computed(() => postLangRoot.value !== localeLangRoot.value);
+
 const siteUrl = (config.public.siteUrl as string).replace(/\/$/, '');
 const url = `${siteUrl}${route.path}`;
 const title = post.value?.title ?? '';
@@ -199,10 +205,7 @@ const coverFor = (p: { path: string; image?: string }) => {
 </script>
 
 <template>
-  <article :dir="postDir" :lang="postLang" class="py-8 sm:py-12">
-    <!-- Reading progress bar. Sits above everything (z-50), thin, primary
-         accent. width is set as a % of scroll depth. Hidden if the user
-         prefers reduced motion — the moving strip can be visual clutter. -->
+  <div class="py-8 sm:py-12">
     <div aria-hidden="true" class="fixed inset-x-0 top-0 z-50 h-[3px] motion-reduce:hidden">
       <div
         class="h-full bg-primary transition-[width] duration-150 ease-out"
@@ -219,61 +222,73 @@ const coverFor = (p: { path: string; image?: string }) => {
         {{ t('common.all_writing') }}
       </NuxtLink>
 
-      <header>
-        <h1
-          class="text-4xl leading-[1.05] font-semibold tracking-tight text-balance sm:text-5xl md:text-[3.25rem]"
-          style="text-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 8%, transparent)"
-        >
-          {{ post?.title }}
-        </h1>
+      <article :dir="postDir" :lang="postLang">
+        <header>
+          <h1
+            class="text-4xl leading-[1.05] font-semibold tracking-tight text-balance sm:text-5xl md:text-[3.25rem]"
+            style="text-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 8%, transparent)"
+          >
+            {{ post?.title }}
+          </h1>
 
-        <p
-          v-if="post?.description"
-          class="mt-6 text-lg leading-relaxed text-muted-foreground text-pretty sm:text-xl"
-        >
-          {{ post.description }}
-        </p>
+          <p
+            v-if="post?.description"
+            class="mt-6 text-lg leading-relaxed text-muted-foreground text-pretty sm:text-xl"
+          >
+            {{ post.description }}
+          </p>
+
+          <div
+            class="mt-8 flex flex-wrap items-center gap-3 font-mono text-[11px] tracking-widest text-muted-foreground uppercase ar:font-sans ar:tracking-normal ar:normal-case ar:text-xs"
+          >
+            <span aria-hidden="true" class="h-px w-8 bg-border" />
+            <time v-if="post?.date" :datetime="post.date" dir="ltr">
+              {{ formatDate(post.date, { year: 'numeric', month: 'short', day: 'numeric' }) }}
+            </time>
+            <span aria-hidden="true">·</span>
+            <span>{{ t('blog.min_read', { n: readingTime }, readingTime) }}</span>
+            <template v-if="post?.updatedAt && post.updatedAt !== post.date">
+              <span aria-hidden="true">·</span>
+              <span>
+                {{ t('blog.updated') }}
+                {{
+                  formatDate(post.updatedAt, { year: 'numeric', month: 'short', day: 'numeric' })
+                }}
+              </span>
+            </template>
+          </div>
+        </header>
 
         <div
-          class="mt-8 flex flex-wrap items-center gap-3 font-mono text-[11px] tracking-widest text-muted-foreground uppercase ar:font-sans ar:tracking-normal ar:normal-case ar:text-xs"
+          v-if="post?.image"
+          class="mt-10 overflow-hidden rounded-xl bg-muted ring-1 ring-border sm:mt-14"
         >
-          <span aria-hidden="true" class="h-px w-8 bg-border" />
-          <time v-if="post?.date" :datetime="post.date" dir="ltr">
-            {{ formatDate(post.date, { year: 'numeric', month: 'short', day: 'numeric' }) }}
-          </time>
-          <span aria-hidden="true">·</span>
-          <span>{{ t('blog.min_read', { n: readingTime }, readingTime) }}</span>
-          <template v-if="post?.updatedAt && post.updatedAt !== post.date">
-            <span aria-hidden="true">·</span>
-            <span>
-              {{ t('blog.updated') }}
-              {{ formatDate(post.updatedAt, { year: 'numeric', month: 'short', day: 'numeric' }) }}
-            </span>
-          </template>
+          <img
+            :src="post.image"
+            :alt="post.title"
+            class="aspect-[16/9] size-full object-cover"
+            width="1280"
+            height="720"
+            fetchpriority="high"
+          />
         </div>
-      </header>
 
-      <div
-        v-if="post?.image"
-        class="mt-10 overflow-hidden rounded-xl bg-muted ring-1 ring-border sm:mt-14"
-      >
-        <img
-          :src="post.image"
-          :alt="post.title"
-          class="aspect-[16/9] size-full object-cover"
-          width="1280"
-          height="720"
-          fetchpriority="high"
-        />
-      </div>
+        <ClientOnly v-if="audioEnabled">
+          <ArticleAudio :slug="slug" @update:active-index="activeIndex = $event" />
+        </ClientOnly>
 
-      <ClientOnly>
-        <ArticleAudio :slug="slug" @update:active-index="activeIndex = $event" />
-      </ClientOnly>
+        <p
+          v-if="showLangNotice"
+          class="mt-10 rounded-lg border border-border bg-foreground/[0.02] px-4 py-3 text-sm text-muted-foreground"
+        >
+          <Icon name="lucide:languages" class="inline size-4 align-[-2px]" />
+          {{ t('blog.english_only_notice') }}
+        </p>
 
-      <BlogTocMobile :links="tocLinks" />
+        <BlogTocMobile :links="tocLinks" />
 
-      <ContentRenderer v-if="post" ref="postBody" :value="post" class="post-body" />
+        <ContentRenderer v-if="post" ref="postBody" :value="post" class="post-body" />
+      </article>
 
       <footer class="mt-16 border-t border-border pt-8">
         <div class="flex items-center gap-4">
@@ -363,7 +378,7 @@ const coverFor = (p: { path: string; image?: string }) => {
         </li>
       </ul>
     </section>
-  </article>
+  </div>
 </template>
 
 <style>

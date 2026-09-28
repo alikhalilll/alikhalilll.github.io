@@ -2,6 +2,7 @@
 title: A custom fetch wrapper, and XHR for upload progress
 description: Why native fetch is the right default, how to build a layered wrapper (base URL, timeouts, interceptors, retry), and when you still need XHR.
 date: 2025-09-22
+lang: en
 updatedAt: 2025-09-22
 keywords:
   - fetch API

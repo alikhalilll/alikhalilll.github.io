@@ -16,7 +16,7 @@ const { data: posts } = await useAsyncData('writes-previews', () =>
         :to="localePath('/writes')"
         class="text-sm text-muted-foreground no-underline hover:text-foreground"
       >
-        {{ t('common.all_writing') }} →
+        {{ t('common.all_writing') }}
       </NuxtLink>
     </div>
 
@@ -27,10 +27,19 @@ const { data: posts } = await useAsyncData('writes-previews', () =>
           class="group flex items-start justify-between gap-4 py-5 no-underline"
         >
           <div class="min-w-0 flex-1">
-            <p class="text-base font-medium text-foreground group-hover:text-primary">
+            <p
+              :lang="post.lang ?? 'en'"
+              :dir="(post.lang ?? 'en').toLowerCase().startsWith('ar') ? 'rtl' : 'ltr'"
+              class="text-base font-medium text-foreground group-hover:text-primary"
+            >
               {{ post.title }}
             </p>
-            <p v-if="post.description" class="mt-1 line-clamp-2 text-sm text-muted-foreground">
+            <p
+              v-if="post.description"
+              :lang="post.lang ?? 'en'"
+              :dir="(post.lang ?? 'en').toLowerCase().startsWith('ar') ? 'rtl' : 'ltr'"
+              class="mt-1 line-clamp-2 text-sm text-muted-foreground"
+            >
               {{ post.description }}
             </p>
             <div class="mt-2 flex items-center gap-3 text-xs text-muted-foreground">

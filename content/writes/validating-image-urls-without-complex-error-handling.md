@@ -2,6 +2,7 @@
 title: Validating image URLs without complex error handling
 description: A small async helper that uses the browser's Image object to tell you whether a URL actually resolves to a loadable image, without a fetch and without CORS concerns.
 date: 2023-07-11
+lang: en
 keywords:
   - JavaScript
   - image validation

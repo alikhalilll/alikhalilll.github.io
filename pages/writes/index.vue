@@ -86,12 +86,16 @@ const yearLabel = (key: string) => (key === UNDATED ? t('blog.undated') : format
 
                 <div class="min-w-0">
                   <h3
+                    :lang="post.lang ?? 'en'"
+                    :dir="(post.lang ?? 'en').toLowerCase().startsWith('ar') ? 'rtl' : 'ltr'"
                     class="font-serif text-xl leading-[1.2] font-semibold tracking-tight text-balance text-foreground transition-colors group-hover/post:text-primary sm:text-2xl md:text-[1.65rem]"
                   >
                     {{ post.title }}
                   </h3>
                   <p
                     v-if="post.description"
+                    :lang="post.lang ?? 'en'"
+                    :dir="(post.lang ?? 'en').toLowerCase().startsWith('ar') ? 'rtl' : 'ltr'"
                     class="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground sm:text-base"
                   >
                     {{ post.description }}

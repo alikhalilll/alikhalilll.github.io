@@ -2,6 +2,7 @@
 title: Inside @alikhalilll/a-skeleton, self-generating skeleton loaders
 description: How a-skeleton derives placeholder UI from the real component. Clone mode, structural mode, mirror mode, and the capture, cache, and replay pipeline behind them.
 date: 2026-06-13
+lang: en
 keywords:
   - Vue 3
   - Nuxt

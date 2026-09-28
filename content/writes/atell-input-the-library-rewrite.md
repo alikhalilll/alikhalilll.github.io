@@ -2,6 +2,7 @@
 title: Notes from rewriting ATellInput as a published library
 description: Turning an in-app phone input into a published Vue component forced specific changes. Detection-first UX, an ISO2 and dial-number split, a responsive popover and drawer picker, and slots for everything.
 date: 2026-05-21
+lang: en
 updatedAt: 2026-05-21
 keywords:
   - Vue 3
