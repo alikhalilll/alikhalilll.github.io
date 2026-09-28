@@ -2,7 +2,7 @@
 title: A custom fetch wrapper, and XHR for upload progress
 title_ar: غلاف مخصَّص لـ fetch، وXHR لتقدُّم الرفع
 description: Why native fetch is the right default, how to build a layered wrapper (base URL, timeouts, interceptors, retry), and when you still need XHR.
-description_ar: لماذا fetch الأصلي هو الاختيار الافتراضي المناسب، وكيف تبني غلافاً طبقياً حوله (رابط أساسي، ومهلات، واعتراضات، وإعادة محاولات)، ومتى تظل بحاجة إلى XHR.
+description_ar: لماذا يبقى fetch الأصلي الخيار الافتراضي الصحيح، وكيف تبني حوله غلافاً متعدّد الطبقات (رابط أساسي، ومهلات، واعتراضات، وإعادة محاولات)، ومتى تظل بحاجة إلى XHR.
 date: 2025-09-22
 lang: en
 updatedAt: 2025-09-22

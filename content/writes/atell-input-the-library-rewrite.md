@@ -2,7 +2,7 @@
 title: Notes from rewriting ATellInput as a published library
 title_ar: ملاحظات من إعادة كتابة ATellInput كمكتبة مُنشَرة
 description: Turning an in-app phone input into a published Vue component forced specific changes. Detection-first UX, an ISO2 and dial-number split, a responsive popover and drawer picker, and slots for everything.
-description_ar: تحويل حقل هاتف داخل تطبيق إلى مكوّن Vue مُنشَر فرض تغييرات محدّدة. تجربة استخدام مبنية على الاكتشاف التلقائي، وفصل بين رمز ISO2 ورقم الاتصال، ومنتقي متجاوب عبر Popover وDrawer، وSlots لكل شيء.
+description_ar: تحويل حقل هاتف من داخل تطبيق واحد إلى مكوّن Vue مُنشَر استوجب تغييرات جوهرية. تجربة استخدام تكتشف الدولة قبل أيّ تدخّل، وفصل بين رمز ISO2 ورقم الاتصال، ومنتقي متجاوب عبر Popover وDrawer، وSlots لكل شيء.
 date: 2026-05-21
 lang: en
 updatedAt: 2026-05-21

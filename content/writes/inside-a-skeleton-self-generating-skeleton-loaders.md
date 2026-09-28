@@ -2,7 +2,7 @@
 title: Inside @alikhalilll/a-skeleton, self-generating skeleton loaders
 title_ar: داخل @alikhalilll/a-skeleton، مُحمِّلات skeleton تولّد نفسها بنفسها
 description: How a-skeleton derives placeholder UI from the real component. Clone mode, structural mode, mirror mode, and the capture, cache, and replay pipeline behind them.
-description_ar: كيف تستخرج a-skeleton واجهة الانتظار من المكوّن الفعلي. وضع Clone، ووضع Structural، ووضع Mirror، وخط أنابيب الالتقاط والتخزين المؤقت وإعادة العرض خلفها.
+description_ar: كيف تستخرج a-skeleton واجهة الانتظار من المكوّن نفسه. وضع Clone، ووضع Structural، ووضع Mirror، ومسار العمل الذي يلتقط ثم يُخزّن مؤقّتاً ثم يُعيد العرض خلفها.
 date: 2026-06-13
 lang: en
 keywords:

@@ -2,7 +2,7 @@
 title: Building ali-nuxt-toolkit, a tour of the internals
 title_ar: بناء ali-nuxt-toolkit، جولة داخل التفاصيل
 description: Three Nuxt 4 modules in a pnpm monorepo. A typed fetch client with upload progress, AES-GCM and PBKDF2 crypto, and layout-scoped middleware.
-description_ar: ثلاث موديولات Nuxt 4 داخل monorepo يعتمد على pnpm. عميل fetch مكتوب بأنواع مع دعم لتقدّم الرفع، وتشفير بـ AES-GCM وPBKDF2، وطبقة middleware مربوطة بالـ layouts.
+description_ar: ثلاث موديولات Nuxt 4 داخل monorepo مبني بـ pnpm. عميل fetch مكتوب بأنواع صارمة يدعم تقدّم الرفع، وتشفير AES-GCM مع PBKDF2، وطبقة middleware مربوطة بالـ layouts.
 date: 2026-01-12
 lang: en
 keywords:
