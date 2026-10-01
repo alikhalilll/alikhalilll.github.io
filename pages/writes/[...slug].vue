@@ -232,6 +232,10 @@ const coverFor = (p: { path: string; image?: string }) => {
   const s = p.path.replace(/^\/writes(-ar)?\//, '').replace(/\/$/, '');
   return `/writes-covers/${s}.png`;
 };
+
+// Public route is always /writes/<slug>; the writesAr collection stores
+// paths as /writes-ar/<slug>, which isn't a real page route.
+const externalPath = (p: { path?: string }) => (p.path ?? '').replace(/^\/writes-ar\//, '/writes/');
 </script>
 
 <template>
@@ -381,7 +385,7 @@ const coverFor = (p: { path: string; image?: string }) => {
 
       <ul class="grid gap-6 sm:grid-cols-2 sm:gap-8">
         <li v-for="p in relatedPosts" :key="p.path">
-          <NuxtLink :to="localePath(p.path)" class="group/rel block no-underline">
+          <NuxtLink :to="localePath(externalPath(p))" class="group/rel block no-underline">
             <div class="aspect-[16/10] overflow-hidden rounded-xl bg-muted ring-1 ring-border">
               <img
                 :src="coverFor(p)"
