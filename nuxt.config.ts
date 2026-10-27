@@ -1,5 +1,9 @@
 import tailwindcss from '@tailwindcss/vite';
 import { defaultLocale, localeCookieName } from './constants/i18n';
+import { phases as plan1Phases } from './features/plan1/phases';
+import { planTopics as plan1Topics } from './features/plan1/topics';
+import { phases as plan2Phases } from './features/plan2/phases';
+import { planTopics as plan2Topics } from './features/plan2/topics';
 
 const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://alikhalilll.github.io';
 const siteName = 'Ali Khalil';
@@ -19,6 +23,21 @@ const analyticsScripts = cfAnalyticsToken
       },
     ]
   : [];
+
+const planRoutes = (
+  planId: string,
+  topics: Array<{ id: string }>,
+  phases: Array<{ key: string }>
+) => [
+  `/en-us/plans/roadmap/${planId}`,
+  ...topics.map((topic) => `/en-us/plans/roadmap/${planId}/topics/${topic.id}`),
+  ...phases.map((phase) => `/en-us/plans/roadmap/${planId}/phase/${phase.key}`),
+];
+
+const learningRoutes = [
+  ...planRoutes('plan-1', plan1Topics, plan1Phases),
+  ...planRoutes('plan-2', plan2Topics, plan2Phases),
+];
 
 export default defineNuxtConfig({
   compatibilityDate: '2026-04-01',
@@ -76,7 +95,7 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       crawlLinks: true,
-      routes: ['/', '/404.html', '/robots.txt', '/sitemap.xml'],
+      routes: ['/', '/404.html', '/robots.txt', '/sitemap.xml', '/en-us/plans', ...learningRoutes],
       failOnError: false,
     },
   },

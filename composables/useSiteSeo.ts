@@ -59,7 +59,9 @@ export function useSiteSeo(input: SeoInput) {
     ogImage: image,
     ogImageAlt: input.title,
     ogLocale: OG_LOCALE[currentLocale] ?? 'en_US',
-    ogLocaleAlternate: alternateLocales.map((l) => OG_LOCALE[l]).filter(Boolean),
+    ogLocaleAlternate: alternateLocales
+      .map((l) => OG_LOCALE[l])
+      .filter((value): value is string => Boolean(value)),
     twitterCard: 'summary_large_image',
     twitterTitle: input.title,
     twitterDescription: description,
