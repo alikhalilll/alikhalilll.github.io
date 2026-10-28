@@ -117,9 +117,16 @@ const onNodeClick = ({ node }: NodeMouseEvent) => {
 const PAD = 10;
 const COLUMN_GAP = 22;
 const ROOT_H = 130;
-const BRANCH_HEAD_H = 128;
+// BRANCH_HEAD_H is sized to fit the full branch summary (no clamp, no scroll)
+// plus the kicker + title + subtitle rows.
+const BRANCH_HEAD_H = 160;
 
-const layoutWidth = computed(() => Math.max(320, canvasWidth.value || 1200));
+// Minimum width we keep the layout at even on narrow viewports — the outer
+// canvas's overflow-auto then gives a real horizontal scrollbar instead of
+// collapsing the diagram into a stacked column.
+const MIN_INTENDED_WIDTH = 640;
+
+const layoutWidth = computed(() => Math.max(MIN_INTENDED_WIDTH, canvasWidth.value || 1200));
 const columns = computed(() => {
   if (layoutWidth.value < 680) return 1;
   if (layoutWidth.value < 1080) return 2;
@@ -218,131 +225,143 @@ const flow = computed(() => {
       </span>
     </header>
 
-    <!-- Canvas with vue-flow diagram -->
+    <!-- Canvas with vue-flow diagram. No internal scroll — the diagram
+         renders at its natural size and the page scrolls normally. -->
     <div
       ref="canvas"
-      class="stack-canvas relative w-full overflow-hidden rounded-xl border border-[var(--line)]"
+      class="stack-canvas relative w-full rounded-xl border border-[var(--line)]"
       :style="{ height: `${flow.height}px` }"
     >
-      <ClientOnly>
-        <VueFlow
-          :nodes="flow.nodes"
-          :edges="flow.edges"
-          :default-viewport="{ x: 0, y: 0, zoom: 1 }"
-          :min-zoom="1"
-          :max-zoom="1"
-          :nodes-draggable="false"
-          :nodes-connectable="false"
-          :elements-selectable="false"
-          :pan-on-drag="false"
-          :zoom-on-scroll="false"
-          :zoom-on-pinch="false"
-          :zoom-on-double-click="false"
-          :prevent-scrolling="false"
-          :fit-view-on-init="false"
-          class="stack-vue-flow"
-          @node-click="onNodeClick"
-        >
-          <!-- Root node: links to roadmap -->
-          <template #node-stack-root>
-            <NuxtLink
-              :to="roadmapPath(planId)"
-              class="stack-node stack-root group flex h-full w-full items-center gap-3 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-5 py-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[var(--brand)] hover:shadow-md"
-              title="Open the plan roadmap"
-            >
-              <span
-                class="grid h-11 w-11 flex-none place-items-center rounded-lg border border-[var(--brand)]/20 bg-[var(--brand-soft)] text-[var(--brand)] transition-transform group-hover:scale-105"
+      <div
+        class="stack-canvas-inner relative"
+        :style="{ width: `${layoutWidth}px`, height: `${flow.height}px` }"
+      >
+        <ClientOnly>
+          <VueFlow
+            :nodes="flow.nodes"
+            :edges="flow.edges"
+            :default-viewport="{ x: 0, y: 0, zoom: 1 }"
+            :min-zoom="1"
+            :max-zoom="1"
+            :nodes-draggable="false"
+            :nodes-connectable="false"
+            :elements-selectable="false"
+            :pan-on-drag="false"
+            :zoom-on-scroll="false"
+            :zoom-on-pinch="false"
+            :zoom-on-double-click="false"
+            :prevent-scrolling="false"
+            :fit-view-on-init="false"
+            class="stack-vue-flow"
+            @node-click="onNodeClick"
+          >
+            <!-- Root node: links to roadmap -->
+            <template #node-stack-root>
+              <NuxtLink
+                :to="roadmapPath(planId)"
+                class="stack-node stack-root group flex h-full w-full items-center gap-3 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-5 py-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[var(--brand)] hover:shadow-md"
+                title="Open the plan roadmap"
               >
-                <Icon name="lucide:workflow" class="learning-icon text-lg" />
-              </span>
-              <div class="grid min-w-0 gap-0.5">
-                <span class="text-[0.7rem] font-bold uppercase tracking-widest text-[var(--brand)]">
-                  Full-stack roadmap
+                <span
+                  class="grid h-11 w-11 flex-none place-items-center rounded-lg border border-[var(--brand)]/20 bg-[var(--brand-soft)] text-[var(--brand)] transition-transform group-hover:scale-105"
+                >
+                  <Icon name="lucide:workflow" class="learning-icon text-lg" />
                 </span>
-                <strong
-                  class="font-[var(--font-display)] text-[1.18rem] font-bold leading-tight text-[var(--ink)]"
-                >
-                  Product engineering
-                </strong>
-                <small class="text-[0.82rem] text-[var(--muted)]">
-                  Client → API → Data → Delivery
-                </small>
-              </div>
-              <span
-                class="ml-auto hidden items-center gap-1 rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2 py-1 text-[0.72rem] text-[var(--muted)] group-hover:text-[var(--brand)] sm:inline-flex"
-              >
-                Open
-                <Icon name="lucide:arrow-right" class="learning-icon" />
-              </span>
-              <Handle type="source" :position="Position.Bottom" class="stack-handle" />
-            </NuxtLink>
-          </template>
-
-          <!-- Branch node: links to that layer's phase -->
-          <template #node-stack-branch="{ data }">
-            <NuxtLink
-              :to="phasePath(planId, data.branch.phaseKey)"
-              class="stack-node stack-branch group flex h-full w-full flex-col overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--surface)] shadow-sm transition-all hover:-translate-y-0.5 hover:border-[color:var(--phase-color)] hover:shadow-md"
-              :data-tone="data.branch.tone"
-              :title="`Open the ${data.branch.title} phase`"
-            >
-              <div class="grid gap-1 border-b border-[var(--line)] bg-[var(--surface-2)] p-4">
-                <div class="flex items-center justify-between gap-2">
+                <div class="grid min-w-0 gap-0.5">
                   <span
-                    class="grid h-8 w-8 place-items-center rounded-md border border-[var(--line)] bg-[var(--surface)] text-[color:var(--phase-color)]"
+                    class="text-[0.7rem] font-bold uppercase tracking-widest text-[var(--brand)]"
                   >
-                    <Icon :name="data.branch.icon" class="learning-icon" />
+                    Full-stack roadmap
                   </span>
-                  <span
-                    class="truncate text-[0.64rem] font-bold uppercase tracking-wider text-[color:var(--phase-color)]"
+                  <strong
+                    class="font-[var(--font-display)] text-[1.18rem] font-bold leading-tight text-[var(--ink)]"
                   >
-                    {{ data.branch.kicker }}
-                  </span>
+                    Product engineering
+                  </strong>
+                  <small class="text-[0.82rem] text-[var(--muted)]">
+                    Client → API → Data → Delivery
+                  </small>
                 </div>
-                <h3 class="m-0 text-[1.16rem] font-bold leading-tight text-[var(--ink)]">
-                  {{ data.branch.title }}
-                </h3>
-                <small class="text-[0.78rem] text-[var(--muted)]">{{ data.branch.subtitle }}</small>
-                <p class="m-0 mt-0.5 line-clamp-2 text-[0.82rem] leading-snug text-[var(--muted)]">
-                  {{ data.branch.summary }}
-                </p>
-              </div>
-              <ul class="m-0 grid list-none p-0">
-                <li
-                  v-for="(leaf, idx) in data.branch.leaves"
-                  :key="leaf.label"
-                  class="flex min-h-[52px] items-start gap-2 px-3 py-2"
-                  :class="idx !== 0 && 'border-t border-[var(--line)]'"
+                <span
+                  class="ml-auto hidden items-center gap-1 rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2 py-1 text-[0.72rem] text-[var(--muted)] group-hover:text-[var(--brand)] sm:inline-flex"
                 >
-                  <span
-                    class="mt-[7px] h-1.5 w-1.5 flex-none rounded-full border border-[color:var(--phase-color)] bg-[var(--surface)]"
-                  />
-                  <div class="grid min-w-0 gap-0">
-                    <strong class="text-[0.84rem] font-semibold leading-snug text-[var(--ink)]">
-                      {{ leaf.label }}
-                    </strong>
-                    <span class="truncate text-[0.72rem] leading-tight text-[var(--muted)]">
-                      {{ leaf.detail }}
+                  Open
+                  <Icon name="lucide:arrow-right" class="learning-icon" />
+                </span>
+                <Handle type="source" :position="Position.Bottom" class="stack-handle" />
+              </NuxtLink>
+            </template>
+
+            <!-- Branch node: links to that layer's phase -->
+            <template #node-stack-branch="{ data }">
+              <NuxtLink
+                :to="phasePath(planId, data.branch.phaseKey)"
+                class="stack-node stack-branch group flex h-full w-full flex-col overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--surface)] shadow-sm transition-all hover:-translate-y-0.5 hover:border-[color:var(--phase-color)] hover:shadow-md"
+                :data-tone="data.branch.tone"
+                :title="`Open the ${data.branch.title} phase`"
+              >
+                <div class="grid gap-1 border-b border-[var(--line)] bg-[var(--surface-2)] p-4">
+                  <div class="flex items-center justify-between gap-2">
+                    <span
+                      class="grid h-8 w-8 place-items-center rounded-md border border-[var(--line)] bg-[var(--surface)] text-[color:var(--phase-color)]"
+                    >
+                      <Icon :name="data.branch.icon" class="learning-icon" />
+                    </span>
+                    <span
+                      class="truncate text-[0.64rem] font-bold uppercase tracking-wider text-[color:var(--phase-color)]"
+                    >
+                      {{ data.branch.kicker }}
                     </span>
                   </div>
-                </li>
-              </ul>
-              <span
-                class="mt-auto flex items-center justify-between gap-2 border-t border-[var(--line)] bg-[var(--surface-2)] px-3 py-2 text-[0.74rem] font-semibold text-[var(--muted)] transition-colors group-hover:text-[color:var(--phase-color)]"
-              >
-                Open phase
-                <Icon name="lucide:arrow-right" class="learning-icon" />
-              </span>
-              <Handle type="target" :position="Position.Top" class="stack-handle" />
-            </NuxtLink>
+                  <h3 class="m-0 text-[1.16rem] font-bold leading-tight text-[var(--ink)]">
+                    {{ data.branch.title }}
+                  </h3>
+                  <small class="text-[0.78rem] text-[var(--muted)]">{{
+                    data.branch.subtitle
+                  }}</small>
+                  <!-- Full summary, no clamp, no scroll. BRANCH_HEAD_H
+                     accommodates the natural height. -->
+                  <p class="m-0 mt-0.5 text-[0.82rem] leading-snug text-[var(--muted)]">
+                    {{ data.branch.summary }}
+                  </p>
+                </div>
+                <ul class="m-0 grid list-none p-0">
+                  <li
+                    v-for="(leaf, idx) in data.branch.leaves"
+                    :key="leaf.label"
+                    class="flex min-h-[52px] items-start gap-2 px-3 py-2"
+                    :class="idx !== 0 && 'border-t border-[var(--line)]'"
+                  >
+                    <span
+                      class="mt-[7px] h-1.5 w-1.5 flex-none rounded-full border border-[color:var(--phase-color)] bg-[var(--surface)]"
+                    />
+                    <div class="grid min-w-0 gap-0">
+                      <strong class="text-[0.84rem] font-semibold leading-snug text-[var(--ink)]">
+                        {{ leaf.label }}
+                      </strong>
+                      <span class="truncate text-[0.72rem] leading-tight text-[var(--muted)]">
+                        {{ leaf.detail }}
+                      </span>
+                    </div>
+                  </li>
+                </ul>
+                <span
+                  class="mt-auto flex items-center justify-between gap-2 border-t border-[var(--line)] bg-[var(--surface-2)] px-3 py-2 text-[0.74rem] font-semibold text-[var(--muted)] transition-colors group-hover:text-[color:var(--phase-color)]"
+                >
+                  Open phase
+                  <Icon name="lucide:arrow-right" class="learning-icon" />
+                </span>
+                <Handle type="target" :position="Position.Top" class="stack-handle" />
+              </NuxtLink>
+            </template>
+          </VueFlow>
+          <template #fallback>
+            <div class="grid h-full place-items-center text-sm text-[var(--muted)]">
+              Loading the stack tree…
+            </div>
           </template>
-        </VueFlow>
-        <template #fallback>
-          <div class="grid h-full place-items-center text-sm text-[var(--muted)]">
-            Loading the stack tree…
-          </div>
-        </template>
-      </ClientOnly>
+        </ClientOnly>
+      </div>
     </div>
 
     <!-- Legend -->
@@ -377,8 +396,18 @@ const flow = computed(() => {
 }
 
 .stack-canvas :deep(.vue-flow) {
+  /* Grow with the computed layout so nodes near the right edge don't get
+     clipped on narrow viewports. The outer .stack-canvas is overflow-auto
+     and will show a horizontal scrollbar when needed. */
   width: 100%;
+  min-width: 100%;
   height: 100%;
+  overflow: visible;
+}
+
+.stack-canvas :deep(.vue-flow__pane),
+.stack-canvas :deep(.vue-flow__viewport) {
+  overflow: visible;
 }
 
 .stack-canvas :deep(.vue-flow__pane) {

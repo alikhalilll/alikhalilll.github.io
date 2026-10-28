@@ -3,6 +3,8 @@ import { planRoles as plan1Roles, planTopics as plan1Topics } from '~/features/p
 import type { PhaseTone } from '~/features/plan1/types';
 import { phases as plan2Phases } from '~/features/plan2/phases';
 import { planRoles as plan2Roles, planTopics as plan2Topics } from '~/features/plan2/topics';
+import { phases as plan3Phases } from '~/features/plan3/phases';
+import { planRoles as plan3Roles, planTopics as plan3Topics } from '~/features/plan3/topics';
 
 export type PlanStatus = 'available' | 'coming-soon';
 
@@ -73,6 +75,30 @@ export const planCatalog: PlanSummary[] = [
       'PHP, Laravel, APIs, SQL and Vue integration',
       'Testing, security, observability, DevOps and system design',
       '6 roles unlocked: Foundations → Laravel → API → Quality & Release → Architect → Full-Stack Owner',
+    ],
+  },
+  {
+    id: 'plan-3',
+    number: 3,
+    title: 'Frontend / Nuxt 4',
+    shortTitle: 'Plan 3',
+    subtitle: 'Fundamentals → Vue 3 → Nuxt 4 → shipping',
+    description:
+      'Learn frontend end to end on the real stack from the muslim-academy-platform: Nuxt 4 + Vue 3 + strict TypeScript + UnoCSS + VeeValidate/Zod + i18n/RTL + Vitest/Playwright. Starts from HTML/CSS and goes deep on JavaScript, TypeScript and "how to think as a frontend engineer" before any framework.',
+    status: 'available',
+    weeks: countWeeks(plan3Topics),
+    topics: plan3Topics.length,
+    phases: plan3Phases.length,
+    roles: plan3Roles.map((role) => role.title),
+    tone: 'teal',
+    outcome:
+      'A real Nuxt 4 feature module shipped end to end: typed service + composable, UnoCSS + @pkgs/ui UI, VeeValidate/Zod form, Vitest + Playwright coverage, a11y clean, Lighthouse ≥ 90, deployed to staging.',
+    preview: [
+      '16 weeks · ~60 topics · 6 phases',
+      'Full-time pace: 10–14 hrs/wk · acknowledges buffer weeks',
+      'Dedicated weeks on deep JS, deep TS and "thinking like a frontend engineer"',
+      'Based on the muslim-academy-platform stack: Nuxt 4 + Vue 3 + UnoCSS + @pkgs/ui',
+      '6 roles unlocked: Fundamentals → Vue → Nuxt → UI → Full-Stack FE → Quality & Release',
     ],
   },
 ];

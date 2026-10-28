@@ -138,26 +138,42 @@ export const resourceGroups: ResourceGroup[] = [
     tone: 'blue',
     items: [
       {
-        label: 'The Pragmatic Programmer',
-        href: 'https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/',
+        label: 'Teach Yourself Computer Science (free guide)',
+        href: 'https://teachyourselfcs.com/',
       },
       {
-        label: 'SOLID Principles in PHP',
-        href: 'https://laracasts.com/series/solid-principles-in-php',
+        label: 'freeCodeCamp: How to think like a programmer',
+        href: 'https://www.freecodecamp.org/news/how-to-think-like-a-programmer-lessons-in-problem-solving-d1d8bf1de7d2/',
       },
       {
-        label: 'Learn Git Branching',
+        label: 'Learn Git Branching (interactive, free)',
         href: 'https://learngitbranching.js.org/',
+      },
+      {
+        label: 'Oh My Git! (interactive game, free)',
+        href: 'https://ohmygit.org/',
       },
       {
         label: 'MDN: HTTP overview',
         href: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview',
       },
       {
+        label: 'High Performance Browser Networking (free online)',
+        href: 'https://hpbn.co/',
+      },
+      {
         label: 'PHP The Right Way',
         href: 'https://phptherightway.com/',
       },
-      { label: 'SQLBolt', href: 'https://sqlbolt.com/' },
+      {
+        label: 'Modern PHP Cheatsheet',
+        href: 'https://github.com/smknstd/modern-php-cheatsheet',
+      },
+      { label: 'SQLBolt (interactive SQL, free)', href: 'https://sqlbolt.com/' },
+      {
+        label: 'Mode: SQL tutorial',
+        href: 'https://mode.com/sql-tutorial/',
+      },
     ],
   },
   {
@@ -166,8 +182,12 @@ export const resourceGroups: ResourceGroup[] = [
     tone: 'violet',
     items: [
       {
-        label: '30 Days to Learn Laravel',
+        label: '30 Days to Learn Laravel (Laracasts, free)',
         href: 'https://www.youtube.com/playlist?list=PL3VM-unCzF8hy47mt9-chowaHNjfkuEVz',
+      },
+      {
+        label: 'Laracasts: Laravel 12 From Scratch (free)',
+        href: 'https://laracasts.com/series/laravel-11-from-scratch',
       },
       {
         label: 'Laravel: Request Lifecycle',
@@ -184,6 +204,10 @@ export const resourceGroups: ResourceGroup[] = [
       {
         label: 'Laravel: Queues',
         href: 'https://laravel.com/docs/12.x/queues',
+      },
+      {
+        label: 'Laravel News',
+        href: 'https://laravel-news.com/',
       },
     ],
   },
@@ -239,21 +263,37 @@ export const resourceGroups: ResourceGroup[] = [
     tone: 'rose',
     items: [
       {
-        label: 'Refactoring Guru: Design Patterns',
+        label: 'Refactoring Guru: Design Patterns (PHP, free)',
         href: 'https://refactoring.guru/design-patterns/php',
       },
       {
-        label: 'Laravel Beyond CRUD',
+        label: 'Spatie packages (free Laravel domain patterns)',
+        href: 'https://spatie.be/open-source',
+      },
+      {
+        label: 'Laravel Beyond CRUD (book, paid)',
         href: 'https://laravel-beyond-crud.com/',
       },
       {
-        label: 'System Design Primer',
+        label: 'System Design Primer (GitHub, free)',
         href: 'https://github.com/donnemartin/system-design-primer',
+      },
+      {
+        label: 'ByteByteGo: System Design 101 (GitHub, free)',
+        href: 'https://github.com/ByteByteGoHq/system-design-101',
+      },
+      {
+        label: 'Martin Fowler: Monolith First',
+        href: 'https://martinfowler.com/bliki/MonolithFirst.html',
       },
       { label: 'C4 model', href: 'https://c4model.com/' },
       {
         label: 'Architecture Decision Records',
         href: 'https://adr.github.io/',
+      },
+      {
+        label: 'The Twelve-Factor App',
+        href: 'https://12factor.net/',
       },
     ],
   },

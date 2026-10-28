@@ -31,6 +31,8 @@ const {
   isPhaseUnlocked,
   progressPercent,
   recordPhaseResult,
+  unlockAll,
+  disableUnlock,
 } = progress;
 
 const result = computed(() => getPhaseResult(props.phaseKey));
@@ -82,6 +84,27 @@ useHead(() => ({
     :progress-percent="progressPercent"
   >
     <template v-if="phase">
+      <!-- ============ UNLOCK-ALL BANNER ============ -->
+      <div
+        v-if="unlockAll"
+        class="mb-5 flex flex-wrap items-center gap-3 rounded-xl border border-dashed border-[color-mix(in_oklab,var(--brand)_40%,var(--line))] bg-[var(--brand-soft)] px-4 py-3 text-[0.88rem] text-[var(--ink)]"
+        role="status"
+      >
+        <Icon name="lucide:unlock" class="learning-icon text-[var(--brand)]" />
+        <span class="flex-1">
+          <strong class="font-semibold">Explore mode</strong> — every phase, topic and gate is open
+          (cookie-persisted for 24h).
+        </span>
+        <button
+          type="button"
+          class="inline-flex items-center gap-1 rounded-md border border-[var(--line)] bg-[var(--surface)] px-2.5 py-1 text-[0.78rem] font-medium text-[var(--ink)] hover:border-[var(--brand)]"
+          @click="disableUnlock"
+        >
+          Turn off
+          <Icon name="lucide:x" class="learning-icon" />
+        </button>
+      </div>
+
       <!-- Phase is locked by prerequisite phase -->
       <section v-if="hydrated && !phaseUnlocked" class="topic-locked">
         <div class="topic-locked-card">

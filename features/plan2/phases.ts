@@ -122,6 +122,12 @@ export const phases: PlanPhase[] = [
             'conventionalcommits.org · free',
             'Use the format for every commit in your first MR.'
           ),
+          watch(
+            'Fireship: Git in 100 seconds',
+            'https://www.youtube.com/watch?v=hwP7WQkmECE',
+            'Fireship · YouTube',
+            'The 100-second mental model. Watch it, then do Learn Git Branching for the muscle memory.'
+          ),
         ],
         items: [
           item(
@@ -235,6 +241,12 @@ export const phases: PlanPhase[] = [
             'https://missing.csail.mit.edu/2020/course-shell/',
             'MIT · free course',
             'Complete the exercises. The shell is part of the job, not an optional extra.'
+          ),
+          watch(
+            'Fireship: HTTP in 100 seconds',
+            'https://www.youtube.com/watch?v=iYM2zFP3Zn0',
+            'Fireship · YouTube',
+            'The 100-second mental model of HTTP. Watch it before you touch MDN.'
           ),
         ],
         items: [
@@ -640,6 +652,12 @@ export const phases: PlanPhase[] = [
             'Laracasts · series',
             'Watch the N+1 and query-count lessons before optimising.'
           ),
+          watch(
+            'Laravel Daily: Eloquent intro',
+            'https://www.youtube.com/watch?v=Gh6EeAVL6vU',
+            'Laravel Daily · YouTube',
+            'Short Eloquent walkthrough. Watch, then reproduce the same operations against your own schema.'
+          ),
         ],
         items: [
           item(
@@ -750,6 +768,12 @@ export const phases: PlanPhase[] = [
             'https://spatie.be/docs/laravel-data/v4/introduction',
             'spatie · free docs',
             'Use DTOs to validate and type request data.'
+          ),
+          watch(
+            'Laravel Daily: Sanctum SPA auth walkthrough',
+            'https://www.youtube.com/watch?v=f5Op2PsmwdQ',
+            'Laravel Daily · YouTube',
+            'The one-shot explanation of Sanctum for SPAs. Watch before wiring auth into your Vue app.'
           ),
         ],
         items: [
@@ -868,6 +892,12 @@ export const phases: PlanPhase[] = [
             'https://spatie.be/docs/laravel-medialibrary/v11/introduction',
             'spatie · free docs',
             'Compare it with plain file storage before adding a dependency.'
+          ),
+          watch(
+            'Laravel Daily: Queues & jobs',
+            'https://www.youtube.com/watch?v=xZbvQiheMUM',
+            'Laravel Daily · YouTube',
+            'Short, focused queue walkthrough. Watch, then run a queue worker locally and dispatch a real job.'
           ),
         ],
         items: [
@@ -1170,6 +1200,12 @@ export const phases: PlanPhase[] = [
             'Laravel docs · free',
             'Use Redis for cache, sessions or queues deliberately.'
           ),
+          watch(
+            'Database indexing explained',
+            'https://www.youtube.com/watch?v=HdqcGbCoxBw',
+            'YouTube · free',
+            'The mental model behind B-tree indexes. Watch before chasing EXPLAIN plans.'
+          ),
         ],
         items: [
           item(
@@ -1297,6 +1333,12 @@ export const phases: PlanPhase[] = [
             'https://vue-i18n.intlify.dev/',
             'Vue I18n docs · free',
             'Plan RTL and message keys from the start.'
+          ),
+          watch(
+            'Vue + Laravel SPA from scratch',
+            'https://www.youtube.com/watch?v=1xo-0gCVhTU',
+            'YouTube · free',
+            'A full walkthrough of wiring Vue to a Laravel API. Watch, then rebuild the parts you did not understand.'
           ),
         ],
         items: [
@@ -1506,6 +1548,12 @@ export const phases: PlanPhase[] = [
             'OWASP · free',
             'Use it as a review checklist for your feature.'
           ),
+          watch(
+            'Jeffrey Way: Pest testing introduction',
+            'https://www.youtube.com/watch?v=tBi1QDI76Co',
+            'Laracasts · YouTube',
+            'Watch the first lesson, then write a failing Pest test against your feature.'
+          ),
         ],
         items: [
           item(
@@ -1706,6 +1754,12 @@ export const phases: PlanPhase[] = [
             'https://12factor.net/logs',
             '12factor.net · free',
             'Treat logs as event streams. Write JSON to stdout; let the platform ship them.'
+          ),
+          watch(
+            'TechWorld with Nana: Docker tutorial',
+            'https://www.youtube.com/watch?v=Gjnup-PuquQ',
+            'TechWorld with Nana · YouTube',
+            'The free, comprehensive Docker course. Watch the first hour before writing your Dockerfile.'
           ),
         ],
         items: [
@@ -1929,6 +1983,12 @@ export const phases: PlanPhase[] = [
             'Slim · free docs',
             'Compare the framework surface with Laravel.'
           ),
+          watch(
+            'Fireship: 10 design patterns explained',
+            'https://www.youtube.com/watch?v=tv-_1er1mWI',
+            'Fireship · YouTube',
+            'A rapid pattern vocabulary. Watch, then find one of each in `crm-backend` and write a trade-off note.'
+          ),
         ],
         items: [
           item(
@@ -2103,6 +2163,12 @@ export const phases: PlanPhase[] = [
             'https://learn.openapis.org/',
             'OpenAPI · free',
             'Describe the API contract in a tool-readable format if it helps.'
+          ),
+          watch(
+            'ByteByteGo: System design concepts',
+            'https://www.youtube.com/watch?v=xN8_SZn6PRM',
+            'ByteByteGo · YouTube',
+            'The visual system-design primer. Watch before writing your capstone design doc.'
           ),
         ],
         items: [
@@ -2336,6 +2402,12 @@ export const phases: PlanPhase[] = [
             'Stripe · free docs',
             'Use the sandbox and idempotency examples.'
           ),
+          watch(
+            'Laracasts: Deploy Laravel (free lesson)',
+            'https://www.youtube.com/watch?v=rbbTd-gkajw',
+            'Laracasts · YouTube',
+            'A deployment walkthrough you can mirror step-by-step for your capstone.'
+          ),
         ],
         items: [
           item(
@@ -2501,6 +2573,12 @@ export const phases: PlanPhase[] = [
             'https://scrumguides.org/scrum-guide.html',
             'Scrum Guides · free',
             'Use the review and retrospective ideas without ceremony for its own sake.'
+          ),
+          watch(
+            'Hussein Nasser: deployment & networking fundamentals',
+            'https://www.youtube.com/watch?v=i7twT3x5yEM',
+            'Hussein Nasser · YouTube',
+            'Deep but accessible production-deployment thinking. Watch the parts relevant to your demo.'
           ),
         ],
         items: [

@@ -47,6 +47,26 @@ import {
   topicPassingScore as plan2TopicPassingScore,
 } from '~/features/plan2/quizzes';
 
+import * as plan3Data from '~/features/plan3/data';
+import { phases as plan3Phases } from '~/features/plan3/phases';
+import {
+  getNextTopic as getPlan3NextTopic,
+  getPhase as getPlan3Phase,
+  getTopicsForPhase as getPlan3TopicsForPhase,
+  getTopic as getPlan3Topic,
+  planRoles as plan3Roles,
+  planTopicById as plan3TopicById,
+  planTopics as plan3Topics,
+  planTopicsByPhase as plan3TopicsByPhase,
+  planTopicsByWeek as plan3TopicsByWeek,
+} from '~/features/plan3/topics';
+import {
+  getPhaseQuiz as getPlan3PhaseQuiz,
+  getTopicQuiz as getPlan3TopicQuiz,
+  phasePassingScore as plan3PhasePassingScore,
+  topicPassingScore as plan3TopicPassingScore,
+} from '~/features/plan3/quizzes';
+
 export interface PlanTeamRole {
   role: string;
   responsibility: string;
@@ -139,6 +159,17 @@ const plan2Operations: PlanOperations = {
   resourceGroups: plan2Data.resourceGroups,
 };
 
+const plan3Operations: PlanOperations = {
+  roles: plan3Data.roles,
+  schedule: plan3Data.schedule,
+  conventions: plan3Data.conventions,
+  aiTools: plan3Data.aiTools,
+  weeklyRhythm: plan3Data.weeklyRhythm,
+  studyLoop: plan3Data.studyLoop,
+  mainResources: plan3Data.mainResources,
+  resourceGroups: plan3Data.resourceGroups,
+};
+
 export const planRuntime: Record<string, PlanRuntime> = {
   'plan-1': {
     id: 'plan-1',
@@ -175,6 +206,24 @@ export const planRuntime: Record<string, PlanRuntime> = {
     topicPassingScore: plan2TopicPassingScore,
     phasePassingScore: plan2PhasePassingScore,
     operations: plan2Operations,
+  },
+  'plan-3': {
+    id: 'plan-3',
+    phases: plan3Phases,
+    topics: plan3Topics,
+    topicById: plan3TopicById,
+    topicsByPhase: plan3TopicsByPhase,
+    topicsByWeek: plan3TopicsByWeek,
+    roles: plan3Roles,
+    getPhase: getPlan3Phase,
+    getTopic: getPlan3Topic,
+    getTopicsForPhase: getPlan3TopicsForPhase,
+    getNextTopic: getPlan3NextTopic,
+    getTopicQuiz: getPlan3TopicQuiz,
+    getPhaseQuiz: getPlan3PhaseQuiz,
+    topicPassingScore: plan3TopicPassingScore,
+    phasePassingScore: plan3PhasePassingScore,
+    operations: plan3Operations,
   },
 };
 

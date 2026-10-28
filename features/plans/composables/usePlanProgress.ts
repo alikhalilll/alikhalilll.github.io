@@ -1,5 +1,7 @@
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useStorage } from '@vueuse/core';
+import { useCookie } from '#imports';
 
 import type { PhaseKey, PlanPhase, PlanTopic } from '~/features/plan1/types';
 import { getPlanRuntime } from '../planRuntime';
@@ -44,6 +46,48 @@ export const usePlanProgress = (planId: string) => {
     mergeDefaults: true,
   });
 
+  // ---------------------------------------------------------------------
+  // Explore mode — unlock every phase/topic/gate for browsing
+  // ---------------------------------------------------------------------
+  // Triggered by `?unlock=true` (also `all` / `1`) in the URL. We persist
+  // the flag to a cookie with a 1-day TTL so once enabled, subsequent
+  // navigations to plan pages stay unlocked without the query param. The
+  // cookie is written on the client (useCookie wraps document.cookie); on
+  // SSR we read the incoming cookie header too.
+  const route = useRoute();
+  const unlockCookie = useCookie<string | null>('plans_unlock', {
+    maxAge: 60 * 60 * 24, // 1 day
+    sameSite: 'lax',
+    path: '/',
+  });
+
+  const unlockFromUrl = computed(() => {
+    const value = route.query.unlock;
+    const match = Array.isArray(value) ? value[0] : value;
+    return match === 'all' || match === '1' || match === 'true';
+  });
+
+  // Any-source unlock: URL query OR persisted cookie.
+  const unlockAll = computed(() => unlockFromUrl.value || unlockCookie.value === '1');
+
+  // When the URL flips the switch on, persist it. We only *set* the cookie
+  // from the URL — removing the query shouldn't auto-clear the cookie (that
+  // would defeat the "survives one day" promise). Explicit clear via
+  // `disableUnlock()` below.
+  watch(
+    unlockFromUrl,
+    (enabled) => {
+      if (enabled && unlockCookie.value !== '1') {
+        unlockCookie.value = '1';
+      }
+    },
+    { immediate: true }
+  );
+
+  const disableUnlock = () => {
+    unlockCookie.value = null;
+  };
+
   const hydrated = ref(false);
 
   onMounted(() => {
@@ -63,6 +107,7 @@ export const usePlanProgress = (planId: string) => {
   const isPhaseComplete = (phaseKey: PhaseKey) => getPhaseResult(phaseKey)?.passed === true;
 
   const isPhaseUnlocked = (phaseKey: PhaseKey) => {
+    if (unlockAll.value) return true;
     const index = phaseKeys.indexOf(phaseKey);
     if (index <= 0) return true;
     const previousPhase = phaseKeys[index - 1];
@@ -70,6 +115,7 @@ export const usePlanProgress = (planId: string) => {
   };
 
   const isTopicUnlocked = (topicId: string) => {
+    if (unlockAll.value) return true;
     const topic = planTopicById.get(topicId);
     if (!topic) return false;
     if (isTopicComplete(topicId)) return true;
@@ -89,6 +135,7 @@ export const usePlanProgress = (planId: string) => {
   };
 
   const isPhaseQuizUnlocked = (phaseKey: PhaseKey) => {
+    if (unlockAll.value) return true;
     if (!isPhaseUnlocked(phaseKey)) return false;
     const topics = getPlanTopicsForPhase(phaseKey);
     return topics.length > 0 && topics.every((topic) => isTopicComplete(topic.id));
@@ -219,5 +266,7 @@ export const usePlanProgress = (planId: string) => {
     recordPhaseResult,
     recordTopicResult,
     resetProgress,
+    unlockAll,
+    disableUnlock,
   };
 };

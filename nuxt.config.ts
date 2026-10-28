@@ -4,6 +4,8 @@ import { phases as plan1Phases } from './features/plan1/phases';
 import { planTopics as plan1Topics } from './features/plan1/topics';
 import { phases as plan2Phases } from './features/plan2/phases';
 import { planTopics as plan2Topics } from './features/plan2/topics';
+import { phases as plan3Phases } from './features/plan3/phases';
+import { planTopics as plan3Topics } from './features/plan3/topics';
 
 const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://alikhalilll.github.io';
 const siteName = 'Ali Khalil';
@@ -37,6 +39,7 @@ const planRoutes = (
 const learningRoutes = [
   ...planRoutes('plan-1', plan1Topics, plan1Phases),
   ...planRoutes('plan-2', plan2Topics, plan2Phases),
+  ...planRoutes('plan-3', plan3Topics, plan3Phases),
 ];
 
 export default defineNuxtConfig({

@@ -255,12 +255,20 @@ const onNodeClick = ({ event, node }: NodeMouseEvent) => {
 const PAD = 10;
 const COLUMN_GAP = 26;
 const ROOT_H = 176;
-const PHASE_H = 212;
+// PHASE_H is the fixed vue-flow node height for the phase card. Sized to fit
+// the full phase goal (no clamp, no scroll) plus the title + progress + role.
+const PHASE_H = 280;
 const GATE_H = 90;
 const TOPIC_ROW_H = 54;
 const WEEK_HEADER_H = 76;
 
-const layoutWidth = computed(() => Math.max(320, canvasWidth.value || 1200));
+// Minimum width we are willing to render the diagram at. If the viewport is
+// narrower than this, the inner layout keeps this width and the outer
+// canvas's `overflow-auto` provides horizontal scroll. Prevents the layout
+// from collapsing into unreadable 1-column stacks on narrow screens.
+const MIN_INTENDED_WIDTH = 720;
+
+const layoutWidth = computed(() => Math.max(MIN_INTENDED_WIDTH, canvasWidth.value || 1200));
 const columns = computed(() => {
   if (layoutWidth.value < 700) return 1;
   if (layoutWidth.value < 1100) return 2;
@@ -459,344 +467,355 @@ const flow = computed(() => {
       </div>
     </header>
 
-    <!-- Diagram canvas -->
+    <!-- Diagram canvas. No internal scroll — the diagram renders at its
+         natural size and the page scrolls normally. If the viewport is
+         narrower than the layout, horizontal page scroll handles it. -->
     <div
       ref="canvas"
-      class="rf-canvas relative w-full overflow-hidden rounded-xl border border-[var(--line)]"
+      class="rf-canvas relative w-full rounded-xl border border-[var(--line)]"
       :style="{ height: `${flow.height}px` }"
     >
-      <ClientOnly>
-        <VueFlow
-          :nodes="flow.nodes"
-          :edges="flow.edges"
-          :default-viewport="{ x: 0, y: 0, zoom: 1 }"
-          :min-zoom="1"
-          :max-zoom="1"
-          :nodes-draggable="false"
-          :nodes-connectable="false"
-          :elements-selectable="false"
-          :pan-on-drag="false"
-          :zoom-on-scroll="false"
-          :zoom-on-pinch="false"
-          :zoom-on-double-click="false"
-          :prevent-scrolling="false"
-          :fit-view-on-init="false"
-          class="rf-vue-flow"
-          @node-click="onNodeClick"
-        >
-          <!-- Root node -->
-          <template #node-roadmap-root="{ data }">
-            <NuxtLink
-              :to="data.href"
-              class="rf-node rf-root group flex h-full w-full items-center justify-between gap-5 rounded-xl border border-[var(--line)] border-t-[3px] border-t-[var(--brand)] bg-[var(--surface)] px-5 py-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[var(--brand)] hover:shadow-md"
-              title="Open your next step"
-            >
-              <div class="grid min-w-0 gap-1">
-                <span
-                  class="inline-flex items-center gap-1.5 text-[0.72rem] font-bold uppercase tracking-widest text-[var(--brand)]"
-                >
-                  <Icon name="lucide:git-fork" class="learning-icon" />
-                  Learning tree
-                </span>
-                <strong
-                  class="font-[var(--font-display)] text-[1.08rem] leading-tight text-[var(--ink)]"
-                >
-                  {{ data.phases }} phases · {{ data.weeks }} weeks · {{ data.topics }} topics
-                </strong>
-                <p class="m-0 text-[0.86rem] leading-snug text-[var(--muted)]">
-                  One root, followed in order. Pass a topic to open the next leaf.
-                </p>
-                <span
-                  class="mt-0.5 inline-flex max-w-full items-center gap-1.5 self-start truncate rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2 py-1 text-[0.76rem] font-medium text-[var(--ink)]"
-                >
-                  <Icon name="lucide:flag" class="learning-icon flex-none text-[var(--brand)]" />
-                  <span class="truncate">{{ data.nextLabel }}</span>
-                </span>
-              </div>
-              <div class="grid w-[132px] flex-none gap-1.5">
-                <strong
-                  class="font-[var(--font-display)] text-[1.6rem] font-bold leading-none text-[var(--ink)]"
-                >
-                  {{ data.percent }}%
-                </strong>
-                <div class="h-1.5 overflow-hidden rounded-full bg-[var(--line)]">
-                  <span
-                    class="block h-full rounded-full bg-[var(--brand)] transition-all"
-                    :style="{ width: `${data.percent}%` }"
-                  />
-                </div>
-                <small class="text-[0.74rem] text-[var(--muted)]">
-                  {{ data.done }} / {{ data.topics }} topics passed
-                </small>
-              </div>
-              <Handle type="source" :position="Position.Bottom" class="rf-handle" />
-            </NuxtLink>
-          </template>
-
-          <!-- Phase node -->
-          <template #node-roadmap-phase="{ data }">
-            <NuxtLink
-              :to="data.phase.gate.href"
-              class="rf-node rf-phase group flex h-full w-full flex-col gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[color:var(--phase-color)] hover:shadow-md"
-              :data-state="data.phase.state"
-              :data-tone="data.phase.tone"
-              :title="`Open Phase ${data.phase.number}: ${data.phase.title}`"
-            >
-              <div
-                class="flex items-center justify-between gap-2 text-[0.72rem] font-bold uppercase tracking-wider text-[color:var(--phase-color)]"
+      <div
+        class="rf-canvas-inner relative"
+        :style="{ width: `${layoutWidth}px`, height: `${flow.height}px` }"
+      >
+        <ClientOnly>
+          <VueFlow
+            :nodes="flow.nodes"
+            :edges="flow.edges"
+            :default-viewport="{ x: 0, y: 0, zoom: 1 }"
+            :min-zoom="1"
+            :max-zoom="1"
+            :nodes-draggable="false"
+            :nodes-connectable="false"
+            :elements-selectable="false"
+            :pan-on-drag="false"
+            :zoom-on-scroll="false"
+            :zoom-on-pinch="false"
+            :zoom-on-double-click="false"
+            :prevent-scrolling="false"
+            :fit-view-on-init="false"
+            class="rf-vue-flow"
+            @node-click="onNodeClick"
+          >
+            <!-- Root node -->
+            <template #node-roadmap-root="{ data }">
+              <NuxtLink
+                :to="data.href"
+                class="rf-node rf-root group flex h-full w-full items-center justify-between gap-5 rounded-xl border border-[var(--line)] border-t-[3px] border-t-[var(--brand)] bg-[var(--surface)] px-5 py-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[var(--brand)] hover:shadow-md"
+                title="Open your next step"
               >
-                <span>Phase {{ data.phase.number }} · {{ data.phase.weekRange }}</span>
+                <div class="grid min-w-0 gap-1">
+                  <span
+                    class="inline-flex items-center gap-1.5 text-[0.72rem] font-bold uppercase tracking-widest text-[var(--brand)]"
+                  >
+                    <Icon name="lucide:git-fork" class="learning-icon" />
+                    Learning tree
+                  </span>
+                  <strong
+                    class="font-[var(--font-display)] text-[1.08rem] leading-tight text-[var(--ink)]"
+                  >
+                    {{ data.phases }} phases · {{ data.weeks }} weeks · {{ data.topics }} topics
+                  </strong>
+                  <p class="m-0 text-[0.86rem] leading-snug text-[var(--muted)]">
+                    One root, followed in order. Pass a topic to open the next leaf.
+                  </p>
+                  <span
+                    class="mt-0.5 inline-flex max-w-full items-center gap-1.5 self-start truncate rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2 py-1 text-[0.76rem] font-medium text-[var(--ink)]"
+                  >
+                    <Icon name="lucide:flag" class="learning-icon flex-none text-[var(--brand)]" />
+                    <span class="truncate">{{ data.nextLabel }}</span>
+                  </span>
+                </div>
+                <div class="grid w-[132px] flex-none gap-1.5">
+                  <strong
+                    class="font-[var(--font-display)] text-[1.6rem] font-bold leading-none text-[var(--ink)]"
+                  >
+                    {{ data.percent }}%
+                  </strong>
+                  <div class="h-1.5 overflow-hidden rounded-full bg-[var(--line)]">
+                    <span
+                      class="block h-full rounded-full bg-[var(--brand)] transition-all"
+                      :style="{ width: `${data.percent}%` }"
+                    />
+                  </div>
+                  <small class="text-[0.74rem] text-[var(--muted)]">
+                    {{ data.done }} / {{ data.topics }} topics passed
+                  </small>
+                </div>
+                <Handle type="source" :position="Position.Bottom" class="rf-handle" />
+              </NuxtLink>
+            </template>
+
+            <!-- Phase node -->
+            <template #node-roadmap-phase="{ data }">
+              <NuxtLink
+                :to="data.phase.gate.href"
+                class="rf-node rf-phase group flex h-full w-full flex-col gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface)] p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[color:var(--phase-color)] hover:shadow-md"
+                :data-state="data.phase.state"
+                :data-tone="data.phase.tone"
+                :title="`Open Phase ${data.phase.number}: ${data.phase.title}`"
+              >
+                <div
+                  class="flex items-center justify-between gap-2 text-[0.72rem] font-bold uppercase tracking-wider text-[color:var(--phase-color)]"
+                >
+                  <span>Phase {{ data.phase.number }} · {{ data.phase.weekRange }}</span>
+                  <span
+                    class="rf-state inline-flex items-center gap-1 rounded-full border border-[var(--line)] bg-[var(--surface-2)] px-2 py-0.5 text-[0.7rem] font-semibold normal-case tracking-normal text-[var(--muted)]"
+                    :data-status="data.phase.state"
+                  >
+                    <Icon
+                      :name="
+                        data.phase.state === 'complete'
+                          ? 'lucide:circle-check-big'
+                          : data.phase.state === 'active'
+                            ? 'lucide:compass'
+                            : 'lucide:lock'
+                      "
+                      class="learning-icon"
+                    />
+                    {{ data.phase.stateLabel }}
+                  </span>
+                </div>
+                <h3 class="m-0 text-[1.2rem] font-bold leading-tight text-[var(--ink)]">
+                  {{ data.phase.title }}
+                </h3>
+                <!-- Full goal, no clamp, no scroll. The node height
+                   (PHASE_H in the script) is sized to accommodate it. -->
+                <p class="m-0 text-[0.88rem] leading-snug text-[var(--muted)]">
+                  {{ data.phase.goal }}
+                </p>
+                <div class="mt-auto grid gap-1">
+                  <div
+                    class="flex items-center justify-between gap-2 text-[0.76rem] text-[var(--muted)]"
+                  >
+                    <span>{{ data.phase.done }} / {{ data.phase.total }} topics</span>
+                    <strong class="text-[var(--ink)]">{{ data.phase.percent }}%</strong>
+                  </div>
+                  <div class="h-1.5 overflow-hidden rounded-full bg-[var(--line)]">
+                    <span
+                      class="block h-full rounded-full bg-[color:var(--phase-color)] transition-all"
+                      :style="{ width: `${data.phase.percent}%` }"
+                    />
+                  </div>
+                </div>
                 <span
-                  class="rf-state inline-flex items-center gap-1 rounded-full border border-[var(--line)] bg-[var(--surface-2)] px-2 py-0.5 text-[0.7rem] font-semibold normal-case tracking-normal text-[var(--muted)]"
-                  :data-status="data.phase.state"
+                  class="inline-flex items-center gap-1.5 self-start rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2 py-1 text-[0.74rem] font-medium text-[var(--ink)]"
                 >
                   <Icon
-                    :name="
-                      data.phase.state === 'complete'
-                        ? 'lucide:circle-check-big'
-                        : data.phase.state === 'active'
-                          ? 'lucide:compass'
-                          : 'lucide:lock'
-                    "
-                    class="learning-icon"
+                    name="lucide:badge-check"
+                    class="learning-icon text-[color:var(--phase-color)]"
                   />
-                  {{ data.phase.stateLabel }}
+                  {{ data.phase.role }}
                 </span>
-              </div>
-              <h3 class="m-0 text-[1.2rem] font-bold leading-tight text-[var(--ink)]">
-                {{ data.phase.title }}
-              </h3>
-              <p class="m-0 line-clamp-3 text-[0.88rem] leading-snug text-[var(--muted)]">
-                {{ data.phase.goal }}
-              </p>
-              <div class="mt-auto grid gap-1">
-                <div
-                  class="flex items-center justify-between gap-2 text-[0.76rem] text-[var(--muted)]"
+                <Handle type="target" :position="Position.Top" class="rf-handle" />
+                <Handle type="source" :position="Position.Bottom" class="rf-handle" />
+              </NuxtLink>
+            </template>
+
+            <!-- Week node: header is a link, topics are their own links -->
+            <template #node-roadmap-week="{ data }">
+              <div
+                class="rf-node rf-week flex h-full w-full flex-col overflow-hidden rounded-lg border border-[var(--line)] bg-[var(--surface)]"
+                :data-tone="data.tone"
+              >
+                <NuxtLink
+                  :to="data.week.href"
+                  :data-nav-href="data.week.href"
+                  class="rf-week-head grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 bg-[var(--surface-2)] px-3 py-2.5 transition-colors hover:bg-[color-mix(in_oklab,var(--phase-color)_6%,var(--surface-2))]"
+                  :title="`Open Week ${data.week.number}: ${data.week.title}`"
                 >
-                  <span>{{ data.phase.done }} / {{ data.phase.total }} topics</span>
-                  <strong class="text-[var(--ink)]">{{ data.phase.percent }}%</strong>
-                </div>
-                <div class="h-1.5 overflow-hidden rounded-full bg-[var(--line)]">
+                  <span
+                    class="grid h-6 min-w-[34px] place-items-center rounded-md border border-[color-mix(in_oklab,var(--phase-color)_20%,var(--line))] bg-[color-mix(in_oklab,var(--phase-color)_7%,var(--surface))] text-[0.7rem] font-bold text-[color:var(--phase-color)]"
+                  >
+                    W{{ data.week.number }}
+                  </span>
+                  <div class="grid min-w-0 gap-0">
+                    <strong class="truncate text-[0.86rem] font-semibold text-[var(--ink)]">
+                      {{ data.week.title }}
+                    </strong>
+                    <small class="text-[0.72rem] text-[var(--muted)]">{{ data.week.stage }}</small>
+                  </div>
+                  <span class="text-[0.72rem] font-medium text-[var(--muted)]">
+                    {{ data.week.done }}/{{ data.week.total }}
+                  </span>
+                </NuxtLink>
+                <div class="mx-3 mb-2 h-[3px] overflow-hidden rounded-full bg-[var(--line)]">
                   <span
                     class="block h-full rounded-full bg-[color:var(--phase-color)] transition-all"
-                    :style="{ width: `${data.phase.percent}%` }"
+                    :style="{ width: `${data.week.percent}%` }"
                   />
                 </div>
-              </div>
-              <span
-                class="inline-flex items-center gap-1.5 self-start rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2 py-1 text-[0.74rem] font-medium text-[var(--ink)]"
-              >
-                <Icon
-                  name="lucide:badge-check"
-                  class="learning-icon text-[color:var(--phase-color)]"
-                />
-                {{ data.phase.role }}
-              </span>
-              <Handle type="target" :position="Position.Top" class="rf-handle" />
-              <Handle type="source" :position="Position.Bottom" class="rf-handle" />
-            </NuxtLink>
-          </template>
 
-          <!-- Week node: header is a link, topics are their own links -->
-          <template #node-roadmap-week="{ data }">
-            <div
-              class="rf-node rf-week flex h-full w-full flex-col overflow-hidden rounded-lg border border-[var(--line)] bg-[var(--surface)]"
-              :data-tone="data.tone"
-            >
-              <NuxtLink
-                :to="data.week.href"
-                :data-nav-href="data.week.href"
-                class="rf-week-head grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 bg-[var(--surface-2)] px-3 py-2.5 transition-colors hover:bg-[color-mix(in_oklab,var(--phase-color)_6%,var(--surface-2))]"
-                :title="`Open Week ${data.week.number}: ${data.week.title}`"
-              >
-                <span
-                  class="grid h-6 min-w-[34px] place-items-center rounded-md border border-[color-mix(in_oklab,var(--phase-color)_20%,var(--line))] bg-[color-mix(in_oklab,var(--phase-color)_7%,var(--surface))] text-[0.7rem] font-bold text-[color:var(--phase-color)]"
-                >
-                  W{{ data.week.number }}
-                </span>
-                <div class="grid min-w-0 gap-0">
-                  <strong class="truncate text-[0.86rem] font-semibold text-[var(--ink)]">
-                    {{ data.week.title }}
-                  </strong>
-                  <small class="text-[0.72rem] text-[var(--muted)]">{{ data.week.stage }}</small>
+                <div class="grid px-2 pb-2">
+                  <template v-for="topic in data.week.topics" :key="topic.id">
+                    <NuxtLink
+                      v-if="!topic.locked"
+                      :to="topic.href"
+                      :data-nav-href="topic.href"
+                      class="rf-topic flex h-[54px] items-center gap-2 border-t border-[var(--line)] px-2 py-1.5 hover:bg-[var(--surface-2)]"
+                      :class="{
+                        'rf-topic-complete bg-[color-mix(in_oklab,var(--success)_6%,transparent)]':
+                          topic.status === 'complete',
+                        'rf-topic-next bg-[var(--brand-soft)]': topic.next,
+                      }"
+                      :title="topic.title"
+                    >
+                      <span
+                        class="grid h-6 w-6 flex-none place-items-center rounded-md border border-[color-mix(in_oklab,var(--phase-color)_18%,var(--line))] bg-[var(--surface-2)] text-[0.66rem] font-bold text-[color:var(--phase-color)]"
+                      >
+                        {{ topic.order }}
+                      </span>
+                      <span class="grid flex-1 min-w-0 gap-0">
+                        <strong
+                          class="line-clamp-2 text-[0.82rem] font-medium leading-tight text-[var(--ink)]"
+                        >
+                          {{ topic.title }}
+                        </strong>
+                        <small class="truncate text-[0.68rem] text-[var(--muted)]">
+                          {{ topic.stage }}
+                          <template v-if="topic.score !== undefined">
+                            · {{ topic.score }}/3</template
+                          >
+                        </small>
+                      </span>
+                      <span
+                        class="inline-flex flex-none items-center gap-1 text-[0.7rem] font-medium text-[var(--muted)]"
+                      >
+                        <Icon
+                          :name="
+                            topic.status === 'complete'
+                              ? 'lucide:circle-check-big'
+                              : topic.next
+                                ? 'lucide:play'
+                                : 'lucide:arrow-right'
+                          "
+                          class="learning-icon"
+                        />
+                        <span class="rf-topic-label">{{ topic.stateLabel }}</span>
+                      </span>
+                    </NuxtLink>
+
+                    <button
+                      v-else
+                      type="button"
+                      class="rf-topic rf-topic-locked flex h-[54px] cursor-not-allowed items-center gap-2 border-t border-[var(--line)] bg-transparent px-2 py-1.5 text-left text-[var(--muted)]"
+                      :title="topic.title"
+                      :data-nav-locked="`Locked. Pass the previous topic quiz first to open “${topic.title}”.`"
+                      @click="handleLockedTopic(topic)"
+                    >
+                      <span
+                        class="grid h-6 w-6 flex-none place-items-center rounded-md border border-dashed border-[var(--line)] bg-[var(--surface-2)] text-[0.66rem] font-bold text-[var(--muted)]"
+                      >
+                        {{ topic.order }}
+                      </span>
+                      <span class="grid flex-1 min-w-0 gap-0">
+                        <strong
+                          class="line-clamp-2 text-[0.82rem] font-medium leading-tight text-[var(--muted)]"
+                        >
+                          {{ topic.title }}
+                        </strong>
+                        <small class="truncate text-[0.68rem] text-[var(--muted)]">
+                          {{ topic.stage }}
+                        </small>
+                      </span>
+                      <span
+                        class="inline-flex flex-none items-center gap-1 text-[0.7rem] font-medium"
+                      >
+                        <Icon name="lucide:lock" class="learning-icon" />
+                        <span class="rf-topic-label">Locked</span>
+                      </span>
+                    </button>
+                  </template>
                 </div>
-                <span class="text-[0.72rem] font-medium text-[var(--muted)]">
-                  {{ data.week.done }}/{{ data.week.total }}
-                </span>
-              </NuxtLink>
-              <div class="mx-3 mb-2 h-[3px] overflow-hidden rounded-full bg-[var(--line)]">
-                <span
-                  class="block h-full rounded-full bg-[color:var(--phase-color)] transition-all"
-                  :style="{ width: `${data.week.percent}%` }"
-                />
+                <Handle type="target" :position="Position.Top" class="rf-handle" />
+                <Handle type="source" :position="Position.Bottom" class="rf-handle" />
               </div>
+            </template>
 
-              <div class="grid px-2 pb-2">
-                <template v-for="topic in data.week.topics" :key="topic.id">
-                  <NuxtLink
-                    v-if="!topic.locked"
-                    :to="topic.href"
-                    :data-nav-href="topic.href"
-                    class="rf-topic flex h-[54px] items-center gap-2 border-t border-[var(--line)] px-2 py-1.5 hover:bg-[var(--surface-2)]"
-                    :class="{
-                      'rf-topic-complete bg-[color-mix(in_oklab,var(--success)_6%,transparent)]':
-                        topic.status === 'complete',
-                      'rf-topic-next bg-[var(--brand-soft)]': topic.next,
-                    }"
-                    :title="topic.title"
-                  >
-                    <span
-                      class="grid h-6 w-6 flex-none place-items-center rounded-md border border-[color-mix(in_oklab,var(--phase-color)_18%,var(--line))] bg-[var(--surface-2)] text-[0.66rem] font-bold text-[color:var(--phase-color)]"
-                    >
-                      {{ topic.order }}
-                    </span>
-                    <span class="grid flex-1 min-w-0 gap-0">
-                      <strong
-                        class="line-clamp-2 text-[0.82rem] font-medium leading-tight text-[var(--ink)]"
-                      >
-                        {{ topic.title }}
-                      </strong>
-                      <small class="truncate text-[0.68rem] text-[var(--muted)]">
-                        {{ topic.stage }}
-                        <template v-if="topic.score !== undefined"> · {{ topic.score }}/3</template>
-                      </small>
-                    </span>
-                    <span
-                      class="inline-flex flex-none items-center gap-1 text-[0.7rem] font-medium text-[var(--muted)]"
-                    >
-                      <Icon
-                        :name="
-                          topic.status === 'complete'
-                            ? 'lucide:circle-check-big'
-                            : topic.next
-                              ? 'lucide:play'
-                              : 'lucide:arrow-right'
-                        "
-                        class="learning-icon"
-                      />
-                      <span class="rf-topic-label">{{ topic.stateLabel }}</span>
-                    </span>
-                  </NuxtLink>
-
-                  <button
-                    v-else
-                    type="button"
-                    class="rf-topic rf-topic-locked flex h-[54px] cursor-not-allowed items-center gap-2 border-t border-[var(--line)] bg-transparent px-2 py-1.5 text-left text-[var(--muted)]"
-                    :title="topic.title"
-                    :data-nav-locked="`Locked. Pass the previous topic quiz first to open “${topic.title}”.`"
-                    @click="handleLockedTopic(topic)"
-                  >
-                    <span
-                      class="grid h-6 w-6 flex-none place-items-center rounded-md border border-dashed border-[var(--line)] bg-[var(--surface-2)] text-[0.66rem] font-bold text-[var(--muted)]"
-                    >
-                      {{ topic.order }}
-                    </span>
-                    <span class="grid flex-1 min-w-0 gap-0">
-                      <strong
-                        class="line-clamp-2 text-[0.82rem] font-medium leading-tight text-[var(--muted)]"
-                      >
-                        {{ topic.title }}
-                      </strong>
-                      <small class="truncate text-[0.68rem] text-[var(--muted)]">
-                        {{ topic.stage }}
-                      </small>
-                    </span>
-                    <span
-                      class="inline-flex flex-none items-center gap-1 text-[0.7rem] font-medium"
-                    >
-                      <Icon name="lucide:lock" class="learning-icon" />
-                      <span class="rf-topic-label">Locked</span>
-                    </span>
-                  </button>
-                </template>
-              </div>
-              <Handle type="target" :position="Position.Top" class="rf-handle" />
-              <Handle type="source" :position="Position.Bottom" class="rf-handle" />
-            </div>
-          </template>
-
-          <!-- Gate node -->
-          <template #node-roadmap-gate="{ data }">
-            <div
-              class="rf-node rf-gate-wrap flex h-full w-full items-stretch"
-              :data-tone="data.tone"
-            >
-              <NuxtLink
-                v-if="!data.gate.locked"
-                :to="data.gate.href"
-                class="rf-gate group flex flex-1 items-center gap-2.5 rounded-lg border border-[var(--line)] bg-[var(--surface)] p-3 transition-all hover:-translate-y-0.5 hover:border-[color:var(--phase-color)] hover:shadow-sm"
-                :class="{
-                  'bg-[color-mix(in_oklab,var(--success)_6%,var(--surface))] border-[color-mix(in_oklab,var(--success)_32%,var(--line))]':
-                    data.gate.status === 'complete',
-                  'bg-[var(--brand-soft)] border-[color-mix(in_oklab,var(--brand)_38%,var(--line))]':
-                    data.gate.next,
-                }"
+            <!-- Gate node -->
+            <template #node-roadmap-gate="{ data }">
+              <div
+                class="rf-node rf-gate-wrap flex h-full w-full items-stretch"
+                :data-tone="data.tone"
               >
-                <span
-                  class="grid h-9 w-9 flex-none place-items-center rounded-md border border-[var(--line)] bg-[var(--surface-2)] text-[color:var(--phase-color)]"
-                  :class="data.gate.status === 'complete' && 'text-[var(--success)]'"
+                <NuxtLink
+                  v-if="!data.gate.locked"
+                  :to="data.gate.href"
+                  class="rf-gate group flex flex-1 items-center gap-2.5 rounded-lg border border-[var(--line)] bg-[var(--surface)] p-3 transition-all hover:-translate-y-0.5 hover:border-[color:var(--phase-color)] hover:shadow-sm"
+                  :class="{
+                    'bg-[color-mix(in_oklab,var(--success)_6%,var(--surface))] border-[color-mix(in_oklab,var(--success)_32%,var(--line))]':
+                      data.gate.status === 'complete',
+                    'bg-[var(--brand-soft)] border-[color-mix(in_oklab,var(--brand)_38%,var(--line))]':
+                      data.gate.next,
+                  }"
                 >
-                  <Icon
-                    :name="
-                      data.gate.status === 'complete' ? 'lucide:badge-check' : 'lucide:door-open'
-                    "
-                    class="learning-icon"
-                  />
-                </span>
-                <span class="grid flex-1 min-w-0 gap-0">
-                  <small
-                    class="text-[0.66rem] font-bold uppercase tracking-wider text-[var(--muted)]"
+                  <span
+                    class="grid h-9 w-9 flex-none place-items-center rounded-md border border-[var(--line)] bg-[var(--surface-2)] text-[color:var(--phase-color)]"
+                    :class="data.gate.status === 'complete' && 'text-[var(--success)]'"
                   >
-                    Phase {{ data.gate.phaseNumber }} gate
-                  </small>
-                  <strong class="truncate text-[0.86rem] font-semibold text-[var(--ink)]">
-                    {{ data.gate.role }}
-                  </strong>
-                  <span class="text-[0.74rem] text-[var(--muted)]">{{
-                    data.gate.statusLabel
-                  }}</span>
-                </span>
-                <Icon
-                  name="lucide:arrow-right"
-                  class="learning-icon text-[color:var(--phase-color)] transition-transform group-hover:translate-x-0.5"
-                />
-              </NuxtLink>
-
-              <button
-                v-else
-                type="button"
-                class="rf-gate flex flex-1 cursor-not-allowed items-center gap-2.5 rounded-lg border border-dashed border-[var(--line)] bg-[var(--surface-2)] p-3 text-left text-[var(--muted)]"
-                @click="handleLockedGate(data.gate)"
-              >
-                <span
-                  class="grid h-9 w-9 flex-none place-items-center rounded-md border border-[var(--line)] bg-[var(--surface)] text-[var(--muted)]"
-                >
-                  <Icon name="lucide:lock" class="learning-icon" />
-                </span>
-                <span class="grid flex-1 min-w-0 gap-0">
-                  <small
-                    class="text-[0.66rem] font-bold uppercase tracking-wider text-[var(--muted)]"
-                  >
-                    Phase {{ data.gate.phaseNumber }} gate
-                  </small>
-                  <strong class="truncate text-[0.86rem] font-semibold">{{
-                    data.gate.role
-                  }}</strong>
-                  <span class="text-[0.74rem]">
-                    Pass all {{ data.gate.topicCount }} topics to open
+                    <Icon
+                      :name="
+                        data.gate.status === 'complete' ? 'lucide:badge-check' : 'lucide:door-open'
+                      "
+                      class="learning-icon"
+                    />
                   </span>
-                </span>
-              </button>
-              <Handle type="target" :position="Position.Top" class="rf-handle" />
+                  <span class="grid flex-1 min-w-0 gap-0">
+                    <small
+                      class="text-[0.66rem] font-bold uppercase tracking-wider text-[var(--muted)]"
+                    >
+                      Phase {{ data.gate.phaseNumber }} gate
+                    </small>
+                    <strong class="truncate text-[0.86rem] font-semibold text-[var(--ink)]">
+                      {{ data.gate.role }}
+                    </strong>
+                    <span class="text-[0.74rem] text-[var(--muted)]">{{
+                      data.gate.statusLabel
+                    }}</span>
+                  </span>
+                  <Icon
+                    name="lucide:arrow-right"
+                    class="learning-icon text-[color:var(--phase-color)] transition-transform group-hover:translate-x-0.5"
+                  />
+                </NuxtLink>
+
+                <button
+                  v-else
+                  type="button"
+                  class="rf-gate flex flex-1 cursor-not-allowed items-center gap-2.5 rounded-lg border border-dashed border-[var(--line)] bg-[var(--surface-2)] p-3 text-left text-[var(--muted)]"
+                  @click="handleLockedGate(data.gate)"
+                >
+                  <span
+                    class="grid h-9 w-9 flex-none place-items-center rounded-md border border-[var(--line)] bg-[var(--surface)] text-[var(--muted)]"
+                  >
+                    <Icon name="lucide:lock" class="learning-icon" />
+                  </span>
+                  <span class="grid flex-1 min-w-0 gap-0">
+                    <small
+                      class="text-[0.66rem] font-bold uppercase tracking-wider text-[var(--muted)]"
+                    >
+                      Phase {{ data.gate.phaseNumber }} gate
+                    </small>
+                    <strong class="truncate text-[0.86rem] font-semibold">{{
+                      data.gate.role
+                    }}</strong>
+                    <span class="text-[0.74rem]">
+                      Pass all {{ data.gate.topicCount }} topics to open
+                    </span>
+                  </span>
+                </button>
+                <Handle type="target" :position="Position.Top" class="rf-handle" />
+              </div>
+            </template>
+          </VueFlow>
+          <template #fallback>
+            <div class="grid h-full place-items-center text-sm text-[var(--muted)]">
+              Loading the roadmap tree…
             </div>
           </template>
-        </VueFlow>
-        <template #fallback>
-          <div class="grid h-full place-items-center text-sm text-[var(--muted)]">
-            Loading the roadmap tree…
-          </div>
-        </template>
-      </ClientOnly>
+        </ClientOnly>
+      </div>
     </div>
 
     <p class="flex items-start gap-2 text-[0.84rem] leading-snug text-[var(--muted)]">
@@ -819,8 +838,18 @@ const flow = computed(() => {
 }
 
 .rf-canvas :deep(.vue-flow) {
+  /* Grow with the computed layout so nodes near the right edge don't get
+     clipped on narrow viewports. The outer .rf-canvas is overflow-auto
+     and will show scrollbars when the diagram exceeds the viewport. */
   width: 100%;
+  min-width: 100%;
   height: 100%;
+  overflow: visible;
+}
+
+.rf-canvas :deep(.vue-flow__pane),
+.rf-canvas :deep(.vue-flow__viewport) {
+  overflow: visible;
 }
 
 .rf-canvas :deep(.vue-flow__pane) {

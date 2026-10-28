@@ -390,6 +390,10 @@ export const resourceGroups: ResourceGroup[] = [
         href: 'https://martinfowler.com/articles/practical-test-pyramid.html',
       },
       {
+        label: 'Test Automation University (Applitools, free courses)',
+        href: 'https://testautomationu.applitools.com/',
+      },
+      {
         label: 'ISTQB Foundation Level syllabus',
         href: 'https://www.istqb.org/',
       },
@@ -419,6 +423,10 @@ export const resourceGroups: ResourceGroup[] = [
         href: 'https://www.w3.org/WAI/WCAG22/quickref/',
       },
       {
+        label: 'WebAIM articles',
+        href: 'https://webaim.org/articles/',
+      },
+      {
         label: 'axe DevTools',
         href: 'https://www.deque.com/axe/devtools/',
       },
@@ -429,6 +437,10 @@ export const resourceGroups: ResourceGroup[] = [
       {
         label: 'Scrum Guide (Definition of Done)',
         href: 'https://scrumguides.org/scrum-guide.html',
+      },
+      {
+        label: 'Simon Willison on prompt security',
+        href: 'https://simonwillison.net/tags/prompt-injection/',
       },
     ],
   },

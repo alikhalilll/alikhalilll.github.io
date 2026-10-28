@@ -17,7 +17,10 @@ const props = defineProps<{
 
 const plan = computed(() => getPlanSummary(props.planId));
 const runtime = computed(() => getPlanRuntime(props.planId));
-const isPlan1 = computed(() => props.planId === 'plan-1');
+// The full-stack architecture diagram's branches are hardcoded to plan-2 phase
+// keys (api, laravel, quality) — rendering it on any other plan would 404 on
+// click. Keep it scoped to plan-2 explicitly.
+const showStack = computed(() => props.planId === 'plan-2');
 const planRoles = computed(() => runtime.value?.roles ?? []);
 const operations = computed(() => runtime.value?.operations);
 const aiTools = computed(() => operations.value?.aiTools ?? []);
@@ -41,6 +44,8 @@ const {
   phaseProgress,
   progressPercent,
   resetProgress,
+  unlockAll,
+  disableUnlock,
 } = progress;
 
 useHead(() => ({
@@ -122,7 +127,7 @@ const phaseOutline = computed(() =>
 
 const jumpLinks = computed(() => [
   { href: '#roadmap', label: 'Roadmap', icon: 'lucide:map' },
-  ...(isPlan1.value ? [] : [{ href: '#stack', label: 'Architecture', icon: 'lucide:git-fork' }]),
+  ...(showStack.value ? [{ href: '#stack', label: 'Architecture', icon: 'lucide:git-fork' }] : []),
   { href: '#rhythm', label: 'How it works', icon: 'lucide:repeat-2' },
   { href: '#roles', label: 'Roles', icon: 'lucide:badge-check' },
   { href: '#resources', label: 'Resources', icon: 'lucide:library' },
@@ -131,9 +136,9 @@ const jumpLinks = computed(() => [
 const sections = computed(() => ({
   roadmap: '01',
   stack: '02',
-  rhythm: isPlan1.value ? '02' : '03',
-  roles: isPlan1.value ? '03' : '04',
-  resources: isPlan1.value ? '04' : '05',
+  rhythm: showStack.value ? '03' : '02',
+  roles: showStack.value ? '04' : '03',
+  resources: showStack.value ? '05' : '04',
 }));
 </script>
 
@@ -146,6 +151,27 @@ const sections = computed(() => ({
     :progress-percent="progressPercent"
   >
     <template v-if="plan?.status === 'available'">
+      <!-- ============ UNLOCK-ALL BANNER ============ -->
+      <div
+        v-if="unlockAll"
+        class="mb-5 flex flex-wrap items-center gap-3 rounded-xl border border-dashed border-[color-mix(in_oklab,var(--brand)_40%,var(--line))] bg-[var(--brand-soft)] px-4 py-3 text-[0.88rem] text-[var(--ink)]"
+        role="status"
+      >
+        <Icon name="lucide:unlock" class="learning-icon text-[var(--brand)]" />
+        <span class="flex-1">
+          <strong class="font-semibold">Explore mode</strong> — every phase, topic and gate is open
+          for browsing (persisted in a cookie for 24h). Your stored progress is unchanged.
+        </span>
+        <button
+          type="button"
+          class="inline-flex items-center gap-1 rounded-md border border-[var(--line)] bg-[var(--surface)] px-2.5 py-1 text-[0.78rem] font-medium text-[var(--ink)] hover:border-[var(--brand)]"
+          @click="disableUnlock"
+        >
+          Turn off
+          <Icon name="lucide:x" class="learning-icon" />
+        </button>
+      </div>
+
       <!-- ============ HERO ============ -->
       <section
         class="plan-hero relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-sm"
@@ -399,7 +425,7 @@ const sections = computed(() => ({
 
       <!-- ============ § 02 — ARCHITECTURE (plan 2 only) ============ -->
       <section
-        v-if="!isPlan1"
+        v-if="showStack"
         id="stack"
         class="plan-section scroll-mt-[160px]"
         aria-labelledby="stack-title"
