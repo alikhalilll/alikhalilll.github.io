@@ -99,7 +99,18 @@ const phaseCards = computed<PhaseCard[]>(() =>
   })
 );
 
+const phaseRows = computed(() => {
+  const rows: PhaseCard[][] = [];
+  for (let index = 0; index < phaseCards.value.length; index += 2) {
+    rows.push(phaseCards.value.slice(index, index + 2));
+  }
+  return rows;
+});
+
 const totalDone = computed(() => phaseCards.value.reduce((total, card) => total + card.done, 0));
+const totalWeeks = computed(() =>
+  phaseCards.value.reduce((total, card) => total + card.weeks.length, 0)
+);
 const overallPercent = computed(() =>
   topics.value.length === 0 ? 0 : Math.round((totalDone.value / topics.value.length) * 100)
 );
@@ -170,789 +181,545 @@ const gateTitle = (phase: PlanPhase, status: string) => {
 </script>
 
 <template>
-  <div class="phase-roadmap">
-    <div v-if="lockedNotice" class="phase-roadmap-notice" role="status">
-      <Icon name="lucide:lock" class="learning-icon" />
-      <span>{{ lockedNotice }}</span>
-      <button type="button" aria-label="Dismiss message" @click="lockedNotice = ''">
+  <div class="phase-roadmap grid gap-5">
+    <!-- Locked notice -->
+    <div
+      v-if="lockedNotice"
+      role="status"
+      class="flex items-center gap-2.5 rounded-xl border border-[color-mix(in_oklab,var(--brand)_28%,var(--line))] bg-[color-mix(in_oklab,var(--brand)_8%,var(--surface))] px-3.5 py-3 text-[0.88rem] text-[var(--ink)]"
+    >
+      <Icon name="lucide:lock" class="learning-icon text-[var(--brand)]" />
+      <span class="flex-1">{{ lockedNotice }}</span>
+      <button
+        type="button"
+        aria-label="Dismiss message"
+        class="grid rounded-md p-1 text-[var(--muted)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
+        @click="lockedNotice = ''"
+      >
         <Icon name="lucide:x" class="learning-icon" />
       </button>
     </div>
 
-    <div class="phase-roadmap-root">
-      <div class="phase-roadmap-root-copy">
-        <span class="phase-roadmap-root-kicker">The full path</span>
-        <strong>{{ topics.length }} topics · {{ phases.length }} phases</strong>
-        <p>
-          Follow the phases in order. A topic opens when the previous one is passed; a phase gate
-          opens when every topic in that phase is passed.
+    <!-- Root summary card -->
+    <section
+      class="phase-roadmap-root mx-auto flex w-full max-w-[820px] flex-wrap items-center justify-between gap-5 rounded-xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-sm"
+    >
+      <span class="absolute inset-x-0 top-0 h-[3px] bg-[var(--brand)]" aria-hidden="true" />
+      <div class="grid max-w-[720px] gap-1">
+        <span
+          class="inline-flex items-center gap-1.5 text-[0.72rem] font-bold uppercase tracking-widest text-[var(--brand)]"
+        >
+          <Icon name="lucide:git-fork" class="learning-icon" />
+          Root · Phase tree
+        </span>
+        <strong
+          class="font-[var(--font-display)] text-[1.14rem] font-bold leading-tight text-[var(--ink)]"
+        >
+          {{ phases.length }} phases · {{ totalWeeks }} weeks · {{ topics.length }} topics
+        </strong>
+        <p class="m-0 text-[0.92rem] leading-snug text-[var(--muted)]">
+          Every phase, week and topic grows from one root. Follow the branches in order: pass a
+          topic leaf to open the next, and pass every leaf in a phase to unlock its gate.
         </p>
-        <span class="phase-roadmap-next">
-          <Icon name="lucide:flag" class="learning-icon" />
+        <span
+          class="mt-1 inline-flex items-center gap-1.5 self-start rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2 py-1 text-[0.78rem] font-semibold text-[var(--ink)]"
+        >
+          <Icon name="lucide:flag" class="learning-icon text-[var(--brand)]" />
           {{ nextLabel }}
         </span>
       </div>
 
-      <div class="phase-roadmap-root-side">
-        <div class="phase-roadmap-total">
-          <strong>{{ overallPercent }}%</strong>
-          <span>{{ totalDone }} / {{ topics.length }} topics passed</span>
+      <div class="grid w-full max-w-[290px] flex-none gap-2">
+        <div class="flex items-baseline justify-between gap-2.5">
+          <strong
+            class="font-[var(--font-display)] text-[1.55rem] font-bold leading-none text-[var(--ink)]"
+          >
+            {{ overallPercent }}%
+          </strong>
+          <span class="text-[0.78rem] text-[var(--muted)]">
+            {{ totalDone }} / {{ topics.length }} topics passed
+          </span>
         </div>
-        <div class="phase-roadmap-total-track">
-          <span :style="{ width: `${overallPercent}%` }" />
+        <div class="h-1.5 overflow-hidden rounded-full bg-[var(--line)]">
+          <span
+            class="block h-full rounded-full bg-[var(--brand)] transition-all"
+            :style="{ width: `${overallPercent}%` }"
+          />
         </div>
-        <div class="phase-roadmap-legend">
-          <span><i class="legend-dot is-complete" /> Passed</span>
-          <span><i class="legend-dot is-available" /> Open</span>
-          <span><i class="legend-dot is-locked" /> Locked</span>
+        <span class="inline-flex items-center gap-1.5 text-[0.74rem] text-[var(--muted)]">
+          <Icon name="lucide:git-fork" class="learning-icon" />
+          Root → phase → week → topic
+        </span>
+        <div class="mt-1 flex flex-wrap gap-3 text-[0.76rem] text-[var(--muted)]">
+          <span class="inline-flex items-center gap-1.5">
+            <i class="h-2 w-2 rounded-full bg-[var(--success)]" />
+            Passed
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <i class="h-2 w-2 rounded-full bg-[var(--brand)]" />
+            Open
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <i class="h-2 w-2 rounded-full bg-[var(--muted)]" />
+            Locked
+          </span>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="phase-roadmap-grid">
-      <article
-        v-for="card in phaseCards"
-        :key="card.phase.key"
-        class="phase-roadmap-card"
-        :data-tone="card.phase.tone"
-        :data-state="card.state"
+    <!-- Phase tree -->
+    <div class="phase-tree relative mt-2" aria-label="Roadmap tree">
+      <div
+        v-for="(row, rowIndex) in phaseRows"
+        :key="rowIndex"
+        class="phase-tree-row relative pt-8"
       >
-        <header class="phase-roadmap-card-head">
-          <div class="phase-roadmap-card-top">
-            <span class="phase-roadmap-phase-label">
-              Phase {{ card.phase.number }} · {{ card.phase.weeks }}
-            </span>
-            <span class="phase-roadmap-state" :data-status="card.state">
-              <Icon :name="phaseIcon(card.state)" class="learning-icon" />
-              {{ card.statusLabel }}
-            </span>
-          </div>
-          <div class="phase-roadmap-title-row">
-            <span class="phase-roadmap-watermark" aria-hidden="true">
-              {{ String(card.phase.number).padStart(2, '0') }}
-            </span>
-            <h3>{{ card.phase.title }}</h3>
-          </div>
-          <p class="phase-roadmap-goal">{{ card.phase.goal }}</p>
-          <div class="phase-roadmap-progress">
-            <div class="phase-roadmap-progress-copy">
-              <span>{{ card.done }} / {{ card.total }} topics passed</span>
-              <strong>{{ card.percent }}%</strong>
-            </div>
-            <div class="roadmap-progress-track">
-              <span :style="{ width: `${card.percent}%` }" />
-            </div>
-          </div>
-          <span class="phase-roadmap-role">
-            <Icon name="lucide:badge-check" class="learning-icon" />
-            {{ card.phase.role.title }}
-          </span>
-        </header>
-
-        <div class="phase-roadmap-weeks">
-          <section v-for="week in card.weeks" :key="week.number" class="phase-roadmap-week">
-            <div class="phase-roadmap-week-head">
-              <span class="phase-roadmap-week-marker">W{{ week.number }}</span>
-              <div class="phase-roadmap-week-copy">
-                <strong>{{ week.title }}</strong>
-                <small>{{ week.stage }}</small>
-              </div>
-              <span class="phase-roadmap-week-count">{{ week.done }}/{{ week.total }}</span>
-            </div>
-            <div class="phase-roadmap-week-track">
-              <span :style="{ width: `${week.percent}%` }" />
-            </div>
-
-            <div class="phase-roadmap-topics">
-              <template v-for="topic in week.topics" :key="topic.id">
-                <NuxtLink
-                  v-if="getTopicStatus(topic.id) !== 'locked'"
-                  :to="topicPath(planId, topic.id)"
-                  class="phase-roadmap-topic"
-                  :class="{
-                    'is-complete': getTopicStatus(topic.id) === 'complete',
-                    'is-next': isNextTopic(topic),
-                  }"
-                  :data-status="getTopicStatus(topic.id)"
-                  :aria-label="topicTitle(topic)"
+        <div class="grid gap-14 md:grid-cols-2">
+          <div
+            v-for="(card, columnIndex) in row"
+            :key="card.phase.key"
+            class="phase-roadmap-branch relative flex min-w-0"
+            :class="columnIndex === 0 ? 'is-left' : 'is-right'"
+            :data-tone="card.phase.tone"
+          >
+            <article
+              class="phase-roadmap-card relative flex min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--surface)] shadow-sm"
+              :data-state="card.state"
+            >
+              <!-- Card head -->
+              <header class="grid gap-2 border-b border-[var(--line)] bg-[var(--surface-2)] p-5">
+                <div class="flex items-center justify-between gap-2.5">
+                  <span
+                    class="text-[0.72rem] font-bold uppercase tracking-wider text-[color:var(--phase-color)]"
+                  >
+                    Phase {{ card.phase.number }} · {{ card.phase.weeks }}
+                  </span>
+                  <span
+                    class="phase-roadmap-state inline-flex items-center gap-1 rounded-full border border-[var(--line)] bg-[var(--surface)] px-2 py-0.5 text-[0.72rem] font-semibold text-[var(--muted)]"
+                    :data-status="card.state"
+                  >
+                    <Icon :name="phaseIcon(card.state)" class="learning-icon" />
+                    {{ card.statusLabel }}
+                  </span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                  <span
+                    class="flex-none font-[var(--font-display)] text-[1.1rem] font-extrabold leading-none text-[color:var(--phase-color)] opacity-50"
+                  >
+                    {{ String(card.phase.number).padStart(2, '0') }}
+                  </span>
+                  <h3 class="m-0 text-[1.24rem] font-bold leading-tight text-[var(--ink)]">
+                    {{ card.phase.title }}
+                  </h3>
+                </div>
+                <p class="m-0 text-[0.9rem] leading-snug text-[var(--muted)]">
+                  {{ card.phase.goal }}
+                </p>
+                <div class="grid gap-1">
+                  <div
+                    class="flex items-center justify-between gap-2 text-[0.76rem] text-[var(--muted)]"
+                  >
+                    <span>{{ card.done }} / {{ card.total }} topics passed</span>
+                    <strong class="text-[var(--ink)]">{{ card.percent }}%</strong>
+                  </div>
+                  <div class="roadmap-progress-track">
+                    <span :style="{ width: `${card.percent}%` }" />
+                  </div>
+                </div>
+                <span
+                  class="inline-flex items-center gap-1.5 self-start rounded-md border border-[var(--line)] bg-[var(--surface)] px-2 py-1 text-[0.76rem] font-semibold text-[var(--ink)]"
                 >
-                  <span class="phase-roadmap-topic-top">
-                    <span class="phase-roadmap-topic-order">{{ topic.order }}</span>
-                    <span class="phase-roadmap-topic-state">
-                      <Icon :name="statusIcon(getTopicStatus(topic.id))" class="learning-icon" />
-                      {{ topicStatusLabel(topic) }}
+                  <Icon
+                    name="lucide:badge-check"
+                    class="learning-icon text-[color:var(--phase-color)]"
+                  />
+                  {{ card.phase.role.title }}
+                </span>
+              </header>
+
+              <!-- Weeks + topics -->
+              <div class="phase-roadmap-weeks relative px-4 pb-3 pl-8 pt-2">
+                <section
+                  v-for="week in card.weeks"
+                  :key="week.number"
+                  class="phase-roadmap-week relative border-b border-[var(--line)] py-3 last:border-b-0"
+                >
+                  <div class="mb-2 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5">
+                    <span
+                      class="grid h-6 min-w-[32px] place-items-center rounded-md border border-[color-mix(in_oklab,var(--phase-color)_20%,var(--line))] bg-[color-mix(in_oklab,var(--phase-color)_7%,var(--surface))] text-[0.68rem] font-bold text-[color:var(--phase-color)]"
+                    >
+                      W{{ week.number }}
+                    </span>
+                    <div class="grid min-w-0 gap-0">
+                      <strong class="truncate text-[0.88rem] font-semibold text-[var(--ink)]">
+                        {{ week.title }}
+                      </strong>
+                      <small class="text-[0.72rem] text-[var(--muted)]">{{ week.stage }}</small>
+                    </div>
+                    <span class="text-[0.72rem] font-semibold text-[var(--muted)]">
+                      {{ week.done }}/{{ week.total }}
+                    </span>
+                  </div>
+                  <div class="mb-2.5 h-[3px] overflow-hidden rounded-full bg-[var(--line)]">
+                    <span
+                      class="block h-full rounded-full bg-[color:var(--phase-color)] transition-all"
+                      :style="{ width: `${week.percent}%` }"
+                    />
+                  </div>
+
+                  <div class="phase-roadmap-topics relative mt-2 grid gap-1.5 pl-4">
+                    <template v-for="topic in week.topics" :key="topic.id">
+                      <NuxtLink
+                        v-if="getTopicStatus(topic.id) !== 'locked'"
+                        :to="topicPath(planId, topic.id)"
+                        class="phase-roadmap-topic group relative flex min-w-0 items-center gap-2 rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2.5 py-2 text-[var(--ink)] no-underline transition-all hover:border-[color:var(--phase-color)] hover:bg-[var(--surface)]"
+                        :class="{
+                          'phase-roadmap-topic-complete': getTopicStatus(topic.id) === 'complete',
+                          'phase-roadmap-topic-next': isNextTopic(topic),
+                        }"
+                        :data-status="getTopicStatus(topic.id)"
+                        :aria-label="topicTitle(topic)"
+                      >
+                        <span
+                          class="grid h-7 w-7 flex-none place-items-center rounded-md border border-[color-mix(in_oklab,var(--phase-color)_20%,var(--line))] bg-[var(--surface)] text-[0.66rem] font-bold text-[color:var(--phase-color)]"
+                        >
+                          {{ topic.order }}
+                        </span>
+                        <span class="grid flex-1 min-w-0 gap-0">
+                          <strong class="line-clamp-2 text-[0.86rem] font-semibold leading-snug">
+                            {{ topic.title }}
+                          </strong>
+                          <span class="truncate text-[0.72rem] text-[var(--muted)]">
+                            {{ topic.stage }}
+                            <template v-if="getTopicResult(topic.id)">
+                              · {{ getTopicResult(topic.id)?.bestScore }}/3
+                            </template>
+                          </span>
+                        </span>
+                        <span
+                          class="inline-flex flex-none items-center gap-1 text-[0.72rem] font-medium text-[var(--muted)]"
+                        >
+                          <Icon
+                            :name="statusIcon(getTopicStatus(topic.id))"
+                            class="learning-icon"
+                          />
+                          <span class="phase-roadmap-topic-label">{{
+                            topicStatusLabel(topic)
+                          }}</span>
+                        </span>
+                      </NuxtLink>
+
+                      <button
+                        v-else
+                        type="button"
+                        class="phase-roadmap-topic phase-roadmap-topic-locked relative flex min-w-0 cursor-not-allowed items-center gap-2 rounded-md border border-dashed border-[var(--line)] bg-[var(--surface-2)] px-2.5 py-2 text-left text-[var(--muted)]"
+                        data-status="locked"
+                        :aria-label="`${topicTitle(topic)} — locked`"
+                        @click="handleLockedTopic(topic)"
+                      >
+                        <span
+                          class="grid h-7 w-7 flex-none place-items-center rounded-md border border-dashed border-[var(--line)] bg-[var(--surface-2)] text-[0.66rem] font-bold text-[var(--muted)]"
+                        >
+                          {{ topic.order }}
+                        </span>
+                        <span class="grid flex-1 min-w-0 gap-0">
+                          <strong class="line-clamp-2 text-[0.86rem] font-semibold leading-snug">
+                            {{ topic.title }}
+                          </strong>
+                          <span class="truncate text-[0.72rem] text-[var(--muted)]">
+                            {{ topic.stage }}
+                          </span>
+                        </span>
+                        <span
+                          class="inline-flex flex-none items-center gap-1 text-[0.72rem] font-medium"
+                        >
+                          <Icon name="lucide:lock" class="learning-icon" />
+                          <span class="phase-roadmap-topic-label">Locked</span>
+                        </span>
+                      </button>
+                    </template>
+                  </div>
+                </section>
+              </div>
+
+              <!-- Phase gate footer -->
+              <footer class="mt-auto border-t border-[var(--line)] px-5 py-4">
+                <NuxtLink
+                  v-if="card.gateStatus !== 'locked'"
+                  :to="phasePath(planId, card.phase.key)"
+                  class="group flex items-center gap-2.5 rounded-lg border border-[var(--line)] bg-[var(--surface-2)] p-3 text-[var(--ink)] no-underline transition-all hover:-translate-y-0.5 hover:border-[color:var(--phase-color)]"
+                  :class="{
+                    'bg-[color-mix(in_oklab,var(--success)_6%,var(--surface-2))] border-[color-mix(in_oklab,var(--success)_32%,var(--line))]':
+                      card.gateStatus === 'complete',
+                    'bg-[var(--brand-soft)] border-[color-mix(in_oklab,var(--brand)_40%,var(--line))]':
+                      isNextGate(card.phase.key),
+                  }"
+                  :aria-label="gateTitle(card.phase, card.gateStatus)"
+                >
+                  <span
+                    class="grid h-8 w-8 flex-none place-items-center rounded-md border border-[var(--line)] bg-[var(--surface)] text-[color:var(--phase-color)]"
+                    :class="card.gateStatus === 'complete' && 'text-[var(--success)]'"
+                  >
+                    <Icon
+                      :name="
+                        card.gateStatus === 'complete' ? 'lucide:badge-check' : 'lucide:door-open'
+                      "
+                      class="learning-icon"
+                    />
+                  </span>
+                  <span class="grid flex-1 min-w-0 gap-0">
+                    <small
+                      class="text-[0.68rem] font-bold uppercase tracking-widest text-[var(--muted)]"
+                    >
+                      Phase {{ card.phase.number }} gate
+                    </small>
+                    <strong class="truncate text-[0.88rem] font-semibold">
+                      {{
+                        card.gateStatus === 'complete'
+                          ? card.phase.role.title
+                          : 'Take the phase quiz'
+                      }}
+                    </strong>
+                    <span class="text-[0.74rem] text-[var(--muted)]">
+                      {{ gateStatusLabel(card.phase.key) }}
                     </span>
                   </span>
-                  <strong>{{ topic.title }}</strong>
-                  <span class="phase-roadmap-topic-meta">
-                    {{ topic.stage }}
-                    <template v-if="getTopicResult(topic.id)">
-                      · {{ getTopicResult(topic.id)?.bestScore }}/3
-                    </template>
-                  </span>
+                  <Icon
+                    name="lucide:arrow-right"
+                    class="learning-icon text-[color:var(--phase-color)] transition-transform group-hover:translate-x-0.5"
+                  />
                 </NuxtLink>
 
                 <button
                   v-else
                   type="button"
-                  class="phase-roadmap-topic is-locked"
-                  data-status="locked"
-                  :aria-label="`${topicTitle(topic)} — locked`"
-                  @click="handleLockedTopic(topic)"
+                  class="flex w-full cursor-not-allowed items-center gap-2.5 rounded-lg border border-dashed border-[var(--line)] bg-[var(--surface-2)] p-3 text-left text-[var(--muted)]"
+                  :aria-label="gateTitle(card.phase, card.gateStatus)"
+                  @click="handleLockedGate(card.phase)"
                 >
-                  <span class="phase-roadmap-topic-top">
-                    <span class="phase-roadmap-topic-order">{{ topic.order }}</span>
-                    <span class="phase-roadmap-topic-state">
-                      <Icon name="lucide:lock" class="learning-icon" />
-                      Locked
-                    </span>
+                  <span
+                    class="grid h-8 w-8 flex-none place-items-center rounded-md border border-[var(--line)] bg-[var(--surface)]"
+                  >
+                    <Icon name="lucide:lock" class="learning-icon" />
                   </span>
-                  <strong>{{ topic.title }}</strong>
-                  <span class="phase-roadmap-topic-meta">{{ topic.stage }}</span>
+                  <span class="grid flex-1 min-w-0 gap-0">
+                    <small
+                      class="text-[0.68rem] font-bold uppercase tracking-widest text-[var(--muted)]"
+                    >
+                      Phase {{ card.phase.number }} gate
+                    </small>
+                    <strong class="truncate text-[0.88rem] font-semibold">
+                      {{ card.phase.role.title }}
+                    </strong>
+                    <span class="text-[0.74rem]"> Pass all {{ card.total }} topics to open </span>
+                  </span>
                 </button>
-              </template>
-            </div>
-          </section>
+              </footer>
+            </article>
+          </div>
         </div>
-
-        <footer class="phase-roadmap-gate-wrap">
-          <NuxtLink
-            v-if="card.gateStatus !== 'locked'"
-            :to="phasePath(planId, card.phase.key)"
-            class="phase-roadmap-gate"
-            :class="{
-              'is-complete': card.gateStatus === 'complete',
-              'is-next': isNextGate(card.phase.key),
-            }"
-            :data-status="card.gateStatus"
-            :aria-label="gateTitle(card.phase, card.gateStatus)"
-          >
-            <span class="phase-roadmap-gate-icon">
-              <Icon
-                :name="card.gateStatus === 'complete' ? 'lucide:badge-check' : 'lucide:door-open'"
-                class="learning-icon"
-              />
-            </span>
-            <span class="phase-roadmap-gate-copy">
-              <small>Phase {{ card.phase.number }} gate</small>
-              <strong>{{
-                card.gateStatus === 'complete' ? card.phase.role.title : 'Take the phase quiz'
-              }}</strong>
-              <span>{{ gateStatusLabel(card.phase.key) }}</span>
-            </span>
-            <Icon name="lucide:arrow-right" class="learning-icon" />
-          </NuxtLink>
-
-          <button
-            v-else
-            type="button"
-            class="phase-roadmap-gate is-locked"
-            data-status="locked"
-            :aria-label="gateTitle(card.phase, card.gateStatus)"
-            @click="handleLockedGate(card.phase)"
-          >
-            <span class="phase-roadmap-gate-icon">
-              <Icon name="lucide:lock" class="learning-icon" />
-            </span>
-            <span class="phase-roadmap-gate-copy">
-              <small>Phase {{ card.phase.number }} gate</small>
-              <strong>{{ card.phase.role.title }}</strong>
-              <span>Pass all {{ card.total }} topics to open</span>
-            </span>
-          </button>
-        </footer>
-      </article>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.phase-roadmap {
-  display: grid;
-  gap: 20px;
-}
-
-.phase-roadmap-notice {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  padding: 12px 14px;
-  font-size: 0.88rem;
-  color: var(--ink);
-  background: color-mix(in oklab, var(--brand) 8%, var(--surface));
-  border: 1px solid color-mix(in oklab, var(--brand) 28%, var(--line));
-  border-radius: 12px;
-}
-
-.phase-roadmap-notice span {
-  flex: 1;
-}
-
-.phase-roadmap-notice button {
-  display: grid;
-  padding: 4px;
-  color: var(--muted);
-  cursor: pointer;
-  background: none;
-  border: 0;
-  border-radius: 6px;
-  place-items: center;
-}
-
-.phase-roadmap-notice button:hover {
-  color: var(--ink);
-  background: var(--surface-2);
-}
-
+/* Root card gets a top accent bar via absolute positioning */
 .phase-roadmap-root {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 22px 24px;
-  background:
-    radial-gradient(
-      circle at 90% 0%,
-      color-mix(in oklab, var(--brand) 10%, transparent),
-      transparent 18rem
-    ),
-    var(--surface);
-  border: 1px solid var(--line);
-  border-top: 4px solid var(--brand);
-  border-radius: 18px;
-}
-
-.phase-roadmap-root-copy {
-  display: grid;
-  gap: 3px;
-  max-width: 720px;
-}
-
-.phase-roadmap-root-kicker {
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: var(--brand);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-}
-
-.phase-roadmap-root-copy strong {
-  font-size: 1.08rem;
-}
-
-.phase-roadmap-root-copy p {
-  margin: 0;
-  font-size: 0.86rem;
-  line-height: 1.55;
-  color: var(--muted);
-}
-
-.phase-roadmap-next {
-  display: inline-flex;
-  gap: 6px;
-  align-items: center;
-  justify-self: start;
-  padding: 5px 8px;
-  margin-top: 5px;
-  font-size: 0.74rem;
-  font-weight: 650;
-  color: var(--ink);
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 7px;
-}
-
-.phase-roadmap-next .learning-icon {
-  color: var(--brand);
-}
-
-.phase-roadmap-root-side {
-  display: grid;
-  flex: none;
-  gap: 8px;
-  width: min(100%, 290px);
-}
-
-.phase-roadmap-total {
-  display: flex;
-  gap: 10px;
-  align-items: baseline;
-  justify-content: space-between;
-}
-
-.phase-roadmap-total strong {
-  font-family: var(--font-display);
-  font-size: 1.55rem;
-  font-weight: 750;
-  line-height: 1;
-  color: var(--brand);
-}
-
-.phase-roadmap-total span {
-  font-size: 0.74rem;
-  color: var(--muted);
-}
-
-.phase-roadmap-total-track {
-  height: 7px;
-  overflow: hidden;
-  background: var(--line);
-  border-radius: 999px;
-}
-
-.phase-roadmap-total-track span {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, var(--phase-blue), var(--phase-violet));
-  border-radius: inherit;
-  transition: width 200ms ease;
-}
-
-.phase-roadmap-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  font-size: 0.74rem;
-  color: var(--muted);
-}
-
-.phase-roadmap-legend span {
-  display: inline-flex;
-  gap: 6px;
-  align-items: center;
-}
-
-.legend-dot {
-  width: 9px;
-  height: 9px;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 50%;
-}
-
-.legend-dot.is-complete {
-  background: #079669;
-  border-color: #079669;
-}
-
-.legend-dot.is-available {
-  background: var(--brand);
-  border-color: var(--brand);
-}
-
-.legend-dot.is-locked {
-  background: var(--muted);
-  border-color: var(--muted);
-}
-
-.phase-roadmap-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  align-items: start;
-}
-
-.phase-roadmap-card {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  overflow: hidden;
+}
+
+/* Phase tone → phase-color mapping (branch cards + topics) */
+.phase-roadmap-branch[data-tone='violet'] {
+  --phase-color: var(--phase-violet);
+}
+
+.phase-roadmap-branch[data-tone='blue'] {
+  --phase-color: var(--phase-blue);
+}
+
+.phase-roadmap-branch[data-tone='teal'] {
+  --phase-color: var(--phase-teal);
+}
+
+.phase-roadmap-branch[data-tone='amber'] {
+  --phase-color: var(--phase-amber);
+}
+
+.phase-roadmap-branch[data-tone='rose'] {
+  --phase-color: var(--phase-rose);
+}
+
+.phase-roadmap-branch[data-tone='indigo'] {
+  --phase-color: var(--phase-indigo);
+}
+
+/* Vertical spine down from the root through the tree */
+.phase-tree::before {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  width: 1px;
+  height: 30px;
+  content: '';
+  background: linear-gradient(var(--brand), var(--line-strong));
+}
+
+.phase-tree-row + .phase-tree-row {
+  margin-top: 20px;
+}
+
+/* Horizontal rail across each row */
+.phase-tree-row::before {
+  position: absolute;
+  top: 0;
+  right: 25%;
+  left: 25%;
+  height: 1px;
+  content: '';
+  background: var(--line-strong);
+}
+
+/* Vertical connector linking rows */
+.phase-tree-row:not(:last-child)::after {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: calc(100% + 20px);
+  content: '';
+  background: var(--line-strong);
+}
+
+/* Each branch gets a stub + dot from the row rail */
+.phase-roadmap-branch::before {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  width: 1px;
+  height: 30px;
+  content: '';
+  background: var(--line-strong);
+}
+
+.phase-roadmap-branch::after {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  content: '';
   background: var(--surface);
-  border: 1px solid var(--line);
-  border-top: 5px solid var(--phase-color, var(--brand));
-  border-radius: 18px;
-  box-shadow: 0 12px 30px -24px rgb(15 23 42 / 35%);
-}
-
-.phase-roadmap-card[data-state='locked'] {
-  opacity: 0.8;
-  filter: saturate(0.74);
-}
-
-.phase-roadmap-card[data-state='active'] {
-  box-shadow: 0 18px 36px -30px color-mix(in oklab, var(--phase-color) 42%, transparent);
-}
-
-.phase-roadmap-card-head {
-  display: grid;
-  gap: 9px;
-  padding: 20px;
-  background:
-    radial-gradient(
-      circle at 92% -8%,
-      color-mix(in oklab, var(--phase-color, var(--brand)) 12%, transparent),
-      transparent 14rem
-    ),
-    color-mix(in oklab, var(--phase-color, var(--brand)) 4%, var(--surface));
-  border-bottom: 1px solid var(--line);
-}
-
-.phase-roadmap-card-top {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.phase-roadmap-phase-label {
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: var(--phase-color, var(--brand));
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.phase-roadmap-state {
-  display: inline-flex;
-  gap: 4px;
-  align-items: center;
-  padding: 3px 7px;
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: var(--muted);
-  background: var(--surface);
-  border: 1px solid var(--line);
+  border: 2px solid var(--phase-color, var(--brand));
   border-radius: 999px;
+  transform: translateX(-50%);
 }
 
+/* Dim locked phase cards without changing their layout */
+.phase-roadmap-card[data-state='locked'] {
+  opacity: 0.74;
+}
+
+/* State chip variants (icon color etc.) */
 .phase-roadmap-state[data-status='complete'] {
-  color: #067a57;
+  color: var(--success);
   background: var(--success-soft);
   border-color: color-mix(in oklab, var(--success) 24%, var(--line));
 }
 
 .phase-roadmap-state[data-status='active'] {
-  color: var(--phase-color, var(--brand));
-  background: color-mix(in oklab, var(--phase-color) 9%, var(--surface));
-  border-color: color-mix(in oklab, var(--phase-color) 25%, var(--line));
+  color: var(--brand);
+  background: var(--brand-soft);
+  border-color: color-mix(in oklab, var(--brand) 22%, var(--line));
 }
 
-.phase-roadmap-title-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  min-width: 0;
+/* Tree spine inside each phase card (vertical rail with elbows) */
+.phase-roadmap-weeks::before {
+  position: absolute;
+  top: 0;
+  bottom: 14px;
+  left: 18px;
+  width: 1px;
+  content: '';
+  background: linear-gradient(var(--line-strong), var(--line) 86%, transparent);
 }
 
-.phase-roadmap-watermark {
-  flex: none;
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 800;
-  line-height: 1;
-  color: var(--phase-color, var(--brand));
-  opacity: 0.42;
+.phase-roadmap-week::before {
+  position: absolute;
+  top: 24px;
+  left: -14px;
+  width: 14px;
+  height: 1px;
+  content: '';
+  background: var(--line-strong);
 }
 
-.phase-roadmap-card-head h3 {
-  margin: 0;
-  font-size: 1.22rem;
-  line-height: 1.2;
-}
-
-.phase-roadmap-goal {
-  margin: 0;
-  font-size: 0.84rem;
-  line-height: 1.55;
-  color: var(--muted);
-}
-
-.phase-roadmap-progress {
-  display: grid;
-  gap: 5px;
-  margin-top: 2px;
-}
-
-.phase-roadmap-progress-copy {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.72rem;
-  color: var(--muted);
-}
-
-.phase-roadmap-progress-copy strong {
-  color: var(--phase-color, var(--brand));
-}
-
-.phase-roadmap-role {
-  display: inline-flex;
-  gap: 5px;
-  align-items: center;
-  justify-self: start;
-  padding: 4px 8px;
-  margin-top: 2px;
-  font-size: 0.72rem;
-  font-weight: 650;
-  color: var(--ink);
+.phase-roadmap-week::after {
+  position: absolute;
+  top: 21px;
+  left: -17px;
+  width: 6px;
+  height: 6px;
+  content: '';
   background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 7px;
-}
-
-.phase-roadmap-role .learning-icon {
-  color: var(--phase-color, var(--brand));
-}
-
-.phase-roadmap-week {
-  padding: 14px 20px;
-  border-bottom: 1px solid var(--line);
-}
-
-.phase-roadmap-week:last-child {
-  border-bottom: 0;
-}
-
-.phase-roadmap-week-head {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 9px;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.phase-roadmap-week-marker {
-  display: grid;
-  min-width: 30px;
-  height: 24px;
-  font-size: 0.59rem;
-  font-weight: 800;
-  color: var(--phase-color, var(--brand));
-  background: color-mix(in oklab, var(--phase-color) 8%, var(--surface));
-  border: 1px solid color-mix(in oklab, var(--phase-color) 20%, var(--line));
-  border-radius: 6px;
-  place-items: center;
-}
-
-.phase-roadmap-week-copy {
-  display: grid;
-  min-width: 0;
-  gap: 1px;
-}
-
-.phase-roadmap-week-copy strong {
-  overflow: hidden;
-  font-size: 0.8rem;
-  line-height: 1.35;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.phase-roadmap-week-copy small {
-  font-size: 0.62rem;
-  color: var(--muted);
-}
-
-.phase-roadmap-week-count {
-  font-size: 0.64rem;
-  font-weight: 700;
-  color: var(--muted);
-}
-
-.phase-roadmap-week-track {
-  height: 3px;
-  margin-bottom: 9px;
-  overflow: hidden;
-  background: var(--line);
+  border: 1px solid var(--phase-color, var(--brand));
   border-radius: 999px;
 }
 
-.phase-roadmap-week-track span {
-  display: block;
-  height: 100%;
-  background: var(--phase-color, var(--brand));
-  border-radius: inherit;
+/* Topic rail — inner tree with dot per leaf */
+.phase-roadmap-topics::before {
+  position: absolute;
+  top: 0;
+  bottom: 14px;
+  left: 4px;
+  width: 1px;
+  content: '';
+  background: linear-gradient(var(--line-strong), var(--line) 84%, transparent);
 }
 
-.phase-roadmap-topics {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 7px;
+.phase-roadmap-topic::before {
+  position: absolute;
+  top: 50%;
+  left: -12px;
+  width: 12px;
+  height: 1px;
+  content: '';
+  background: var(--line-strong);
 }
 
-.phase-roadmap-topic {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  min-width: 0;
-  padding: 9px 10px;
-  color: var(--ink) !important;
-  text-align: left;
-  text-decoration: none !important;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  transition:
-    border-color 160ms ease,
-    transform 160ms ease,
-    box-shadow 160ms ease;
-}
-
-.phase-roadmap-topic:hover {
-  border-color: var(--phase-color, var(--brand));
-  transform: translateY(-1px);
-  box-shadow: 0 8px 18px -14px rgb(15 23 42 / 40%);
-}
-
-.phase-roadmap-topic.is-next {
-  background: color-mix(in oklab, var(--phase-color, var(--brand)) 9%, var(--surface));
-  border-color: var(--phase-color, var(--brand));
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--phase-color, var(--brand)) 16%, transparent);
-}
-
-.phase-roadmap-topic.is-complete {
-  border-color: color-mix(in oklab, #079669 38%, var(--line));
-}
-
-.phase-roadmap-topic.is-locked {
-  color: var(--muted);
-  cursor: not-allowed;
-  border-style: dashed;
-}
-
-.phase-roadmap-topic.is-locked:hover {
-  border-color: var(--line);
-  transform: none;
-  box-shadow: none;
-}
-
-.phase-roadmap-topic-top {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.phase-roadmap-topic-order {
-  font-size: 0.62rem;
-  font-weight: 800;
-  color: var(--muted);
-}
-
-.phase-roadmap-topic-state {
-  display: inline-flex;
-  gap: 3px;
-  align-items: center;
-  font-size: 0.6rem;
-  color: var(--muted);
-}
-
-.phase-roadmap-topic.is-complete .phase-roadmap-topic-state {
-  color: #067a57;
-}
-
-.phase-roadmap-topic.is-next .phase-roadmap-topic-state {
-  color: var(--phase-color, var(--brand));
-}
-
-.phase-roadmap-topic strong {
-  display: -webkit-box;
-  overflow: hidden;
-  font-size: 0.76rem;
-  font-weight: 650;
-  line-height: 1.35;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-}
-
-.phase-roadmap-topic-meta {
-  font-size: 0.62rem;
-  color: var(--muted);
-}
-
-.phase-roadmap-gate-wrap {
-  padding: 14px 20px 18px;
-  margin-top: auto;
-  border-top: 1px solid var(--line);
-}
-
-.phase-roadmap-gate {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  padding: 11px 12px;
-  color: var(--ink) !important;
-  text-decoration: none !important;
-  background: color-mix(in oklab, var(--phase-color, var(--brand)) 7%, var(--surface));
-  border: 1px solid color-mix(in oklab, var(--phase-color, var(--brand)) 25%, var(--line));
-  border-radius: 11px;
-}
-
-.phase-roadmap-gate:hover {
-  border-color: var(--phase-color, var(--brand));
-}
-
-.phase-roadmap-gate.is-locked {
-  cursor: not-allowed;
-  background: var(--surface-2);
-  border-color: var(--line);
-  border-style: dashed;
-}
-
-.phase-roadmap-gate.is-complete {
-  border-color: #079669;
-}
-
-.phase-roadmap-gate-icon {
-  display: grid;
-  flex: 0 0 auto;
-  width: 32px;
-  height: 32px;
-  font-size: 0.95rem;
-  color: var(--phase-color, var(--brand));
+.phase-roadmap-topic::after {
+  position: absolute;
+  top: calc(50% - 3px);
+  left: -15px;
+  width: 6px;
+  height: 6px;
+  content: '';
   background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  place-items: center;
+  border: 1px solid var(--phase-color, var(--brand));
+  border-radius: 999px;
 }
 
-.phase-roadmap-gate.is-complete .phase-roadmap-gate-icon {
-  color: #079669;
+/* Topic variants beyond Tailwind reach */
+.phase-roadmap-topic-complete {
+  border-color: color-mix(in oklab, var(--success) 32%, var(--line));
 }
 
-.phase-roadmap-gate-copy {
-  display: grid;
-  flex: 1;
-  min-width: 0;
-  gap: 1px;
+.phase-roadmap-topic-next {
+  background: var(--brand-soft);
+  border-color: color-mix(in oklab, var(--brand) 45%, var(--line));
 }
 
-.phase-roadmap-gate-copy small {
-  font-size: 0.6rem;
-  font-weight: 800;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+.phase-roadmap-topic-complete .phase-roadmap-topic-label {
+  color: var(--success);
 }
 
-.phase-roadmap-gate-copy strong {
-  overflow: hidden;
-  font-size: 0.8rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.phase-roadmap-topic-next .phase-roadmap-topic-label {
+  color: var(--brand);
 }
 
-.phase-roadmap-gate-copy span {
-  font-size: 0.66rem;
-  color: var(--muted);
-}
-
-.phase-roadmap-gate > .learning-icon {
-  color: var(--phase-color, var(--brand));
-}
-
-@media (max-width: 1400px) {
-  .phase-roadmap-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 980px) {
-  .phase-roadmap-grid {
-    grid-template-columns: 1fr;
+@media (max-width: 760px) {
+  .phase-roadmap-topic-label {
+    display: none;
   }
 }
 
@@ -961,19 +728,16 @@ const gateTitle = (phase: PlanPhase, status: string) => {
     padding: 18px;
   }
 
-  .phase-roadmap-root-side {
-    width: 100%;
-  }
-
-  .phase-roadmap-topics {
+  /* Collapse the two-column tree to one column + straight stems */
+  .phase-tree-row > .grid {
     grid-template-columns: 1fr;
+    gap: 28px;
   }
 
-  .phase-roadmap-card-head,
-  .phase-roadmap-week,
-  .phase-roadmap-gate-wrap {
-    padding-right: 15px;
-    padding-left: 15px;
+  .phase-tree-row::before {
+    right: 50%;
+    left: 50%;
+    display: none;
   }
 }
 </style>

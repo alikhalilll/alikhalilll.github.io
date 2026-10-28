@@ -34,19 +34,21 @@ export const planCatalog: PlanSummary[] = [
     shortTitle: 'Plan 1',
     subtitle: 'Requirements, Prompt Engineering & QA',
     description:
-      'Learn to understand what to build, use AI reliably and prove the result works. This is the foundation every later project depends on.',
+      'Learn to understand what to build, use AI reliably and prove the result works. This is the foundation every later project depends on. Each week produces a real artifact — an interview summary, a tested prompt, an executed test plan — not a reading list.',
     status: 'available',
     weeks: countWeeks(plan1Topics),
     topics: plan1Topics.length,
     phases: plan1Phases.length,
     roles: plan1Roles.map((role) => role.title),
     tone: 'blue',
-    outcome: 'A signed-off spec, a tested prompt library and an executed QA plan.',
+    outcome:
+      'A signed-off spec, a tested prompt library, an executed QA plan and a Postman + k6 collection you can hand to a developer.',
     preview: [
       '9 weeks · 39 topics · 3 phases',
+      'Full-time pace: 10–12 hrs/wk · part-time: double the calendar',
       'One real feature carried through every week',
-      'Topic quizzes + phase gates',
-      '3 roles unlocked as you finish',
+      'Topic quizzes + phase gates · best score is kept',
+      '3 roles unlocked: Requirements Analyst → Prompt Engineer → QA Engineer',
     ],
   },
   {
@@ -56,7 +58,7 @@ export const planCatalog: PlanSummary[] = [
     shortTitle: 'Plan 2',
     subtitle: 'Vue, Laravel & production delivery',
     description:
-      'The full-stack path builds on Plan 1: ship real Vue + Laravel features with APIs, data, auth, testing, performance and deployment.',
+      'The full-stack path builds on Plan 1: ship real Vue + Laravel features with APIs, data, auth, testing, performance, observability and deployment. The stack is opinionated (Laravel 12 + Vue 3), but the principles — HTTP, data modelling, testing, release engineering, system design — transfer to any framework.',
     status: 'available',
     weeks: countWeeks(plan2Topics),
     topics: plan2Topics.length,
@@ -64,12 +66,13 @@ export const planCatalog: PlanSummary[] = [
     roles: plan2Roles.map((role) => role.title),
     tone: 'violet',
     outcome:
-      'A deployed full-stack app with a green pipeline, executed test plan and 15-minute demo.',
+      'A deployed full-stack app with a green pipeline, executed test plan, Sentry + structured logs wired up, a documented SLO, a 15-minute demo and a reviewed design doc with trade-offs and ADRs.',
     preview: [
       '16 weeks · 90 topics · 6 phases',
+      'Full-time pace: 12–15 hrs/wk · plan for buffer weeks on top',
       'PHP, Laravel, APIs, SQL and Vue integration',
-      'Testing, security, DevOps and system design',
-      '6 roles unlocked as you finish',
+      'Testing, security, observability, DevOps and system design',
+      '6 roles unlocked: Foundations → Laravel → API → Quality & Release → Architect → Full-Stack Owner',
     ],
   },
 ];

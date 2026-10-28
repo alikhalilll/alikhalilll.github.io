@@ -100,6 +100,7 @@ useHead(() => ({
     :progress-percent="progressPercent"
   >
     <template v-if="topic">
+      <!-- Topic is locked -->
       <section v-if="hydrated && status === 'locked'" class="topic-locked">
         <div class="topic-locked-card">
           <span class="topic-locked-icon">
@@ -128,6 +129,7 @@ useHead(() => ({
       </section>
 
       <template v-else>
+        <!-- Breadcrumb -->
         <nav class="topic-breadcrumb" aria-label="Breadcrumb">
           <NuxtLink :to="roadmapPath(planId)">Roadmap</NuxtLink>
           <span>/</span>
@@ -136,34 +138,90 @@ useHead(() => ({
           <span>Week {{ topic.week }}</span>
         </nav>
 
-        <section class="topic-hero" :data-tone="phase?.tone">
-          <div class="topic-hero-order">
-            <span>{{ String(topic.order).padStart(2, '0') }}</span>
-            <small>of {{ planTopics.length }}</small>
+        <!-- ============ HERO ============ -->
+        <section
+          class="topic-hero relative grid gap-6 overflow-hidden rounded-3xl border border-[var(--line)] p-8 shadow-md md:grid-cols-[80px_minmax(0,1fr)_320px] md:items-start md:p-10"
+          :data-tone="phase?.tone"
+        >
+          <span
+            class="absolute inset-x-0 top-0 h-[5px] bg-[color:var(--phase-color)]"
+            aria-hidden="true"
+          />
+
+          <!-- Order badge -->
+          <div
+            class="relative flex h-20 w-20 flex-col items-center justify-center gap-0.5 rounded-2xl border border-[var(--line)] bg-[var(--surface)]"
+          >
+            <span
+              class="font-[var(--font-display)] text-[2rem] font-bold leading-none text-[color:var(--phase-color)]"
+            >
+              {{ String(topic.order).padStart(2, '0') }}
+            </span>
+            <small class="text-[0.68rem] text-[var(--muted)]">of {{ planTopics.length }}</small>
           </div>
-          <div class="topic-hero-copy">
-            <div class="topic-meta">
-              <span class="topic-badge" :data-stage="topic.stage">{{ topic.stage }}</span>
+
+          <!-- Copy -->
+          <div class="relative min-w-0">
+            <div
+              class="flex flex-wrap items-center gap-x-3.5 gap-y-2 text-[0.84rem] text-[var(--muted)]"
+            >
+              <span
+                class="rounded-md border border-[color-mix(in_oklab,var(--phase-color)_30%,var(--line))] bg-[color-mix(in_oklab,var(--phase-color)_10%,var(--surface))] px-2.5 py-1 text-[0.72rem] font-extrabold uppercase tracking-widest text-[color:var(--phase-color)]"
+                :data-stage="topic.stage"
+              >
+                {{ topic.stage }}
+              </span>
               <span>Week {{ topic.week }} · {{ topic.weekTitle }}</span>
-              <span v-if="result?.passed" class="topic-passed">
+              <span
+                v-if="result?.passed"
+                class="inline-flex items-center gap-1 font-semibold text-[var(--success)]"
+              >
                 <Icon name="lucide:circle-check-big" class="learning-icon" />
                 Passed · best {{ result.bestScore }}/3
               </span>
             </div>
-            <h1>{{ topic.title }}</h1>
-            <p class="topic-lede">{{ topic.why }}</p>
+            <h1
+              class="my-3 text-[clamp(2.3rem,4.4vw,3.7rem)] font-bold leading-[1.02] tracking-tight"
+            >
+              {{ topic.title }}
+            </h1>
+            <p class="m-0 max-w-[780px] text-[1.05rem] leading-relaxed text-[var(--muted)]">
+              {{ topic.why }}
+            </p>
           </div>
-          <div class="topic-hero-task">
-            <span>Task of the week</span>
-            <strong>{{ topic.task.title }}</strong>
-            <p>{{ topic.task.brief }}</p>
+
+          <!-- Task preview card -->
+          <div class="relative rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5">
+            <span
+              class="mb-1.5 block text-[0.72rem] font-extrabold uppercase tracking-widest text-[color:var(--phase-color)]"
+            >
+              Task of the week
+            </span>
+            <strong class="block text-[1rem] font-bold leading-tight">{{
+              topic.task.title
+            }}</strong>
+            <p class="m-0 mt-2 line-clamp-5 text-[0.86rem] leading-snug text-[var(--muted)]">
+              {{ topic.task.brief }}
+            </p>
           </div>
         </section>
 
-        <section class="topic-guidance" aria-labelledby="guidance-title">
+        <!-- ============ § 01 — UNDERSTAND THE TOPIC ============ -->
+        <section
+          id="understand"
+          class="topic-section scroll-mt-24"
+          aria-labelledby="guidance-title"
+        >
           <div class="plan-section-head">
             <div>
-              <p class="plans-section-kicker">Understand the topic</p>
+              <div class="flex items-center gap-3">
+                <span
+                  class="grid h-7 w-9 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_30%,transparent)] bg-[var(--brand-soft)] text-[0.72rem] font-bold text-[var(--brand)]"
+                >
+                  01
+                </span>
+                <p class="plans-section-kicker m-0">Understand the topic</p>
+              </div>
               <h2 id="guidance-title">Why, how and what it changes in you</h2>
             </div>
             <p>
@@ -172,46 +230,76 @@ useHead(() => ({
             </p>
           </div>
 
-          <div class="topic-guidance-grid">
-            <article class="topic-guidance-card">
-              <span class="topic-guidance-icon"
-                ><Icon name="lucide:circle-help" class="learning-icon"
-              /></span>
-              <h3>Why it matters</h3>
-              <p>{{ topic.why }}</p>
+          <div class="grid gap-4 lg:grid-cols-3">
+            <article
+              class="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 transition-colors hover:border-[color:var(--phase-color)]"
+            >
+              <span
+                class="mb-3.5 grid h-10 w-10 place-items-center rounded-xl border border-[color-mix(in_oklab,var(--phase-color)_24%,var(--line))] bg-[color-mix(in_oklab,var(--phase-color)_10%,var(--surface))] text-[1.15rem] text-[color:var(--phase-color)]"
+              >
+                <Icon name="lucide:circle-help" class="learning-icon" />
+              </span>
+              <h3 class="mb-2 mt-0 text-[1.08rem] font-bold">Why it matters</h3>
+              <p class="m-0 text-[0.94rem] leading-relaxed text-[var(--muted)]">
+                {{ topic.why }}
+              </p>
             </article>
-            <article class="topic-guidance-card">
-              <span class="topic-guidance-icon"
-                ><Icon name="lucide:hammer" class="learning-icon"
-              /></span>
-              <h3>How to implement it</h3>
-              <p>{{ topic.how }}</p>
+            <article
+              class="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 transition-colors hover:border-[color:var(--phase-color)]"
+            >
+              <span
+                class="mb-3.5 grid h-10 w-10 place-items-center rounded-xl border border-[color-mix(in_oklab,var(--phase-color)_24%,var(--line))] bg-[color-mix(in_oklab,var(--phase-color)_10%,var(--surface))] text-[1.15rem] text-[color:var(--phase-color)]"
+              >
+                <Icon name="lucide:hammer" class="learning-icon" />
+              </span>
+              <h3 class="mb-2 mt-0 text-[1.08rem] font-bold">How to implement it</h3>
+              <p class="m-0 text-[0.94rem] leading-relaxed text-[var(--muted)]">
+                {{ topic.how }}
+              </p>
             </article>
-            <article class="topic-guidance-card">
-              <span class="topic-guidance-icon"
-                ><Icon name="lucide:trending-up" class="learning-icon"
-              /></span>
-              <h3>How it improves you</h3>
-              <p>{{ topic.impact }}</p>
+            <article
+              class="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 transition-colors hover:border-[color:var(--phase-color)]"
+            >
+              <span
+                class="mb-3.5 grid h-10 w-10 place-items-center rounded-xl border border-[color-mix(in_oklab,var(--phase-color)_24%,var(--line))] bg-[color-mix(in_oklab,var(--phase-color)_10%,var(--surface))] text-[1.15rem] text-[color:var(--phase-color)]"
+              >
+                <Icon name="lucide:trending-up" class="learning-icon" />
+              </span>
+              <h3 class="mb-2 mt-0 text-[1.08rem] font-bold">How it improves you</h3>
+              <p class="m-0 text-[0.94rem] leading-relaxed text-[var(--muted)]">
+                {{ topic.impact }}
+              </p>
             </article>
           </div>
 
-          <div class="topic-brief">
+          <!-- Brief notes + topic links -->
+          <div
+            class="mt-4 grid gap-8 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 md:grid-cols-[minmax(0,1.4fr)_minmax(250px,0.6fr)]"
+          >
             <div>
-              <h3>Brief notes</h3>
-              <p v-if="topic.body">{{ topic.body }}</p>
-              <ul v-if="topic.list">
+              <h3 class="mb-3 mt-0 text-[1.04rem] font-bold">Brief notes</h3>
+              <p v-if="topic.body" class="m-0 text-[0.94rem] leading-relaxed text-[var(--muted)]">
+                {{ topic.body }}
+              </p>
+              <ul
+                v-if="topic.list"
+                class="m-0 mt-3 grid list-disc gap-1.5 pl-5 text-[0.92rem] leading-relaxed text-[var(--muted)]"
+              >
                 <li v-for="entry in topic.list" :key="entry">{{ entry }}</li>
               </ul>
             </div>
-            <div v-if="topic.links" class="topic-links">
-              <h3>Topic links</h3>
+            <div
+              v-if="topic.links"
+              class="topic-links border-t border-[var(--line)] pt-5 md:border-l md:border-t-0 md:pl-7 md:pt-0"
+            >
+              <h3 class="mb-3 mt-0 text-[1.04rem] font-bold">Topic links</h3>
               <a
                 v-for="link in topic.links"
                 :key="link.href"
                 :href="link.href"
                 target="_blank"
                 rel="noopener noreferrer"
+                class="flex items-center justify-between gap-2 border-b border-[var(--line)] py-2 text-[0.88rem] no-underline hover:text-[color:var(--phase-color)] last:border-b-0"
               >
                 {{ link.label }}
                 <Icon name="lucide:arrow-up-right" class="learning-icon" />
@@ -220,10 +308,22 @@ useHead(() => ({
           </div>
         </section>
 
-        <section class="topic-section" aria-labelledby="resources-title">
+        <!-- ============ § 02 — RESOURCES ============ -->
+        <section
+          id="resources"
+          class="topic-section scroll-mt-24"
+          aria-labelledby="resources-title"
+        >
           <div class="plan-section-head">
             <div>
-              <p class="plans-section-kicker">Learn first</p>
+              <div class="flex items-center gap-3">
+                <span
+                  class="grid h-7 w-9 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_30%,transparent)] bg-[var(--brand-soft)] text-[0.72rem] font-bold text-[var(--brand)]"
+                >
+                  02
+                </span>
+                <p class="plans-section-kicker m-0">Learn first</p>
+              </div>
               <h2 id="resources-title">Resources for this week</h2>
             </div>
             <p>
@@ -236,48 +336,96 @@ useHead(() => ({
           </div>
 
           <div
-            class="topic-resources"
-            :class="{ 'is-single': !hasVideoResources || !hasReadingResources }"
+            class="grid gap-4"
+            :class="hasVideoResources && hasReadingResources ? 'md:grid-cols-2' : 'grid-cols-1'"
           >
-            <div v-if="hasVideoResources" class="topic-resource-column">
-              <h3><Icon name="lucide:youtube" class="learning-icon" /> Watch</h3>
+            <div
+              v-if="hasVideoResources"
+              class="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6"
+            >
+              <h3
+                class="mb-4 mt-0 flex items-center gap-2 border-b border-[var(--line)] pb-3 text-[1rem] font-bold"
+              >
+                <Icon name="lucide:youtube" class="learning-icon text-[color:var(--phase-color)]" />
+                Watch
+              </h3>
               <a
                 v-for="resource in youtubeResources"
                 :key="resource.href"
                 :href="resource.href"
-                class="topic-resource"
+                class="topic-resource group grid gap-1 border-b border-[var(--line)] py-3.5 text-[var(--ink)] no-underline last:border-b-0"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <span class="topic-resource-kind">YouTube</span>
-                <strong>{{ resource.title }}</strong>
-                <span>{{ resource.source }}</span>
-                <small>{{ resource.focus }}</small>
+                <span
+                  class="justify-self-start rounded-md bg-[#c83b30] px-2 py-0.5 text-[0.65rem] font-extrabold uppercase tracking-widest text-white"
+                >
+                  YouTube
+                </span>
+                <strong
+                  class="text-[0.94rem] leading-snug transition-colors group-hover:text-[var(--brand)]"
+                >
+                  {{ resource.title }}
+                </strong>
+                <span class="text-[0.82rem] text-[var(--muted)]">{{ resource.source }}</span>
+                <small class="text-[0.8rem] leading-snug text-[var(--muted)]">
+                  {{ resource.focus }}
+                </small>
               </a>
             </div>
-            <div v-if="hasReadingResources" class="topic-resource-column">
-              <h3><Icon name="lucide:book-open" class="learning-icon" /> Read / use</h3>
+
+            <div
+              v-if="hasReadingResources"
+              class="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6"
+            >
+              <h3
+                class="mb-4 mt-0 flex items-center gap-2 border-b border-[var(--line)] pb-3 text-[1rem] font-bold"
+              >
+                <Icon
+                  name="lucide:book-open"
+                  class="learning-icon text-[color:var(--phase-color)]"
+                />
+                Read / use
+              </h3>
               <a
                 v-for="resource in readingResources"
                 :key="resource.href"
                 :href="resource.href"
-                class="topic-resource"
+                class="topic-resource group grid gap-1 border-b border-[var(--line)] py-3.5 text-[var(--ink)] no-underline last:border-b-0"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <span class="topic-resource-kind is-read">Read</span>
-                <strong>{{ resource.title }}</strong>
-                <span>{{ resource.source }}</span>
-                <small>{{ resource.focus }}</small>
+                <span
+                  class="justify-self-start rounded-md bg-[var(--brand)] px-2 py-0.5 text-[0.65rem] font-extrabold uppercase tracking-widest text-[var(--on-brand)]"
+                >
+                  Read
+                </span>
+                <strong
+                  class="text-[0.94rem] leading-snug transition-colors group-hover:text-[var(--brand)]"
+                >
+                  {{ resource.title }}
+                </strong>
+                <span class="text-[0.82rem] text-[var(--muted)]">{{ resource.source }}</span>
+                <small class="text-[0.8rem] leading-snug text-[var(--muted)]">
+                  {{ resource.focus }}
+                </small>
               </a>
             </div>
           </div>
         </section>
 
-        <section class="topic-section" aria-labelledby="task-title">
+        <!-- ============ § 03 — TASK OF THE WEEK ============ -->
+        <section id="task" class="topic-section scroll-mt-24" aria-labelledby="task-title">
           <div class="plan-section-head">
             <div>
-              <p class="plans-section-kicker">Do the work</p>
+              <div class="flex items-center gap-3">
+                <span
+                  class="grid h-7 w-9 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_30%,transparent)] bg-[var(--brand-soft)] text-[0.72rem] font-bold text-[var(--brand)]"
+                >
+                  03
+                </span>
+                <p class="plans-section-kicker m-0">Do the work</p>
+              </div>
               <h2 id="task-title">Task of the week</h2>
             </div>
             <p>
@@ -286,32 +434,58 @@ useHead(() => ({
             </p>
           </div>
 
-          <div class="topic-task">
-            <div class="topic-task-head">
-              <span>Deliverable</span>
-              <h3>{{ topic.task.title }}</h3>
-              <p>{{ topic.task.brief }}</p>
+          <div class="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-7">
+            <div class="border-b border-[var(--line)] pb-5">
+              <span
+                class="text-[0.73rem] font-extrabold uppercase tracking-widest text-[color:var(--phase-color)]"
+              >
+                Deliverable
+              </span>
+              <h3 class="my-1.5 text-[1.34rem] font-bold leading-tight">{{ topic.task.title }}</h3>
+              <p class="m-0 max-w-[840px] text-[0.96rem] leading-relaxed text-[var(--muted)]">
+                {{ topic.task.brief }}
+              </p>
             </div>
-            <ol class="topic-task-steps">
+
+            <ol
+              class="topic-task-steps my-6 grid list-decimal gap-x-8 gap-y-2.5 pl-6 text-[0.92rem] leading-relaxed text-[var(--muted)] md:grid-cols-2"
+            >
               <li v-for="step in topic.task.steps" :key="step">{{ step }}</li>
             </ol>
-            <div class="topic-hints">
-              <h3><Icon name="lucide:lightbulb" class="learning-icon" /> Solution hints</h3>
-              <ul>
+
+            <div class="rounded-xl border border-[var(--line)] bg-[var(--surface-2)] p-5">
+              <h3 class="mb-2.5 mt-0 flex items-center gap-2 text-[0.94rem] font-bold">
+                <Icon name="lucide:lightbulb" class="learning-icon text-[var(--warning-ink)]" />
+                Solution hints
+              </h3>
+              <ul
+                class="m-0 grid list-disc gap-1.5 pl-5 text-[0.88rem] leading-relaxed text-[var(--muted)]"
+              >
                 <li v-for="hint in topic.task.hints" :key="hint">{{ hint }}</li>
               </ul>
             </div>
-            <div class="topic-done">
-              <strong>Done when:</strong>
+
+            <div
+              class="mt-3.5 rounded-xl border border-[color-mix(in_oklab,var(--brand)_24%,var(--line))] bg-[var(--brand-soft)] px-5 py-4 text-[0.9rem] leading-relaxed text-[var(--muted)]"
+            >
+              <strong class="text-[var(--brand)]">Done when:</strong>
               {{ topic.task.doneWhen }}
             </div>
           </div>
         </section>
 
-        <section class="topic-section" aria-labelledby="outcomes-title">
+        <!-- ============ § 04 — OUTCOMES ============ -->
+        <section id="outcomes" class="topic-section scroll-mt-24" aria-labelledby="outcomes-title">
           <div class="plan-section-head">
             <div>
-              <p class="plans-section-kicker">Prove it</p>
+              <div class="flex items-center gap-3">
+                <span
+                  class="grid h-7 w-9 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_30%,transparent)] bg-[var(--brand-soft)] text-[0.72rem] font-bold text-[var(--brand)]"
+                >
+                  04
+                </span>
+                <p class="plans-section-kicker m-0">Prove it</p>
+              </div>
               <h2 id="outcomes-title">By the end of the week, you can</h2>
             </div>
             <p>
@@ -319,18 +493,30 @@ useHead(() => ({
               again.
             </p>
           </div>
-          <ul class="topic-outcomes">
-            <li v-for="outcome in topic.outcomes" :key="outcome">
-              <Icon name="lucide:check" class="learning-icon" />
+          <ul class="m-0 grid list-none gap-3 p-0 md:grid-cols-2">
+            <li
+              v-for="outcome in topic.outcomes"
+              :key="outcome"
+              class="flex items-start gap-2.5 rounded-xl border border-[var(--line)] bg-[var(--surface)] p-4 text-[0.92rem] leading-relaxed text-[var(--muted)]"
+            >
+              <Icon name="lucide:check" class="learning-icon mt-1 text-[var(--success)]" />
               {{ outcome }}
             </li>
           </ul>
         </section>
 
-        <section class="topic-section" aria-labelledby="quiz-title">
+        <!-- ============ § 05 — QUIZ ============ -->
+        <section id="quiz" class="topic-section scroll-mt-24" aria-labelledby="quiz-title">
           <div class="plan-section-head">
             <div>
-              <p class="plans-section-kicker">Pass the level</p>
+              <div class="flex items-center gap-3">
+                <span
+                  class="grid h-7 w-9 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_30%,transparent)] bg-[var(--brand-soft)] text-[0.72rem] font-bold text-[var(--brand)]"
+                >
+                  05
+                </span>
+                <p class="plans-section-kicker m-0">Pass the level</p>
+              </div>
               <h2 id="quiz-title">Checkpoint quiz</h2>
             </div>
             <p>
@@ -350,6 +536,7 @@ useHead(() => ({
             @pass="handleQuizPass"
           />
 
+          <!-- Next step CTA -->
           <div v-if="result?.passed && nextStep" class="topic-next">
             <div>
               <span class="plans-section-kicker">Unlocked</span>
@@ -378,12 +565,8 @@ useHead(() => ({
 </template>
 
 <style scoped>
+/* Hero wash per tone (color-mix needs real CSS, not Tailwind arbitrary) */
 .topic-hero {
-  display: grid;
-  grid-template-columns: 82px minmax(0, 1fr) 320px;
-  gap: 28px;
-  align-items: start;
-  padding: 34px;
   background:
     radial-gradient(
       circle at 95% 0%,
@@ -395,454 +578,22 @@ useHead(() => ({
       var(--surface),
       color-mix(in oklab, var(--phase-color) 4%, var(--surface))
     );
-  border: 1px solid var(--line);
-  border-top: 5px solid var(--phase-color);
-  border-radius: 30px;
-  box-shadow: var(--shadow);
 }
 
-.topic-hero-order {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  align-items: center;
-  justify-content: center;
-  width: 76px;
-  height: 76px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-}
-
-.topic-hero-order span {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 750;
-  line-height: 1;
-  color: var(--phase-color);
-}
-
-.topic-hero-order small {
-  font-size: 0.68rem;
-  color: var(--muted);
-}
-
-.topic-hero-copy {
-  min-width: 0;
-}
-
-.topic-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 9px 14px;
-  align-items: center;
-  font-size: 0.84rem;
-  color: var(--muted);
-}
-
-.topic-badge {
-  padding: 4px 9px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--phase-color);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  background: color-mix(in oklab, var(--phase-color) 10%, var(--surface));
-  border: 1px solid color-mix(in oklab, var(--phase-color) 30%, var(--line));
-  border-radius: 6px;
-}
-
-.topic-passed {
-  display: inline-flex;
-  gap: 4px;
-  align-items: center;
-  font-weight: 650;
-  color: var(--success);
-}
-
-.topic-hero h1 {
-  margin: 11px 0 11px;
-  font-size: clamp(2.3rem, 4.4vw, 3.7rem);
-  line-height: 1.01;
-}
-
-.topic-lede {
-  max-width: 780px;
-  margin: 0;
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: var(--muted);
-}
-
-.topic-hero-task {
-  padding: 20px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-}
-
-.topic-hero-task > span {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--phase-color);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.topic-hero-task strong {
-  display: block;
-  font-size: 1rem;
-  line-height: 1.35;
-}
-
-.topic-hero-task p {
-  display: -webkit-box;
-  margin: 8px 0 0;
-  overflow: hidden;
-  font-size: 0.86rem;
-  line-height: 1.55;
-  color: var(--muted);
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 5;
-}
-
-.topic-guidance {
-  margin-top: 68px;
-}
-
-.topic-guidance-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.topic-guidance-card {
-  padding: 22px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 19px;
-}
-
-.topic-guidance-icon {
-  display: grid;
-  width: 42px;
-  height: 42px;
-  margin-bottom: 14px;
-  font-size: 1.15rem;
-  color: var(--phase-color);
-  background: color-mix(in oklab, var(--phase-color) 10%, var(--surface));
-  border: 1px solid color-mix(in oklab, var(--phase-color) 24%, var(--line));
-  border-radius: 12px;
-  place-items: center;
-}
-
-.topic-guidance-card h3 {
-  margin: 0 0 7px;
-  font-size: 1.08rem;
-}
-
-.topic-guidance-card p {
-  margin: 0;
-  font-size: 0.94rem;
-  line-height: 1.68;
-  color: var(--muted);
-}
-
-.topic-brief {
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(250px, 0.6fr);
-  gap: 32px;
-  padding: 24px;
-  margin-top: 16px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-}
-
-.topic-brief h3 {
-  margin: 0 0 10px;
-  font-size: 1.04rem;
-}
-
-.topic-brief p {
-  margin: 0;
-  font-size: 0.94rem;
-  line-height: 1.68;
-  color: var(--muted);
-}
-
-.topic-brief ul {
-  display: grid;
-  gap: 7px;
-  padding-left: 20px;
-  margin: 12px 0 0;
-  font-size: 0.92rem;
-  line-height: 1.6;
-  color: var(--muted);
-}
-
-.topic-links {
-  padding-left: 28px;
-  border-left: 1px solid var(--line);
-}
-
-.topic-links a {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 0;
-  font-size: 0.88rem;
-  text-decoration: none;
-  border-bottom: 1px solid var(--line);
-}
-
-.topic-links a:last-child {
-  border-bottom: 0;
-}
-
-.topic-resources {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.topic-resources.is-single {
-  grid-template-columns: 1fr;
-}
-
-.topic-resource-column {
-  padding: 22px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-}
-
-.topic-resource-column > h3 {
-  display: flex;
-  gap: 7px;
-  align-items: center;
-  padding-bottom: 12px;
-  margin: 0 0 4px;
-  font-size: 1rem;
-  border-bottom: 1px solid var(--line);
-}
-
-.topic-resource-column > h3 .learning-icon {
-  color: var(--phase-color);
-}
-
-.topic-resource {
-  display: grid;
-  gap: 3px;
-  padding: 13px 0;
-  color: var(--ink) !important;
-  text-decoration: none !important;
-  border-bottom: 1px solid var(--line);
-}
-
-.topic-resource:last-child {
-  border-bottom: 0;
-}
-
-.topic-resource:hover strong {
-  color: var(--brand);
-}
-
-.topic-resource-kind {
-  justify-self: start;
-  padding: 2px 7px;
-  font-size: 0.65rem;
-  font-weight: 800;
-  color: #fff;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  background: #c83b30;
-  border-radius: 5px;
-}
-
-.topic-resource-kind.is-read {
-  color: var(--on-brand);
-  background: var(--brand);
-}
-
-.topic-resource strong {
-  font-size: 0.94rem;
-  line-height: 1.4;
-  transition: color 0.15s ease;
-}
-
-.topic-resource > span:not(.topic-resource-kind) {
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-.topic-resource small {
-  font-size: 0.8rem;
-  line-height: 1.5;
-  color: var(--muted);
-}
-
-.topic-task {
-  padding: 26px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 22px;
-}
-
-.topic-task-head {
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--line);
-}
-
-.topic-task-head > span {
-  font-size: 0.73rem;
-  font-weight: 800;
-  color: var(--phase-color);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.topic-task-head h3 {
-  margin: 6px 0 5px;
-  font-size: 1.34rem;
-}
-
-.topic-task-head p {
-  max-width: 840px;
-  margin: 0;
-  font-size: 0.96rem;
-  line-height: 1.65;
-  color: var(--muted);
-}
-
-.topic-task-steps {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px 30px;
-  padding-left: 24px;
-  margin: 20px 0;
-  font-size: 0.92rem;
-  line-height: 1.6;
-  color: var(--muted);
-}
-
-.topic-task-steps li {
-  padding-left: 3px;
-}
-
+/* Markers on ordered steps get phase color (Tailwind can't target ::marker on arbitrary color-mix) */
 .topic-task-steps li::marker {
   font-weight: 800;
   color: var(--phase-color);
 }
 
-.topic-hints {
-  padding: 18px;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 15px;
-}
-
-.topic-hints h3 {
-  display: flex;
-  gap: 7px;
-  align-items: center;
-  margin: 0 0 9px;
-  font-size: 0.94rem;
-}
-
-.topic-hints h3 .learning-icon {
-  color: var(--warning-ink);
-}
-
-.topic-hints ul {
-  display: grid;
-  gap: 7px;
-  padding-left: 20px;
-  margin: 0;
-  font-size: 0.88rem;
-  line-height: 1.6;
-  color: var(--muted);
-}
-
-.topic-done {
-  padding: 16px 18px;
-  margin-top: 14px;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--muted);
-  background: var(--brand-soft);
-  border: 1px solid color-mix(in oklab, var(--brand) 24%, var(--line));
-  border-radius: 13px;
-}
-
-.topic-done strong {
-  color: var(--brand);
-}
-
-.topic-outcomes {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-.topic-outcomes li {
-  display: flex;
-  gap: 9px;
-  align-items: flex-start;
-  padding: 16px 18px;
-  font-size: 0.92rem;
-  line-height: 1.6;
-  color: var(--muted);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 13px;
-}
-
-.topic-outcomes .learning-icon {
-  margin-top: 4px;
-  color: var(--success);
-}
-
-@media (max-width: 1040px) {
+/* Topic links section — border-left on desktop handled by Tailwind utility above */
+@media (max-width: 820px) {
   .topic-hero {
     grid-template-columns: 78px minmax(0, 1fr);
   }
 
-  .topic-hero-task {
+  .topic-hero > div:last-child {
     grid-column: 2;
-  }
-
-  .topic-guidance-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 820px) {
-  .topic-hero {
-    padding: 26px;
-  }
-
-  .topic-brief,
-  .topic-resources,
-  .topic-outcomes {
-    grid-template-columns: 1fr;
-  }
-
-  .topic-links {
-    padding-top: 18px;
-    padding-left: 0;
-    border-top: 1px solid var(--line);
-    border-left: 0;
-  }
-
-  .topic-task-steps {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -850,44 +601,32 @@ useHead(() => ({
   .topic-hero {
     grid-template-columns: 1fr;
     gap: 16px;
-    padding: 20px;
+    padding: 22px;
     border-radius: 24px;
   }
 
-  .topic-hero-order {
+  .topic-hero > div:first-child {
     flex-direction: row;
-    gap: 6px;
+    gap: 8px;
     align-items: baseline;
     justify-content: flex-start;
     width: auto;
     height: auto;
-    padding: 6px 10px;
+    padding: 7px 11px;
     background: var(--surface-2);
-    border-radius: 9px;
+    border-radius: 10px;
   }
 
-  .topic-hero-order span {
+  .topic-hero > div:first-child span {
     font-size: 1.25rem;
   }
 
-  .topic-hero-task {
+  .topic-hero > div:last-child {
     grid-column: auto;
   }
 
   .topic-hero h1 {
     font-size: clamp(2.1rem, 10vw, 2.9rem);
-  }
-
-  .topic-guidance {
-    margin-top: 48px;
-  }
-
-  .topic-task {
-    padding: 20px;
-  }
-
-  .topic-brief {
-    padding: 18px;
   }
 }
 </style>

@@ -1395,12 +1395,14 @@ export const phases: PlanPhase[] = [
     role: {
       title: 'Quality & Release Engineer',
       summary:
-        'You can prove a feature works, review it for common security failures and move it to staging through an automated pipeline.',
+        'You can prove a feature works, review it for common security failures, move it to staging through an automated pipeline and operate it with real signals — logs, errors, SLOs and a runbook — once it ships.',
       responsibilities: [
         'Write Pest and frontend tests that fail when behaviour breaks.',
         'Review code against the OWASP Top 10 and fix the real risks.',
         'Containerise the app and explain every stage of the CI pipeline.',
-        'Deploy to staging and use logs, metrics and errors to verify the release.',
+        'Deploy to staging and use structured logs, metrics and Sentry to verify the release.',
+        "Define SLOs that reflect user pain and alerts that don't cry wolf.",
+        'Lead the first 10 minutes of an incident and write a blameless post-mortem after.',
       ],
     },
     weeksData: [
@@ -1595,24 +1597,30 @@ export const phases: PlanPhase[] = [
           'Containerise the app and run it with Docker Compose.',
           'Explain every stage of the GitLab CI pipeline.',
           'Deploy to staging, verify it and document rollback.',
+          'Define one SLO for the feature and know what fires an alert.',
+          'Walk a hypothetical outage through structured logs with a correlation ID.',
         ],
         task: task(
-          'Dockerise and deploy to staging through GitLab CI',
-          'Wrap the app in Docker, add a pipeline that installs, lints, tests, builds and deploys, then verify the staging release.',
+          'Dockerise, deploy to staging and wire observability',
+          'Wrap the app in Docker, add a pipeline that installs, lints, tests, builds and deploys, then verify the staging release *through* logs, errors and one documented SLO.',
           [
             'Write a Dockerfile and Compose setup for app, database and queue worker.',
             'Add a GitLab CI pipeline with install, lint, test, build and deploy stages.',
             'Use environment variables and a migration step that is safe to rerun.',
             'Deploy to staging and verify the health endpoint, login and one critical flow.',
-            'Write the rollback steps and where to find logs, metrics and errors.',
+            'Add Sentry + a structured log formatter (JSON) and attach a request/correlation ID that threads through logs and errors.',
+            'Define one SLO for the critical path (e.g. 99% of login requests under 500ms over 7 days) and write the alert condition.',
+            'Write the rollback steps, the incident runbook (first 10 minutes) and where to find logs, metrics and errors.',
           ],
           [
             'A container is not a deployment. It is one artifact in a repeatable release.',
             'Run the same image locally and in staging. If they differ, you will debug a ghost.',
             'CI should fail on a real test failure, not just on a syntax error.',
-            'In our code: `Dockerfile`, `docker/nginx/`, `docker/php/`, `docker-compose.yml`, `Makefile` and `.gitlab-ci.yml`.',
+            'An SLO is a promise *to users*. Pick one indicator that reflects user pain, pick a target you can defend, pick a window. Write what you will do when the budget burns.',
+            'Correlation IDs: generate on the edge, pass through middleware, attach to every log line and the Sentry scope. Without them, debugging a distributed failure is archaeology.',
+            'In our code: `Dockerfile`, `docker/nginx/`, `docker/php/`, `docker-compose.yml`, `Makefile`, `.gitlab-ci.yml`.',
           ],
-          'Staging runs the app in Docker, the pipeline is green, the release is verified and the rollback steps are written down.'
+          'Staging runs the app in Docker, the pipeline is green, the release is verified through logs, Sentry is capturing errors with request IDs, one SLO + alert is documented, and the rollback + first-10-minutes runbook is written down.'
         ),
         resources: [
           read(
@@ -1674,6 +1682,30 @@ export const phases: PlanPhase[] = [
             'https://docs.sentry.io/platforms/php/guides/laravel/',
             'Sentry docs · free',
             'Capture errors with enough context to fix them.'
+          ),
+          read(
+            'Google SRE: Service Level Objectives',
+            'https://sre.google/sre-book/service-level-objectives/',
+            'Google SRE Book · free',
+            'Read the SLI/SLO/SLA chapter end to end. Pick one indicator for your feature.'
+          ),
+          read(
+            'Google SRE: Monitoring Distributed Systems',
+            'https://sre.google/sre-book/monitoring-distributed-systems/',
+            'Google SRE Book · free',
+            'The four golden signals: latency, traffic, errors, saturation. Everything else is noise.'
+          ),
+          read(
+            'How to write an incident post-mortem',
+            'https://response.pagerduty.com/after/post_mortem_process/',
+            'PagerDuty · free playbook',
+            "Blameless, factual, actionable. Copy the structure; make it your team's."
+          ),
+          read(
+            'Twelve-Factor: Logs',
+            'https://12factor.net/logs',
+            '12factor.net · free',
+            'Treat logs as event streams. Write JSON to stdout; let the platform ship them.'
           ),
         ],
         items: [
@@ -1737,6 +1769,51 @@ export const phases: PlanPhase[] = [
             ],
             'In our code: Telescope is installed in both Laravel projects.'
           ),
+          item(
+            'Structured logs & correlation IDs',
+            'A log line without context is a line in a haystack. Correlation IDs turn a thousand lines into one trace.',
+            'Emit JSON logs to stdout. Generate a request ID at the edge (middleware), attach it to the Laravel log context, the Sentry scope, every outbound HTTP call and every queued job.',
+            "You can reconstruct a single user's request end to end, across web / queue / DB, in minutes rather than hours.",
+            [
+              link('Twelve-Factor: Logs', 'https://12factor.net/logs'),
+              link('Laravel: Logging', `${laravelDocs}/logging`),
+              link('Monolog JsonFormatter', 'https://github.com/Seldaek/monolog'),
+            ],
+            'Set `LOG_CHANNEL=stderr` + a JSON formatter in production. In our code: tie the ID into `Log::withContext(["request_id" => $id])` at the start of the request lifecycle.'
+          ),
+          item(
+            "SLOs, SLIs & alerting that doesn't cry wolf",
+            'Uptime is not the goal; user-perceived reliability is. An SLO forces you to pick a number you will defend.',
+            'For each critical path, pick one SLI (latency p95, error rate), set a target (e.g. 99.5% over 7 days), compute the error budget, and alert *only* when the budget burns fast enough to miss the target.',
+            'You stop paging on noise and start paging on things that actually matter to users.',
+            [
+              link('Google SRE: SLOs', 'https://sre.google/sre-book/service-level-objectives/'),
+              link(
+                'Google SRE: Monitoring',
+                'https://sre.google/sre-book/monitoring-distributed-systems/'
+              ),
+              link('Burn-rate alerts', 'https://sre.google/workbook/alerting-on-slos/'),
+            ],
+            'Start with ONE SLO per phase gate. More targets than you can defend is noise with a dashboard.'
+          ),
+          item(
+            'Incident response & post-mortems',
+            'The question is not *if* production breaks; it is *how fast* you detect, communicate, mitigate and learn.',
+            'Write a 10-minute runbook (who leads, who comms, where logs live, how to roll back). After every incident, write a blameless post-mortem with timeline, impact, root cause, action items with owners.',
+            'You turn outages into permanent improvements instead of permanent anxiety.',
+            [
+              link(
+                'PagerDuty: post-mortems',
+                'https://response.pagerduty.com/after/post_mortem_process/'
+              ),
+              link('PagerDuty: incident response', 'https://response.pagerduty.com/'),
+              link(
+                'Google SRE: Managing incidents',
+                'https://sre.google/sre-book/managing-incidents/'
+              ),
+            ],
+            'Blameless means: the system allowed the mistake. Fix the system. Humans in incidents did the best they could with what they had.'
+          ),
         ],
       },
     ],
@@ -1749,6 +1826,9 @@ export const phases: PlanPhase[] = [
         'OWASP review with one real risk documented',
         'Docker Compose for app, database and worker',
         'Green pipeline that deploys to staging',
+        'Structured JSON logs with a request/correlation ID threaded end to end',
+        'One documented SLO with its SLI, target, window and alert condition',
+        'A 10-minute incident runbook + rollback steps',
       ],
     },
     prompts: [
@@ -1761,6 +1841,9 @@ export const phases: PlanPhase[] = [
       'You can run, read and fix the GitLab CI pipeline.',
       'You can review code against the OWASP Top 10.',
       'Staging is running the Dockerised app and you can verify it with logs and metrics.',
+      'You can trace one request end to end using a correlation ID.',
+      'You have defined one SLO and can explain when it would page you.',
+      'You have a written incident runbook and a template for a blameless post-mortem.',
     ],
   },
   {

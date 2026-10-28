@@ -50,86 +50,167 @@ const actionLabel = computed(() => {
 
 <template>
   <article
-    class="plan-card"
+    class="plan-card group relative flex flex-col gap-5 overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-7 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
     :data-tone="plan.tone"
     :data-status="plan.status"
     :data-progress="progressState"
   >
-    <div class="plan-card-head">
-      <span class="plan-card-number">0{{ plan.number }}</span>
-      <span class="plan-card-status" :data-progress="progressState">
+    <!-- Phase-color top accent -->
+    <span
+      class="absolute inset-x-0 top-0 h-[5px] bg-[color:var(--phase-color)]"
+      aria-hidden="true"
+    />
+    <!-- Soft corner glow -->
+    <span
+      class="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full"
+      aria-hidden="true"
+      :style="{
+        background:
+          'radial-gradient(circle, color-mix(in oklab, var(--phase-color) 18%, transparent), transparent 68%)',
+      }"
+    />
+
+    <!-- Head: number + status pill -->
+    <div class="relative flex items-center justify-between gap-3">
+      <span
+        class="font-[var(--font-display)] text-[2.5rem] font-bold leading-none text-[color:var(--phase-color)] opacity-30"
+      >
+        0{{ plan.number }}
+      </span>
+      <span
+        class="inline-flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--surface-2)] px-2.5 py-1 text-[0.72rem] font-bold uppercase tracking-wider text-[var(--muted)]"
+        :data-progress="progressState"
+      >
         <Icon :name="statusIcon" class="learning-icon" />
         {{ statusLabel }}
       </span>
     </div>
 
-    <div class="plan-card-copy">
-      <p class="plan-card-eyebrow">{{ plan.shortTitle }} · {{ plan.subtitle }}</p>
-      <h2>{{ plan.title }}</h2>
-      <p>{{ plan.description }}</p>
+    <!-- Copy -->
+    <div class="relative grid gap-2">
+      <p
+        class="plan-card-eyebrow m-0 text-[0.75rem] font-extrabold uppercase tracking-widest text-[color:var(--phase-color)]"
+      >
+        {{ plan.shortTitle }} · {{ plan.subtitle }}
+      </p>
+      <h2 class="my-0 text-[clamp(1.75rem,2.7vw,2.25rem)] font-bold leading-tight tracking-tight">
+        {{ plan.title }}
+      </h2>
+      <p class="m-0 text-[0.96rem] leading-relaxed text-[var(--muted)]">
+        {{ plan.description }}
+      </p>
     </div>
 
-    <div class="plan-card-stats">
+    <!-- Stats pills -->
+    <div class="relative flex flex-wrap gap-1.5">
       <span
-        ><strong>{{ plan.weeks }}</strong> weeks</span
+        class="rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2.5 py-1.5 text-[0.78rem] text-[var(--muted)]"
       >
+        <strong class="text-[var(--ink)]">{{ plan.weeks }}</strong> weeks
+      </span>
       <span
-        ><strong>{{ plan.topics || '—' }}</strong> topics</span
+        class="rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2.5 py-1.5 text-[0.78rem] text-[var(--muted)]"
       >
+        <strong class="text-[var(--ink)]">{{ plan.topics || '—' }}</strong> topics
+      </span>
       <span
-        ><strong>{{ plan.phases }}</strong> phases</span
+        class="rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2.5 py-1.5 text-[0.78rem] text-[var(--muted)]"
       >
+        <strong class="text-[var(--ink)]">{{ plan.phases }}</strong> phases
+      </span>
     </div>
 
-    <div class="plan-card-route">
-      <span class="plan-card-label">The route</span>
-      <div class="plan-card-phases">
+    <!-- Phase route (plans with runtime) -->
+    <div v-if="planPhases.length" class="relative grid gap-2">
+      <span
+        class="inline-flex items-center gap-1.5 text-[0.68rem] font-extrabold uppercase tracking-widest text-[var(--muted)]"
+      >
+        The route
+      </span>
+      <div class="grid gap-1.5 sm:grid-cols-2">
         <span
           v-for="phase in planPhases"
           :key="phase.key"
-          class="plan-card-phase"
+          class="plan-card-phase grid grid-cols-[6px_auto_minmax(0,1fr)] items-center gap-2 rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2.5 py-1.5"
           :data-tone="phase.tone"
         >
-          <i />
-          <small>0{{ phase.number }}</small>
-          <span>{{ phase.title }}</span>
+          <i class="h-1.5 w-1.5 rounded-full bg-[color:var(--phase-color)]" />
+          <small class="text-[0.6rem] font-extrabold text-[color:var(--phase-color)]">
+            0{{ phase.number }}
+          </small>
+          <span class="truncate text-[0.72rem] leading-tight text-[var(--muted)]">
+            {{ phase.title }}
+          </span>
         </span>
       </div>
     </div>
 
-    <ul class="plan-card-preview">
-      <li v-for="item in previewItems" :key="item">
-        <Icon name="lucide:check" class="learning-icon" />
-        {{ item }}
+    <!-- Preview bullets -->
+    <ul class="relative m-0 grid list-none gap-1.5 p-0">
+      <li
+        v-for="item in previewItems"
+        :key="item"
+        class="flex items-start gap-2 text-[0.86rem] leading-snug text-[var(--muted)]"
+      >
+        <Icon
+          name="lucide:check"
+          class="learning-icon mt-1 flex-none text-[color:var(--phase-color)]"
+        />
+        <span>{{ item }}</span>
       </li>
     </ul>
 
-    <div class="plan-card-outcome">
-      <span class="plan-card-label">
+    <!-- Outcome callout -->
+    <div
+      class="relative grid gap-1.5 rounded-xl border p-3.5"
+      :style="{
+        background: 'color-mix(in oklab, var(--phase-color) 6%, var(--surface-2))',
+        borderColor: 'color-mix(in oklab, var(--phase-color) 22%, var(--line))',
+      }"
+    >
+      <span
+        class="inline-flex items-center gap-1.5 text-[0.68rem] font-extrabold uppercase tracking-widest text-[color:var(--phase-color)]"
+      >
         <Icon name="lucide:flag" class="learning-icon" />
         You leave with
       </span>
-      <p>{{ plan.outcome }}</p>
+      <p class="m-0 text-[0.86rem] leading-snug text-[var(--ink)]">{{ plan.outcome }}</p>
     </div>
 
-    <div class="plan-card-roles">
-      <span class="plan-card-label">Roles you unlock</span>
-      <div class="plan-card-role-list">
-        <span v-for="role in plan.roles" :key="role">{{ role }}</span>
+    <!-- Roles earned -->
+    <div class="relative grid gap-2">
+      <span
+        class="inline-flex items-center gap-1.5 text-[0.68rem] font-extrabold uppercase tracking-widest text-[var(--muted)]"
+      >
+        Roles you unlock
+      </span>
+      <div class="flex flex-wrap gap-1.5">
+        <span
+          v-for="role in plan.roles"
+          :key="role"
+          class="rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2.5 py-1 text-[0.78rem] text-[var(--ink)]"
+        >
+          {{ role }}
+        </span>
       </div>
     </div>
 
-    <div v-if="plan.status === 'available'" class="plan-card-progress">
-      <div class="plan-card-progress-row">
+    <!-- Progress bar (available plans only) -->
+    <div v-if="plan.status === 'available'" class="relative grid gap-1.5">
+      <div class="flex items-center justify-between gap-3 text-[0.84rem] text-[var(--muted)]">
         <span>{{ completedTopics }} of {{ plan.topics }} topics passed</span>
-        <strong>{{ progressPercent }}%</strong>
+        <strong class="text-[color:var(--phase-color)]">{{ progressPercent }}%</strong>
       </div>
-      <div class="plan-card-progress-track">
-        <span :style="{ width: `${progressPercent}%` }" />
+      <div class="h-1.5 overflow-hidden rounded-full bg-[var(--line)]">
+        <span
+          class="block h-full rounded-full bg-[color:var(--phase-color)] transition-all duration-300"
+          :style="{ width: `${progressPercent}%` }"
+        />
       </div>
     </div>
 
-    <div class="plan-card-foot">
+    <!-- Foot: CTA -->
+    <div class="relative mt-auto flex flex-col items-start gap-2.5 pt-0.5">
       <NuxtLink
         v-if="plan.status === 'available'"
         :to="roadmapPath(plan.id)"
@@ -142,8 +223,8 @@ const actionLabel = computed(() => {
         <Icon name="lucide:lock" class="learning-icon" />
         Coming soon
       </span>
-      <span class="plan-card-save-note">
-        <Icon name="lucide:cloud-check" class="learning-icon" />
+      <span class="inline-flex items-center gap-1.5 text-[0.78rem] text-[var(--muted)]">
+        <Icon name="lucide:cloud-check" class="learning-icon text-[var(--success)]" />
         Progress saves automatically
       </span>
     </div>
@@ -151,45 +232,63 @@ const actionLabel = computed(() => {
 </template>
 
 <style scoped>
+/* Phase tone → variable mapping. The phases inside the "route" also carry
+   their own data-tone, overriding at the inner level. */
+.plan-card[data-tone='blue'] {
+  --phase-color: var(--phase-blue);
+}
+
+.plan-card[data-tone='violet'] {
+  --phase-color: var(--phase-violet);
+}
+
+.plan-card[data-tone='teal'] {
+  --phase-color: var(--phase-teal);
+}
+
+.plan-card[data-tone='amber'] {
+  --phase-color: var(--phase-amber);
+}
+
+.plan-card[data-tone='rose'] {
+  --phase-color: var(--phase-rose);
+}
+
+.plan-card[data-tone='indigo'] {
+  --phase-color: var(--phase-indigo);
+}
+
+.plan-card-phase[data-tone='blue'] {
+  --phase-color: var(--phase-blue);
+}
+
+.plan-card-phase[data-tone='violet'] {
+  --phase-color: var(--phase-violet);
+}
+
+.plan-card-phase[data-tone='teal'] {
+  --phase-color: var(--phase-teal);
+}
+
+.plan-card-phase[data-tone='amber'] {
+  --phase-color: var(--phase-amber);
+}
+
+.plan-card-phase[data-tone='rose'] {
+  --phase-color: var(--phase-rose);
+}
+
+.plan-card-phase[data-tone='indigo'] {
+  --phase-color: var(--phase-indigo);
+}
+
+/* Subtle background wash tinted by phase color */
 .plan-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding: 28px;
-  overflow: hidden;
   background: linear-gradient(
     165deg,
     color-mix(in oklab, var(--phase-color) 7%, var(--surface)),
     var(--surface) 42%
   );
-  border: 1px solid var(--line);
-  border-top: 5px solid var(--phase-color);
-  border-radius: 24px;
-  box-shadow: var(--shadow-sm);
-  transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease;
-}
-
-.plan-card::after {
-  position: absolute;
-  top: -50px;
-  right: -50px;
-  width: 160px;
-  height: 160px;
-  pointer-events: none;
-  content: '';
-  background: radial-gradient(
-    circle,
-    color-mix(in oklab, var(--phase-color) 18%, transparent),
-    transparent 68%
-  );
-}
-
-.plan-card:hover {
-  box-shadow: var(--shadow);
-  transform: translateY(-3px);
 }
 
 .plan-card[data-status='coming-soon'] {
@@ -201,277 +300,22 @@ const actionLabel = computed(() => {
   transform: none;
 }
 
-.plan-card-head {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.plan-card-number {
-  font-family: var(--font-display);
-  font-size: 2.5rem;
-  font-weight: 750;
-  line-height: 0.9;
-  color: var(--phase-color);
-  opacity: 0.3;
-}
-
-.plan-card-status {
-  display: inline-flex;
-  gap: 5px;
-  align-items: center;
-  padding: 5px 10px;
-  font-size: 0.72rem;
-  font-weight: 750;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-}
-
-.plan-card-status[data-progress='ready'] {
+/* Status pill variants beyond Tailwind reach */
+[data-progress='ready'] {
   color: var(--success);
   background: var(--success-soft);
   border-color: color-mix(in oklab, var(--success) 30%, var(--line));
 }
 
-.plan-card-status[data-progress='in-progress'] {
+[data-progress='in-progress'] {
   color: var(--phase-color);
   background: color-mix(in oklab, var(--phase-color) 10%, var(--surface));
   border-color: color-mix(in oklab, var(--phase-color) 30%, var(--line));
 }
 
-.plan-card-status[data-progress='complete'] {
+[data-progress='complete'] {
   color: var(--success);
   background: var(--success-soft);
   border-color: color-mix(in oklab, var(--success) 30%, var(--line));
-}
-
-.plan-card-copy h2 {
-  margin: 2px 0 8px;
-  font-size: clamp(1.75rem, 2.7vw, 2.25rem);
-  line-height: 1.06;
-}
-
-.plan-card-copy p {
-  margin: 0;
-  font-size: 0.96rem;
-  line-height: 1.65;
-  color: var(--muted);
-}
-
-.plan-card-eyebrow {
-  font-size: 0.75rem !important;
-  font-weight: 800;
-  color: var(--phase-color) !important;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-}
-
-.plan-card-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.plan-card-stats span {
-  padding: 6px 10px;
-  font-size: 0.78rem;
-  color: var(--muted);
-  background: color-mix(in oklab, var(--phase-color) 5%, var(--surface-2));
-  border: 1px solid var(--line);
-  border-radius: 8px;
-}
-
-.plan-card-stats strong {
-  color: var(--ink);
-}
-
-.plan-card-route {
-  display: grid;
-  gap: 8px;
-}
-
-.plan-card-label {
-  display: inline-flex;
-  gap: 5px;
-  align-items: center;
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-}
-
-.plan-card-phases {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
-}
-
-.plan-card-phase {
-  display: grid;
-  grid-template-columns: 6px auto minmax(0, 1fr);
-  gap: 6px;
-  align-items: center;
-  min-width: 0;
-  padding: 6px 8px;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 7px;
-}
-
-.plan-card-phase i {
-  width: 6px;
-  height: 6px;
-  background: var(--phase-color);
-  border-radius: 999px;
-}
-
-.plan-card-phase small {
-  font-size: 0.58rem;
-  font-weight: 800;
-  color: var(--phase-color);
-}
-
-.plan-card-phase > span {
-  overflow: hidden;
-  font-size: 0.7rem;
-  line-height: 1.25;
-  color: var(--muted);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.plan-card-preview {
-  display: grid;
-  gap: 7px;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-.plan-card-preview li {
-  display: flex;
-  gap: 7px;
-  align-items: flex-start;
-  font-size: 0.84rem;
-  line-height: 1.45;
-  color: var(--muted);
-}
-
-.plan-card-preview .learning-icon {
-  flex: none;
-  margin-top: 3px;
-  color: var(--phase-color);
-}
-
-.plan-card-outcome {
-  display: grid;
-  gap: 6px;
-  padding: 13px 14px;
-  background: color-mix(in oklab, var(--phase-color) 6%, var(--surface-2));
-  border: 1px solid color-mix(in oklab, var(--phase-color) 22%, var(--line));
-  border-radius: 11px;
-}
-
-.plan-card-outcome .plan-card-label {
-  color: var(--phase-color);
-}
-
-.plan-card-outcome p {
-  margin: 0;
-  font-size: 0.84rem;
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-.plan-card-roles {
-  display: grid;
-  gap: 8px;
-}
-
-.plan-card-role-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.plan-card-role-list span {
-  padding: 5px 9px;
-  font-size: 0.78rem;
-  color: var(--ink);
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 7px;
-}
-
-.plan-card-progress {
-  display: grid;
-  gap: 7px;
-}
-
-.plan-card-progress-row {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.84rem;
-  color: var(--muted);
-}
-
-.plan-card-progress-row strong {
-  color: var(--phase-color);
-}
-
-.plan-card-progress-track {
-  height: 7px;
-  overflow: hidden;
-  background: var(--line);
-  border-radius: 999px;
-}
-
-.plan-card-progress-track span {
-  display: block;
-  height: 100%;
-  background: var(--phase-color);
-  border-radius: inherit;
-  transition: width 0.35s ease;
-}
-
-.plan-card-foot {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: flex-start;
-  margin-top: auto;
-  padding-top: 2px;
-}
-
-.plan-card-save-note {
-  display: inline-flex;
-  gap: 5px;
-  align-items: center;
-  font-size: 0.76rem;
-  color: var(--muted);
-}
-
-.plan-card-save-note .learning-icon {
-  color: var(--success);
-}
-
-@media (max-width: 700px) {
-  .plan-card {
-    padding: 22px;
-  }
-}
-
-@media (max-width: 430px) {
-  .plan-card-phases {
-    grid-template-columns: 1fr;
-  }
 }
 </style>

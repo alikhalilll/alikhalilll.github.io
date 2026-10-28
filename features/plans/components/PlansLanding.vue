@@ -58,105 +58,185 @@ const howItWorks = [
     :progress-label="`${completedTopics} topics passed`"
     :progress-percent="progressPercent"
   >
-    <section class="plans-hero">
-      <div class="plans-hero-copy">
-        <p class="plans-eyebrow">Learning Paths</p>
-        <h1>Two plans. One path from idea to production.</h1>
-        <p>
-          Pick the plan you want to start. Each plan is a visual roadmap: topics in the right order,
-          a real task every week, free resources, and a quiz that has to be passed before the next
-          level opens.
-        </p>
-        <div class="plans-hero-actions">
-          <a href="#plans" class="learning-button learning-button-primary">
-            Explore the two plans
-            <Icon name="lucide:arrow-down" class="learning-icon" />
-          </a>
-          <span class="plans-hero-note">
-            <Icon name="lucide:shield-check" class="learning-icon" />
-            No account needed · progress stays in your browser
-          </span>
-        </div>
+    <!-- ============ HERO ============ -->
+    <section
+      class="plans-hero relative overflow-hidden rounded-3xl border border-[var(--line)] shadow-md"
+    >
+      <!-- Decorative gradient bg (scoped CSS for color-mix + radial) -->
+      <span class="plans-hero-bg pointer-events-none absolute inset-0" aria-hidden="true" />
+      <!-- Top gradient bar -->
+      <span
+        class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[var(--brand)] via-[var(--phase-blue)] to-[var(--brand)]"
+      />
 
-        <div class="plans-hero-facts" aria-label="Learning path totals">
-          <span>
-            <strong>{{ totalTopics }}</strong>
-            guided topics
-          </span>
-          <span>
-            <strong>{{ totalPhases }}</strong>
-            phase gates
-          </span>
-          <span>
-            <strong>{{ totalRoles }}</strong>
-            roles
-          </span>
-          <span>
-            <strong>{{ totalWeeks }}</strong>
-            weeks of material
-          </span>
-        </div>
-      </div>
+      <div
+        class="relative grid gap-10 p-8 md:grid-cols-[minmax(0,1fr)_360px] md:items-center md:p-12"
+      >
+        <!-- Copy column -->
+        <div class="min-w-0">
+          <p class="plans-eyebrow m-0">Learning Paths</p>
+          <h1
+            class="my-3 max-w-[18ch] text-[clamp(3rem,5.8vw,5.1rem)] font-bold leading-[0.97] tracking-tight"
+          >
+            Two plans. One path from idea to production.
+          </h1>
+          <p class="m-0 max-w-[700px] text-[1.12rem] leading-relaxed text-[var(--muted)]">
+            Pick the plan you want to start. Each plan is a visual roadmap: topics in the right
+            order, a real task every week, free resources, and a quiz that has to be passed before
+            the next level opens.
+          </p>
 
-      <aside class="plans-hero-dashboard" aria-label="Your plan progress">
-        <div class="plans-dashboard-head">
-          <div>
-            <p class="plans-card-kicker">Your progress</p>
-            <strong>Pick up where you left off</strong>
+          <div class="mt-7 flex flex-wrap items-center gap-4">
+            <a href="#plans" class="learning-button learning-button-primary">
+              Explore the two plans
+              <Icon name="lucide:arrow-down" class="learning-icon" />
+            </a>
+            <span class="inline-flex items-center gap-1.5 text-[0.86rem] text-[var(--muted)]">
+              <Icon name="lucide:shield-check" class="learning-icon text-[var(--brand)]" />
+              No account needed · progress stays in your browser
+            </span>
           </div>
-          <span class="plans-dashboard-saved">
-            <Icon name="lucide:cloud-check" class="learning-icon" />
-            Saved locally
-          </span>
+
+          <!-- Totals grid -->
+          <div
+            class="mt-7 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--line)] p-px sm:grid-cols-4"
+            aria-label="Learning path totals"
+          >
+            <div class="grid gap-0.5 bg-[color-mix(in_oklab,var(--surface)_86%,transparent)] p-3">
+              <strong class="font-[var(--font-display)] text-[1.1rem] font-bold text-[var(--ink)]">
+                {{ totalTopics }}
+              </strong>
+              <span class="text-[0.72rem] font-medium text-[var(--muted)]">guided topics</span>
+            </div>
+            <div class="grid gap-0.5 bg-[color-mix(in_oklab,var(--surface)_86%,transparent)] p-3">
+              <strong class="font-[var(--font-display)] text-[1.1rem] font-bold text-[var(--ink)]">
+                {{ totalPhases }}
+              </strong>
+              <span class="text-[0.72rem] font-medium text-[var(--muted)]">phase gates</span>
+            </div>
+            <div class="grid gap-0.5 bg-[color-mix(in_oklab,var(--surface)_86%,transparent)] p-3">
+              <strong class="font-[var(--font-display)] text-[1.1rem] font-bold text-[var(--ink)]">
+                {{ totalRoles }}
+              </strong>
+              <span class="text-[0.72rem] font-medium text-[var(--muted)]">roles</span>
+            </div>
+            <div class="grid gap-0.5 bg-[color-mix(in_oklab,var(--surface)_86%,transparent)] p-3">
+              <strong class="font-[var(--font-display)] text-[1.1rem] font-bold text-[var(--ink)]">
+                {{ totalWeeks }}
+              </strong>
+              <span class="text-[0.72rem] font-medium text-[var(--muted)]">weeks of material</span>
+            </div>
+          </div>
         </div>
 
-        <NuxtLink
-          v-for="plan in planCatalog"
-          :key="plan.id"
-          :to="roadmapPath(plan.id)"
-          class="plans-dashboard-plan"
-          :data-tone="plan.tone"
+        <!-- Dashboard panel: your progress -->
+        <aside
+          class="grid gap-3 rounded-2xl border border-[var(--line)] bg-[color-mix(in_oklab,var(--surface)_90%,transparent)] p-5 shadow-sm backdrop-blur"
+          aria-label="Your plan progress"
         >
-          <span class="plans-dashboard-number">0{{ plan.number }}</span>
-          <span class="plans-dashboard-copy">
-            <span class="plans-dashboard-label">{{ plan.shortTitle }} · {{ plan.title }}</span>
-            <span class="plans-dashboard-meta">
-              {{ planProgress[plan.id]?.completed ?? 0 }} / {{ plan.topics }} topics
+          <div class="flex items-start justify-between gap-3 pb-1">
+            <div class="grid gap-0.5">
+              <p
+                class="m-0 text-[0.68rem] font-extrabold uppercase tracking-widest text-[var(--muted)]"
+              >
+                Your progress
+              </p>
+              <strong
+                class="font-[var(--font-display)] text-[1.04rem] font-bold leading-tight text-[var(--ink)]"
+              >
+                Pick up where you left off
+              </strong>
+            </div>
+            <span
+              class="inline-flex flex-none items-center gap-1 rounded-full bg-[var(--success-soft)] px-2 py-1 text-[0.66rem] font-bold text-[var(--success)]"
+            >
+              <Icon name="lucide:cloud-check" class="learning-icon" />
+              Saved locally
             </span>
-            <span class="plans-dashboard-track">
-              <span :style="{ width: `${planProgress[plan.id]?.percent ?? 0}%` }" />
-            </span>
-          </span>
-          <span class="plans-dashboard-side">
-            <strong>{{ planProgress[plan.id]?.percent ?? 0 }}%</strong>
-            <span>
-              {{ (planProgress[plan.id]?.completed ?? 0) > 0 ? 'Continue' : 'Start' }}
-              <Icon name="lucide:arrow-right" class="learning-icon" />
-            </span>
-          </span>
-        </NuxtLink>
+          </div>
 
-        <p class="plans-dashboard-note">
-          <Icon name="lucide:split" class="learning-icon" />
-          Both plans keep independent progress. Finishing one never resets the other.
-        </p>
-      </aside>
+          <NuxtLink
+            v-for="plan in planCatalog"
+            :key="plan.id"
+            :to="roadmapPath(plan.id)"
+            class="plans-dashboard-plan group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-xl border border-[var(--line)] bg-[var(--surface)] p-3 text-[var(--ink)] no-underline transition-all hover:-translate-y-0.5 hover:border-[color:var(--phase-color)]"
+            :data-tone="plan.tone"
+          >
+            <span
+              class="grid h-9 w-9 flex-none place-items-center rounded-lg border font-[var(--font-display)] text-[0.72rem] font-bold text-[color:var(--phase-color)]"
+              :style="{
+                background: 'color-mix(in oklab, var(--phase-color) 10%, var(--surface))',
+                borderColor: 'color-mix(in oklab, var(--phase-color) 22%, var(--line))',
+              }"
+            >
+              0{{ plan.number }}
+            </span>
+            <span class="grid min-w-0 gap-0.5">
+              <span class="truncate text-[0.84rem] font-bold leading-tight">
+                {{ plan.shortTitle }} · {{ plan.title }}
+              </span>
+              <span class="text-[0.7rem] text-[var(--muted)]">
+                {{ planProgress[plan.id]?.completed ?? 0 }} / {{ plan.topics }} topics
+              </span>
+              <span class="mt-0.5 block h-1 overflow-hidden rounded-full bg-[var(--line)]">
+                <span
+                  class="block h-full rounded-full bg-[color:var(--phase-color)]"
+                  :style="{ width: `${planProgress[plan.id]?.percent ?? 0}%` }"
+                />
+              </span>
+            </span>
+            <span class="grid justify-items-end gap-0.5">
+              <strong
+                class="font-[var(--font-display)] text-[1.02rem] text-[color:var(--phase-color)]"
+              >
+                {{ planProgress[plan.id]?.percent ?? 0 }}%
+              </strong>
+              <span
+                class="inline-flex items-center gap-0.5 text-[0.66rem] font-bold uppercase tracking-wider text-[var(--muted)] group-hover:text-[color:var(--phase-color)]"
+              >
+                {{ (planProgress[plan.id]?.completed ?? 0) > 0 ? 'Continue' : 'Start' }}
+                <Icon name="lucide:arrow-right" class="learning-icon" />
+              </span>
+            </span>
+          </NuxtLink>
+
+          <p
+            class="m-0 flex items-start gap-1.5 pt-1 text-[0.74rem] leading-snug text-[var(--muted)]"
+          >
+            <Icon name="lucide:split" class="learning-icon mt-0.5 flex-none text-[var(--brand)]" />
+            Both plans keep independent progress. Finishing one never resets the other.
+          </p>
+        </aside>
+      </div>
     </section>
 
-    <section id="plans" class="plans-section" aria-labelledby="plans-title">
-      <div class="plans-section-head">
-        <div>
-          <p class="plans-section-kicker">Choose your starting point</p>
-          <h2 id="plans-title">Two routes. One clear next step.</h2>
+    <!-- ============ § 01 — PLANS ============ -->
+    <section id="plans" class="mt-16 scroll-mt-24" aria-labelledby="plans-title">
+      <header class="mb-6 flex flex-wrap items-end justify-between gap-8">
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-3">
+            <span
+              class="grid h-7 w-9 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_30%,transparent)] bg-[var(--brand-soft)] text-[0.72rem] font-bold text-[var(--brand)]"
+            >
+              01
+            </span>
+            <p class="plans-section-kicker m-0">Choose your starting point</p>
+          </div>
+          <h2
+            id="plans-title"
+            class="mt-2 text-[clamp(1.8rem,2.9vw,2.5rem)] font-bold leading-tight"
+          >
+            Two routes. One clear next step.
+          </h2>
         </div>
-        <p>
+        <p class="m-0 max-w-[540px] text-[1rem] leading-relaxed text-[var(--muted)]">
           Start with the product and QA foundation, or go directly into backend and full-stack
           delivery. Both plans are live, and each keeps its own roadmap, quizzes, gates and
           progress.
         </p>
-      </div>
+      </header>
 
-      <div class="plans-grid">
+      <div class="grid gap-5 md:grid-cols-2">
         <PlanCard
           v-for="plan in planCatalog"
           :key="plan.id"
@@ -167,26 +247,50 @@ const howItWorks = [
       </div>
     </section>
 
-    <section class="plans-section" aria-labelledby="how-title">
-      <div class="plans-section-head">
-        <div>
-          <p class="plans-section-kicker">How it works</p>
-          <h2 id="how-title">A learning loop with a real gate</h2>
+    <!-- ============ § 02 — HOW IT WORKS ============ -->
+    <section class="mt-16 scroll-mt-24" aria-labelledby="how-title">
+      <header class="mb-6 flex flex-wrap items-end justify-between gap-8">
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-3">
+            <span
+              class="grid h-7 w-9 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_30%,transparent)] bg-[var(--brand-soft)] text-[0.72rem] font-bold text-[var(--brand)]"
+            >
+              02
+            </span>
+            <p class="plans-section-kicker m-0">How it works</p>
+          </div>
+          <h2 id="how-title" class="mt-2 text-[clamp(1.8rem,2.9vw,2.5rem)] font-bold leading-tight">
+            A learning loop with a real gate
+          </h2>
         </div>
-        <p>
+        <p class="m-0 max-w-[540px] text-[1rem] leading-relaxed text-[var(--muted)]">
           The roadmap is not a reading list. You produce something each week, prove it, then earn
           the next role.
         </p>
-      </div>
+      </header>
 
-      <div class="plans-steps">
-        <article v-for="step in howItWorks" :key="step.number" class="plans-step">
-          <span class="plans-step-number">{{ step.number }}</span>
-          <span class="plans-step-icon">
+      <div class="grid gap-4 md:grid-cols-3">
+        <article
+          v-for="step in howItWorks"
+          :key="step.number"
+          class="plans-step relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 transition-colors hover:border-[var(--brand)]"
+        >
+          <span
+            class="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-[var(--brand)] to-transparent opacity-60"
+            aria-hidden="true"
+          />
+          <span
+            class="absolute right-4 top-3 font-[var(--font-display)] text-[2.3rem] font-bold leading-none text-[var(--line-strong)] opacity-55"
+          >
+            {{ step.number }}
+          </span>
+          <span
+            class="mb-4 grid h-10 w-10 place-items-center rounded-xl border border-[color-mix(in_oklab,var(--brand)_18%,var(--line))] bg-[var(--brand-soft)] text-[1.15rem] text-[var(--brand)]"
+          >
             <Icon :name="step.icon" class="learning-icon" />
           </span>
-          <h3>{{ step.title }}</h3>
-          <p>{{ step.body }}</p>
+          <h3 class="mb-1.5 mt-0 text-[1.12rem] font-bold">{{ step.title }}</h3>
+          <p class="m-0 text-[0.92rem] leading-relaxed text-[var(--muted)]">{{ step.body }}</p>
         </article>
       </div>
     </section>
@@ -194,12 +298,8 @@ const howItWorks = [
 </template>
 
 <style scoped>
-.plans-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  gap: 38px;
-  align-items: center;
-  padding: 46px;
+/* Hero multi-layer background (brand-tinted) — a NestJS-ish subtle wash */
+.plans-hero-bg {
   background:
     radial-gradient(
       circle at 88% 10%,
@@ -207,402 +307,22 @@ const howItWorks = [
       transparent 24rem
     ),
     linear-gradient(145deg, var(--surface), color-mix(in oklab, var(--brand) 5%, var(--surface)));
-  border: 1px solid var(--line);
-  border-radius: 32px;
-  box-shadow: var(--shadow);
 }
 
-.plans-hero-copy h1 {
-  max-width: 840px;
-  margin: 12px 0 20px;
-  font-size: clamp(3rem, 5.8vw, 5.1rem);
-  line-height: 0.97;
-  letter-spacing: -0.05em;
+/* Phase tone → variable mapping for dashboard plan tiles */
+.plans-dashboard-plan[data-tone='blue'] {
+  --phase-color: var(--phase-blue);
 }
 
-.plans-hero-copy > p:not(.plans-eyebrow) {
-  max-width: 700px;
-  margin: 0;
-  font-size: 1.12rem;
-  line-height: 1.7;
-  color: var(--muted);
+.plans-dashboard-plan[data-tone='violet'] {
+  --phase-color: var(--phase-violet);
 }
 
-.plans-hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  align-items: center;
-  margin-top: 28px;
+.plans-dashboard-plan[data-tone='teal'] {
+  --phase-color: var(--phase-teal);
 }
 
-.plans-hero-note {
-  display: inline-flex;
-  gap: 7px;
-  align-items: center;
-  font-size: 0.84rem;
-  color: var(--muted);
-}
-
-.plans-hero-facts {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1px;
-  padding: 1px;
-  margin-top: 30px;
-  overflow: hidden;
-  background: var(--line);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-}
-
-.plans-hero-facts span {
-  display: grid;
-  gap: 1px;
-  padding: 10px 12px;
-  font-size: 0.7rem;
-  color: var(--muted);
-  background: color-mix(in oklab, var(--surface) 86%, transparent);
-}
-
-.plans-hero-facts strong {
-  font-family: var(--font-display);
-  font-size: 1.02rem;
-  font-weight: 750;
-  color: var(--ink);
-}
-
-.plans-hero-dashboard {
-  display: grid;
-  gap: 12px;
-  padding: 20px;
-  background: color-mix(in oklab, var(--surface) 90%, transparent);
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  box-shadow: var(--shadow-sm);
-  backdrop-filter: blur(12px);
-}
-
-.plans-dashboard-head {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding-bottom: 4px;
-}
-
-.plans-dashboard-head > div {
-  display: grid;
-  gap: 3px;
-}
-
-.plans-dashboard-head strong {
-  font-family: var(--font-display);
-  font-size: 1.04rem;
-  line-height: 1.25;
-}
-
-.plans-card-kicker {
-  margin: 0;
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.11em;
-}
-
-.plans-dashboard-saved {
-  display: inline-flex;
-  flex: none;
-  gap: 4px;
-  align-items: center;
-  padding: 4px 7px;
-  font-size: 0.66rem;
-  font-weight: 700;
-  color: var(--success);
-  background: var(--success-soft);
-  border-radius: 999px;
-}
-
-.plans-dashboard-plan {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 11px;
-  align-items: center;
-  padding: 13px;
-  color: var(--ink) !important;
-  text-decoration: none !important;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 13px;
-  transition:
-    border-color 160ms ease,
-    transform 160ms ease;
-}
-
-.plans-dashboard-plan:hover {
-  border-color: var(--phase-color);
-  transform: translateY(-1px);
-}
-
-.plans-dashboard-number {
-  display: grid;
-  width: 34px;
-  height: 34px;
-  font-family: var(--font-display);
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--phase-color);
-  background: color-mix(in oklab, var(--phase-color) 10%, var(--surface));
-  border: 1px solid color-mix(in oklab, var(--phase-color) 22%, var(--line));
-  border-radius: 9px;
-  place-items: center;
-}
-
-.plans-dashboard-copy {
-  display: grid;
-  gap: 3px;
-  min-width: 0;
-}
-
-.plans-dashboard-label {
-  overflow: hidden;
-  font-size: 0.82rem;
-  font-weight: 700;
-  line-height: 1.25;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.plans-dashboard-meta {
-  font-size: 0.7rem;
-  color: var(--muted);
-}
-
-.plans-dashboard-track {
-  display: block;
-  height: 4px;
-  margin-top: 2px;
-  overflow: hidden;
-  background: var(--line);
-  border-radius: 999px;
-}
-
-.plans-dashboard-track span {
-  display: block;
-  height: 100%;
-  background: var(--phase-color);
-  border-radius: inherit;
-}
-
-.plans-dashboard-side {
-  display: grid;
-  gap: 2px;
-  justify-items: end;
-}
-
-.plans-dashboard-side > strong {
-  font-family: var(--font-display);
-  font-size: 1rem;
-  color: var(--phase-color);
-}
-
-.plans-dashboard-side > span {
-  display: inline-flex;
-  gap: 3px;
-  align-items: center;
-  font-size: 0.66rem;
-  font-weight: 700;
-  color: var(--muted);
-}
-
-.plans-dashboard-note {
-  display: flex;
-  gap: 7px;
-  align-items: flex-start;
-  padding-top: 4px;
-  margin: 0;
-  font-size: 0.72rem;
-  line-height: 1.5;
-  color: var(--muted);
-}
-
-.plans-dashboard-note .learning-icon {
-  flex: none;
-  margin-top: 2px;
-  color: var(--brand);
-}
-
-.plans-section {
-  margin-top: 68px;
-  scroll-margin-top: 96px;
-}
-
-.plans-section-head {
-  display: flex;
-  gap: 32px;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 24px;
-}
-
-.plans-section-head h2 {
-  margin: 5px 0 0;
-  font-size: clamp(1.8rem, 2.9vw, 2.5rem);
-  line-height: 1.1;
-}
-
-.plans-section-head > p {
-  max-width: 540px;
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1.65;
-  color: var(--muted);
-}
-
-.plans-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-}
-
-.plans-steps {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.plans-step {
-  position: relative;
-  padding: 24px;
-  overflow: hidden;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-}
-
-.plans-step-number {
-  position: absolute;
-  top: 14px;
-  right: 16px;
-  font-family: var(--font-display);
-  font-size: 2.3rem;
-  font-weight: 750;
-  color: var(--line-strong);
-  opacity: 0.55;
-}
-
-.plans-step-icon {
-  display: grid;
-  width: 40px;
-  height: 40px;
-  margin-bottom: 18px;
-  font-size: 1.15rem;
-  color: var(--brand);
-  background: var(--brand-soft);
-  border: 1px solid color-mix(in oklab, var(--brand) 18%, var(--line));
-  border-radius: 11px;
-  place-items: center;
-}
-
-.plans-step::before {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 3px;
-  content: '';
-  background: linear-gradient(90deg, var(--brand), transparent 80%);
-  opacity: 0.55;
-}
-
-.plans-step h3 {
-  margin: 0 0 6px;
-  font-size: 1.12rem;
-}
-
-.plans-step p {
-  margin: 0;
-  font-size: 0.92rem;
-  line-height: 1.6;
-  color: var(--muted);
-}
-
-@media (max-width: 1080px) {
-  .plans-hero {
-    grid-template-columns: 1fr;
-    padding: 32px;
-  }
-
-  .plans-hero-dashboard {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .plans-dashboard-head,
-  .plans-dashboard-note {
-    grid-column: 1 / -1;
-  }
-
-  .plans-steps {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 720px) {
-  .plans-hero-dashboard {
-    grid-template-columns: 1fr;
-  }
-
-  .plans-dashboard-head,
-  .plans-dashboard-note {
-    grid-column: auto;
-  }
-}
-
-@media (max-width: 760px) {
-  .plans-section-head {
-    display: block;
-  }
-
-  .plans-section-head > p {
-    margin-top: 10px;
-  }
-
-  .plans-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 560px) {
-  .plans-hero {
-    padding: 26px;
-    border-radius: 24px;
-  }
-
-  .plans-hero-copy h1 {
-    font-size: clamp(2.5rem, 12vw, 3.3rem);
-  }
-
-  .plans-hero-actions .learning-button {
-    width: 100%;
-  }
-
-  .plans-hero-facts {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .plans-dashboard-plan {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-
-  .plans-dashboard-side {
-    grid-column: 2;
-    grid-template-columns: auto minmax(0, 1fr);
-    justify-items: start;
-  }
-
-  .plans-dashboard-side > span {
-    justify-self: end;
-  }
+.plans-dashboard-plan[data-tone='amber'] {
+  --phase-color: var(--phase-amber);
 }
 </style>

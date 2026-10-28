@@ -82,6 +82,7 @@ useHead(() => ({
     :progress-percent="progressPercent"
   >
     <template v-if="phase">
+      <!-- Phase is locked by prerequisite phase -->
       <section v-if="hydrated && !phaseUnlocked" class="topic-locked">
         <div class="topic-locked-card">
           <span class="topic-locked-icon">
@@ -100,6 +101,7 @@ useHead(() => ({
         </div>
       </section>
 
+      <!-- Phase unlocked but gate quiz still locked (topics incomplete) -->
       <section v-else-if="hydrated && status === 'locked'" class="topic-locked">
         <div class="topic-locked-card">
           <span class="topic-locked-icon">
@@ -111,16 +113,22 @@ useHead(() => ({
             The phase gate opens after all {{ topics.length }} topic quizzes in this phase are
             passed. You have passed {{ completedTopicCount }} so far.
           </p>
-          <div class="phase-quiz-topic-list">
+          <div
+            class="phase-quiz-topic-list my-3 grid max-h-[380px] w-full gap-1.5 overflow-y-auto p-0.5"
+          >
             <NuxtLink
               v-for="topic in topics"
               :key="topic.id"
               :to="topicPath(planId, topic.id)"
-              class="phase-quiz-topic"
+              class="phase-quiz-topic grid grid-cols-[38px_minmax(0,1fr)_auto] items-center gap-2.5 rounded-lg border border-[var(--line)] bg-[var(--surface-2)] px-3 py-2.5 text-[var(--muted)] no-underline transition-colors"
               :data-status="getTopicStatus(topic.id)"
             >
-              <span>{{ String(topic.order).padStart(2, '0') }}</span>
-              <strong>{{ topic.title }}</strong>
+              <span class="text-[0.72rem] font-extrabold text-[color:var(--phase-color)]">
+                {{ String(topic.order).padStart(2, '0') }}
+              </span>
+              <strong class="text-[0.84rem] font-semibold leading-snug">
+                {{ topic.title }}
+              </strong>
               <Icon
                 :name="
                   getTopicStatus(topic.id) === 'complete'
@@ -140,39 +148,67 @@ useHead(() => ({
         </div>
       </section>
 
+      <!-- Phase gate quiz available -->
       <template v-else>
+        <!-- Breadcrumb -->
         <nav class="topic-breadcrumb" aria-label="Breadcrumb">
           <NuxtLink :to="roadmapPath(planId)">Roadmap</NuxtLink>
           <span>/</span>
           <span>Phase {{ phase.number }} gate</span>
         </nav>
 
-        <section class="phase-quiz-hero" :data-tone="phase.tone">
-          <div>
-            <p class="plans-eyebrow">Phase {{ phase.number }} · {{ phase.weeks }}</p>
-            <h1>{{ phase.title }}</h1>
-            <p>{{ phase.goal }}</p>
-            <div class="plan-hero-stats">
+        <!-- ============ HERO ============ -->
+        <section
+          class="phase-quiz-hero relative grid gap-7 overflow-hidden rounded-3xl border border-[var(--line)] p-8 shadow-md md:grid-cols-[minmax(0,1fr)_340px] md:items-center md:p-10"
+          :data-tone="phase.tone"
+        >
+          <span
+            class="absolute inset-x-0 top-0 h-[5px] bg-[color:var(--phase-color)]"
+            aria-hidden="true"
+          />
+
+          <div class="relative min-w-0">
+            <p class="plans-eyebrow m-0">Phase {{ phase.number }} · {{ phase.weeks }}</p>
+            <h1 class="my-3 text-[clamp(2.4rem,4.6vw,3.8rem)] font-bold leading-[1] tracking-tight">
+              {{ phase.title }}
+            </h1>
+            <p class="m-0 max-w-[720px] text-[1.05rem] leading-relaxed text-[var(--muted)]">
+              {{ phase.goal }}
+            </p>
+            <div class="plan-hero-stats mt-6">
               <span
                 ><strong>{{ topics.length }}</strong> topics</span
               >
               <span
                 ><strong>{{ completedTopicCount }}</strong> passed</span
               >
-              <span
-                ><strong>{{ phasePassingScore }} / {{ quiz.length }}</strong> to pass the gate</span
-              >
+              <span>
+                <strong>{{ phasePassingScore }} / {{ quiz.length }}</strong> to pass the gate
+              </span>
             </div>
           </div>
 
-          <aside class="phase-quiz-role" :data-status="result?.passed ? 'complete' : 'locked'">
-            <span class="plan-card-label">
+          <!-- Role card -->
+          <aside
+            class="phase-quiz-role relative flex flex-col gap-1 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6"
+            :data-status="result?.passed ? 'complete' : 'locked'"
+          >
+            <span
+              class="plan-card-label inline-flex items-center gap-1.5 text-[0.68rem] font-extrabold uppercase tracking-widest text-[var(--muted)]"
+            >
               {{ result?.passed ? 'Role earned' : 'Role waiting' }}
             </span>
-            <Icon name="lucide:badge-check" class="phase-quiz-role-icon" />
-            <h2>{{ phase.role.title }}</h2>
-            <p>{{ phase.role.summary }}</p>
-            <span class="phase-quiz-role-status">
+            <Icon
+              name="lucide:badge-check"
+              class="my-1.5 h-7 w-7 text-[color:var(--phase-color)]"
+            />
+            <h2 class="m-0 text-[1.35rem] font-bold leading-tight">{{ phase.role.title }}</h2>
+            <p class="m-0 mt-1 text-[0.88rem] leading-relaxed text-[var(--muted)]">
+              {{ phase.role.summary }}
+            </p>
+            <span
+              class="phase-quiz-role-status mt-2 inline-flex items-center gap-1.5 text-[0.82rem] font-semibold text-[var(--muted)]"
+            >
               <Icon
                 :name="result?.passed ? 'lucide:circle-check-big' : 'lucide:lock'"
                 class="learning-icon"
@@ -182,23 +218,38 @@ useHead(() => ({
           </aside>
         </section>
 
-        <section class="phase-quiz-summary">
+        <!-- ============ WHAT PROVES THIS PHASE ============ -->
+        <section
+          class="mt-5 grid gap-7 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 md:grid-cols-[minmax(240px,0.65fr)_minmax(0,1.35fr)]"
+        >
           <div>
-            <p class="plans-section-kicker">What proves this phase</p>
-            <h2>{{ phase.proof }}</h2>
+            <p class="plans-section-kicker m-0">What proves this phase</p>
+            <h2 class="mt-1 text-[1.28rem] font-bold leading-tight">{{ phase.proof }}</h2>
           </div>
-          <ul>
-            <li v-for="gate in phase.gates" :key="gate">
-              <Icon name="lucide:check" class="learning-icon" />
+          <ul class="m-0 grid list-none gap-2 p-0">
+            <li
+              v-for="gate in phase.gates"
+              :key="gate"
+              class="flex items-start gap-2 text-[0.92rem] leading-relaxed text-[var(--muted)]"
+            >
+              <Icon name="lucide:check" class="learning-icon mt-1 text-[var(--success)]" />
               {{ gate }}
             </li>
           </ul>
         </section>
 
-        <section class="topic-section" aria-labelledby="phase-quiz-title">
+        <!-- ============ THE GATE QUIZ ============ -->
+        <section class="topic-section scroll-mt-24" aria-labelledby="phase-quiz-title">
           <div class="plan-section-head">
             <div>
-              <p class="plans-section-kicker">The gate</p>
+              <div class="flex items-center gap-3">
+                <span
+                  class="grid h-7 w-9 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_30%,transparent)] bg-[var(--brand-soft)] text-[0.72rem] font-bold text-[var(--brand)]"
+                >
+                  01
+                </span>
+                <p class="plans-section-kicker m-0">The gate</p>
+              </div>
               <h2 id="phase-quiz-title">Phase checkpoint</h2>
             </div>
             <p>
@@ -221,6 +272,7 @@ useHead(() => ({
             @pass="handleQuizPass"
           />
 
+          <!-- Next step after pass -->
           <div v-if="result?.passed" class="topic-next">
             <div>
               <span class="plans-section-kicker">
@@ -236,10 +288,18 @@ useHead(() => ({
           </div>
         </section>
 
-        <section class="plan-section">
+        <!-- ============ THE ROLE ============ -->
+        <section class="plan-section scroll-mt-24">
           <div class="plan-section-head">
             <div>
-              <p class="plans-section-kicker">The role</p>
+              <div class="flex items-center gap-3">
+                <span
+                  class="grid h-7 w-9 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_30%,transparent)] bg-[var(--brand-soft)] text-[0.72rem] font-bold text-[var(--brand)]"
+                >
+                  02
+                </span>
+                <p class="plans-section-kicker m-0">The role</p>
+              </div>
               <h2>What you can own after this gate</h2>
             </div>
             <p>
@@ -276,6 +336,7 @@ useHead(() => ({
       </template>
     </template>
 
+    <!-- Phase doesn't exist -->
     <section v-else class="plan-coming-soon">
       <div class="plan-coming-card">
         <h1>Phase not found</h1>
@@ -289,12 +350,8 @@ useHead(() => ({
 </template>
 
 <style scoped>
+/* Hero background wash per tone */
 .phase-quiz-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 330px;
-  gap: 30px;
-  align-items: center;
-  padding: 34px;
   background:
     radial-gradient(
       circle at 92% 4%,
@@ -306,149 +363,19 @@ useHead(() => ({
       var(--surface),
       color-mix(in oklab, var(--phase-color) 4%, var(--surface))
     );
-  border: 1px solid var(--line);
-  border-top: 5px solid var(--phase-color);
-  border-radius: 30px;
-  box-shadow: var(--shadow);
 }
 
-.phase-quiz-hero > div > h1 {
-  margin: 9px 0 12px;
-  font-size: clamp(2.4rem, 4.6vw, 3.8rem);
-  line-height: 1;
-}
-
-.phase-quiz-hero > div > p:not(.plans-eyebrow) {
-  max-width: 720px;
-  margin: 0;
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: var(--muted);
-}
-
-.phase-quiz-role {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 24px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-}
-
+/* Role card tint when earned */
 .phase-quiz-role[data-status='complete'] {
   background: color-mix(in oklab, var(--success) 7%, var(--surface));
   border-color: color-mix(in oklab, var(--success) 30%, var(--line));
-}
-
-.phase-quiz-role-icon {
-  width: 1.7rem;
-  height: 1.7rem;
-  margin: 6px 0 4px;
-  color: var(--phase-color);
-}
-
-.phase-quiz-role h2 {
-  margin: 0;
-  font-size: 1.35rem;
-  line-height: 1.15;
-}
-
-.phase-quiz-role p {
-  margin: 4px 0 8px;
-  font-size: 0.88rem;
-  line-height: 1.6;
-  color: var(--muted);
-}
-
-.phase-quiz-role-status {
-  display: inline-flex;
-  gap: 6px;
-  align-items: center;
-  font-size: 0.8rem;
-  font-weight: 650;
-  color: var(--muted);
 }
 
 .phase-quiz-role[data-status='complete'] .phase-quiz-role-status {
   color: var(--success);
 }
 
-.phase-quiz-summary {
-  display: grid;
-  grid-template-columns: minmax(240px, 0.65fr) minmax(0, 1.35fr);
-  gap: 28px;
-  align-items: start;
-  padding: 24px;
-  margin-top: 18px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-}
-
-.phase-quiz-summary h2 {
-  margin: 5px 0 0;
-  font-size: 1.28rem;
-  line-height: 1.3;
-}
-
-.phase-quiz-summary ul {
-  display: grid;
-  gap: 8px;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-.phase-quiz-summary li {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  font-size: 0.92rem;
-  line-height: 1.6;
-  color: var(--muted);
-}
-
-.phase-quiz-summary li .learning-icon {
-  margin-top: 4px;
-  color: var(--success);
-}
-
-.phase-quiz-topic-list {
-  display: grid;
-  gap: 6px;
-  width: 100%;
-  max-height: 380px;
-  padding: 2px;
-  margin: 8px 0 12px;
-  overflow-y: auto;
-}
-
-.phase-quiz-topic {
-  display: grid;
-  grid-template-columns: 38px minmax(0, 1fr) auto;
-  gap: 9px;
-  align-items: center;
-  padding: 9px 11px;
-  color: var(--muted) !important;
-  text-decoration: none !important;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 9px;
-}
-
-.phase-quiz-topic > span {
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--phase-color);
-}
-
-.phase-quiz-topic strong {
-  font-size: 0.84rem;
-  font-weight: 600;
-  line-height: 1.35;
-}
-
+/* Topic list variants (locked gate state) */
 .phase-quiz-topic[data-status='complete'] {
   color: var(--ink) !important;
   background: var(--success-soft);
@@ -471,34 +398,5 @@ useHead(() => ({
 
 .phase-quiz-topic[data-status='locked'] {
   opacity: 0.58;
-}
-
-@media (max-width: 940px) {
-  .phase-quiz-hero {
-    grid-template-columns: 1fr;
-  }
-
-  .phase-quiz-summary {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 600px) {
-  .phase-quiz-hero {
-    padding: 20px;
-    border-radius: 24px;
-  }
-
-  .phase-quiz-role {
-    padding: 18px;
-  }
-
-  .phase-quiz-summary {
-    padding: 18px;
-  }
-
-  .phase-quiz-topic {
-    grid-template-columns: 30px minmax(0, 1fr) auto;
-  }
 }
 </style>

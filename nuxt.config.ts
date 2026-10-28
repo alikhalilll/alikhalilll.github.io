@@ -43,7 +43,12 @@ export default defineNuxtConfig({
   compatibilityDate: '2026-04-01',
   srcDir: '.',
   modules: ['@nuxt/content', '@nuxt/eslint', '@nuxt/icon', '@nuxtjs/i18n', 'shadcn-nuxt'],
-  css: ['~/assets/css/main.css'],
+  css: [
+    '@vue-flow/core/dist/style.css',
+    '@vue-flow/core/dist/theme-default.css',
+    '~/assets/css/main.css',
+  ],
+
   vite: {
     plugins: [tailwindcss()],
   },

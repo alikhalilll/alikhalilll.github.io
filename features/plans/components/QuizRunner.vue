@@ -39,15 +39,13 @@ const answeredCount = computed(
 
 const isCorrect = (index: number) => answers.value[index] === props.questions[index]?.answer;
 
-const optionClass = (questionIndex: number, optionIndex: number) => {
-  if (!submitted.value) return undefined;
+const optionState = (questionIndex: number, optionIndex: number) => {
+  if (!submitted.value) return 'pending';
   const question = props.questions[questionIndex];
   const selected = answers.value[questionIndex];
-  return {
-    'is-correct': optionIndex === question?.answer,
-    'is-wrong': selected === optionIndex && selected !== question?.answer,
-    'is-muted': selected !== optionIndex && optionIndex !== question?.answer,
-  };
+  if (optionIndex === question?.answer) return 'correct';
+  if (selected === optionIndex) return 'wrong';
+  return 'muted';
 };
 
 const letter = (index: number) => String.fromCharCode(65 + index);
@@ -78,48 +76,97 @@ const retry = () => {
 </script>
 
 <template>
-  <section class="quiz-runner" aria-labelledby="quiz-title">
-    <header class="quiz-head">
-      <div>
-        <p class="quiz-kicker">Checkpoint quiz</p>
-        <h3 id="quiz-title">{{ title }}</h3>
-        <p v-if="description" class="quiz-description">{{ description }}</p>
+  <section
+    class="quiz-runner relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-7 shadow-sm"
+    aria-labelledby="quiz-title"
+  >
+    <!-- Decorative top accent -->
+    <span
+      class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[var(--brand)] via-[var(--phase-blue)] to-[var(--brand)]"
+      aria-hidden="true"
+    />
+
+    <!-- Head -->
+    <header class="flex flex-wrap items-start justify-between gap-6">
+      <div class="min-w-0 flex-1">
+        <p
+          class="plans-eyebrow m-0 mb-1 text-[0.74rem] font-extrabold uppercase tracking-widest text-[var(--brand)]"
+        >
+          Checkpoint quiz
+        </p>
+        <h3 id="quiz-title" class="m-0 text-[1.38rem] font-bold leading-tight">
+          {{ title }}
+        </h3>
+        <p
+          v-if="description"
+          class="m-0 mt-2 max-w-[700px] text-[0.94rem] leading-relaxed text-[var(--muted)]"
+        >
+          {{ description }}
+        </p>
       </div>
-      <div class="quiz-meta">
-        <span>{{ questions.length }} questions</span>
-        <span>Pass {{ passingScore }}/{{ questions.length }}</span>
-        <span v-if="attempts > 0">Attempt {{ attempts + 1 }}</span>
+      <div class="flex flex-wrap justify-end gap-1.5">
+        <span
+          class="whitespace-nowrap rounded-full border border-[var(--line)] bg-[var(--surface-2)] px-2.5 py-1.5 text-[0.74rem] font-semibold text-[var(--muted)]"
+        >
+          {{ questions.length }} questions
+        </span>
+        <span
+          class="whitespace-nowrap rounded-full border border-[var(--line)] bg-[var(--surface-2)] px-2.5 py-1.5 text-[0.74rem] font-semibold text-[var(--muted)]"
+        >
+          Pass {{ passingScore }}/{{ questions.length }}
+        </span>
+        <span
+          v-if="attempts > 0"
+          class="whitespace-nowrap rounded-full border border-[var(--line)] bg-[var(--surface-2)] px-2.5 py-1.5 text-[0.74rem] font-semibold text-[var(--muted)]"
+        >
+          Attempt {{ attempts + 1 }}
+        </span>
       </div>
     </header>
 
-    <div v-if="alreadyPassed" class="quiz-already">
-      <Icon name="lucide:circle-check-big" class="learning-icon" />
+    <!-- Already passed notice -->
+    <div
+      v-if="alreadyPassed"
+      class="mt-5 flex items-start gap-2.5 rounded-xl border border-[color-mix(in_oklab,var(--success)_28%,var(--line))] bg-[var(--success-soft)] p-4 text-[var(--success)]"
+    >
+      <Icon name="lucide:circle-check-big" class="learning-icon mt-0.5 text-lg" />
       <div>
-        <strong>Already passed · best {{ bestScore }}/{{ questions.length }}</strong>
-        <span>You can retake it, but your best score is kept.</span>
+        <strong class="block text-[0.9rem]">
+          Already passed · best {{ bestScore }}/{{ questions.length }}
+        </strong>
+        <span class="mt-0.5 block text-[0.82rem] text-[var(--muted)]">
+          You can retake it, but your best score is kept.
+        </span>
       </div>
     </div>
 
-    <form v-if="questions.length > 0" class="quiz-form" @submit.prevent="submitQuiz">
+    <!-- Quiz form -->
+    <form v-if="questions.length > 0" class="mt-6 grid gap-4" @submit.prevent="submitQuiz">
       <fieldset
         v-for="(question, questionIndex) in questions"
         :key="question.id"
-        class="quiz-question"
+        class="quiz-question m-0 rounded-2xl border border-[var(--line)] bg-[var(--surface-2)] p-5 transition-colors"
         :class="{
-          'is-correct': submitted && isCorrect(questionIndex),
-          'is-wrong': submitted && !isCorrect(questionIndex),
+          'quiz-question-correct': submitted && isCorrect(questionIndex),
+          'quiz-question-wrong': submitted && !isCorrect(questionIndex),
         }"
       >
-        <legend>
-          <span class="quiz-question-number">Q{{ questionIndex + 1 }}</span>
-          {{ question.prompt }}
+        <legend
+          class="flex items-start gap-2.5 px-1 text-[1rem] font-semibold leading-snug text-[var(--ink)]"
+        >
+          <span
+            class="rounded-md bg-[var(--brand-soft)] px-2 py-0.5 text-[0.72rem] font-extrabold text-[var(--brand)]"
+          >
+            Q{{ questionIndex + 1 }}
+          </span>
+          <span>{{ question.prompt }}</span>
         </legend>
 
         <label
           v-for="(option, optionIndex) in question.options"
           :key="`${question.id}-${optionIndex}`"
-          class="quiz-option"
-          :class="optionClass(questionIndex, optionIndex)"
+          class="quiz-option relative mt-2 flex cursor-pointer items-start gap-2.5 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2.5 text-[0.94rem] leading-snug text-[var(--muted)] transition-all hover:border-[var(--line-strong)] hover:text-[var(--ink)]"
+          :data-state="optionState(questionIndex, optionIndex)"
         >
           <input
             v-model="answers[questionIndex]"
@@ -127,19 +174,32 @@ const retry = () => {
             :name="`quiz-${question.id}`"
             :value="optionIndex"
             :disabled="submitted"
+            class="pointer-events-none absolute h-px w-px opacity-0"
           />
-          <span class="quiz-option-letter">{{ letter(optionIndex) }}</span>
-          <span class="quiz-option-copy">{{ option }}</span>
+          <span
+            class="quiz-option-letter grid h-7 w-7 flex-none place-items-center rounded-full border border-[var(--line)] bg-[var(--surface-2)] text-[0.72rem] font-extrabold text-[var(--muted)]"
+          >
+            {{ letter(optionIndex) }}
+          </span>
+          <span class="pt-0.5">{{ option }}</span>
         </label>
 
-        <p v-if="submitted" class="quiz-explanation">
-          <strong>{{ isCorrect(questionIndex) ? 'Correct.' : 'Not quite.' }}</strong>
+        <p
+          v-if="submitted"
+          class="quiz-explanation mt-2.5 rounded-r-lg border-l-[3px] border-[var(--line-strong)] bg-[var(--surface)] px-3 py-2.5 text-[0.86rem] leading-relaxed text-[var(--muted)]"
+        >
+          <strong class="text-[var(--ink)]">
+            {{ isCorrect(questionIndex) ? 'Correct.' : 'Not quite.' }}
+          </strong>
           {{ question.explanation }}
         </p>
       </fieldset>
 
-      <div v-if="!submitted" class="quiz-actions">
-        <span>{{ answeredCount }} / {{ questions.length }} answered</span>
+      <!-- Actions row -->
+      <div v-if="!submitted" class="flex flex-wrap items-center justify-between gap-4 pt-0.5">
+        <span class="text-[0.84rem] text-[var(--muted)]">
+          {{ answeredCount }} / {{ questions.length }} answered
+        </span>
         <button
           type="submit"
           class="learning-button learning-button-primary"
@@ -150,12 +210,27 @@ const retry = () => {
         </button>
       </div>
 
-      <div v-else class="quiz-result" :data-passed="passedNow">
-        <div class="quiz-result-copy">
-          <span class="quiz-result-score">{{ score }} / {{ questions.length }}</span>
-          <strong>{{ passedNow ? 'Level passed' : 'Not yet — keep going' }}</strong>
-          <p v-if="passedNow">The next step is unlocked. Continue below.</p>
-          <p v-else>Review the explanations and try again. Nothing unlocks until you pass.</p>
+      <!-- Result banner -->
+      <div
+        v-else
+        class="quiz-result flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[var(--line)] bg-[var(--surface-2)] p-5"
+        :data-passed="passedNow"
+      >
+        <div class="grid min-w-0 gap-0.5">
+          <span
+            class="font-[var(--font-display)] text-[1.6rem] font-bold leading-tight text-[var(--ink)]"
+          >
+            {{ score }} / {{ questions.length }}
+          </span>
+          <strong class="text-[0.94rem] font-semibold text-[var(--ink)]">
+            {{ passedNow ? 'Level passed' : 'Not yet — keep going' }}
+          </strong>
+          <p v-if="passedNow" class="m-0 mt-0.5 text-[0.86rem] text-[var(--muted)]">
+            The next step is unlocked. Continue below.
+          </p>
+          <p v-else class="m-0 mt-0.5 text-[0.86rem] text-[var(--muted)]">
+            Review the explanations and try again. Nothing unlocks until you pass.
+          </p>
         </div>
         <button type="button" class="learning-button learning-button-soft" @click="retry">
           <Icon name="lucide:rotate-ccw" class="learning-icon" />
@@ -164,199 +239,30 @@ const retry = () => {
       </div>
     </form>
 
-    <p v-else class="quiz-empty">This checkpoint has no questions yet.</p>
+    <p v-else class="m-0 mt-5 text-[0.94rem] text-[var(--muted)]">
+      This checkpoint has no questions yet.
+    </p>
   </section>
 </template>
 
 <style scoped>
-.quiz-runner {
-  padding: 28px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  box-shadow: var(--shadow-sm);
-}
-
-.quiz-head {
-  display: flex;
-  gap: 24px;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
-.quiz-kicker {
-  margin: 0 0 5px;
-  font-size: 0.74rem;
-  font-weight: 800;
-  color: var(--brand);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.quiz-head h3 {
-  margin: 0;
-  font-size: 1.38rem;
-  line-height: 1.2;
-}
-
-.quiz-description {
-  max-width: 700px;
-  margin: 7px 0 0;
-  font-size: 0.94rem;
-  line-height: 1.65;
-  color: var(--muted);
-}
-
-.quiz-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  justify-content: flex-end;
-}
-
-.quiz-meta span {
-  padding: 5px 10px;
-  font-size: 0.74rem;
-  font-weight: 650;
-  color: var(--muted);
-  white-space: nowrap;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-}
-
-.quiz-already {
-  display: flex;
-  gap: 11px;
-  align-items: flex-start;
-  padding: 14px 16px;
-  margin-top: 18px;
-  color: var(--success);
-  background: var(--success-soft);
-  border: 1px solid color-mix(in oklab, var(--success) 28%, var(--line));
-  border-radius: 14px;
-}
-
-.quiz-already .learning-icon {
-  margin-top: 3px;
-  font-size: 1.1rem;
-}
-
-.quiz-already strong {
-  display: block;
-  font-size: 0.9rem;
-}
-
-.quiz-already span {
-  display: block;
-  margin-top: 2px;
-  font-size: 0.82rem;
-  color: var(--muted);
-}
-
-.quiz-form {
-  display: grid;
-  gap: 18px;
-  margin-top: 22px;
-}
-
-.quiz-question {
-  padding: 18px 20px 20px;
-  margin: 0;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  transition:
-    border-color 0.16s ease,
-    background 0.16s ease;
-}
-
-.quiz-question.is-correct {
+/* Submitted-state variants per question card */
+.quiz-question-correct {
   background: color-mix(in oklab, var(--success) 5%, var(--surface-2));
   border-color: color-mix(in oklab, var(--success) 36%, var(--line));
 }
 
-.quiz-question.is-wrong {
+.quiz-question-wrong {
   background: color-mix(in oklab, var(--warning-line) 8%, var(--surface-2));
   border-color: var(--warning-line);
 }
 
-.quiz-question legend {
-  display: flex;
-  gap: 9px;
-  align-items: flex-start;
-  padding: 0 4px;
-  font-size: 1rem;
-  font-weight: 650;
-  line-height: 1.45;
-  color: var(--ink);
-}
-
-.quiz-question-number {
-  flex: none;
-  padding: 2px 7px;
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: var(--brand);
-  background: var(--brand-soft);
-  border-radius: 5px;
-}
-
-.quiz-option {
-  position: relative;
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  padding: 11px 12px;
-  margin-top: 8px;
-  font-size: 0.94rem;
-  line-height: 1.5;
-  color: var(--muted);
-  cursor: pointer;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 11px;
-  transition:
-    border-color 0.15s ease,
-    background 0.15s ease,
-    color 0.15s ease;
-}
-
-.quiz-option:hover {
-  color: var(--ink);
-  border-color: var(--line-strong);
-}
-
-.quiz-option input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  pointer-events: none;
-  opacity: 0;
-}
-
+/* Option visual states — these piggy-back on the data-state attribute set
+   from JS once the quiz is submitted. */
 .quiz-option:has(input:checked) {
   color: var(--ink);
   background: var(--brand-soft);
   border-color: color-mix(in oklab, var(--brand) 52%, var(--line));
-}
-
-.quiz-option:has(input:disabled) {
-  cursor: default;
-}
-
-.quiz-option-letter {
-  display: grid;
-  flex: none;
-  width: 26px;
-  height: 26px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--muted);
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  place-items: center;
 }
 
 .quiz-option:has(input:checked) .quiz-option-letter {
@@ -365,73 +271,34 @@ const retry = () => {
   border-color: var(--brand);
 }
 
-.quiz-option-copy {
-  padding-top: 3px;
-}
-
-.quiz-option.is-correct {
+.quiz-option[data-state='correct'] {
   color: var(--ink);
   background: var(--success-soft);
   border-color: color-mix(in oklab, var(--success) 42%, var(--line));
 }
 
-.quiz-option.is-correct .quiz-option-letter {
+.quiz-option[data-state='correct'] .quiz-option-letter {
   color: var(--on-brand);
   background: var(--success);
   border-color: var(--success);
 }
 
-.quiz-option.is-wrong {
+.quiz-option[data-state='wrong'] {
   color: var(--warning-ink);
   background: var(--warning-soft);
   border-color: var(--warning-line);
 }
 
-.quiz-option.is-wrong .quiz-option-letter {
+.quiz-option[data-state='wrong'] .quiz-option-letter {
   color: var(--warning-ink);
   border-color: var(--warning-line);
 }
 
-.quiz-option.is-muted {
+.quiz-option[data-state='muted'] {
   opacity: 0.62;
 }
 
-.quiz-explanation {
-  padding: 10px 12px;
-  margin: 10px 0 0;
-  font-size: 0.86rem;
-  line-height: 1.6;
-  color: var(--muted);
-  background: var(--surface);
-  border-left: 3px solid var(--line-strong);
-  border-radius: 0 8px 8px 0;
-}
-
-.quiz-explanation strong {
-  color: var(--ink);
-}
-
-.quiz-actions,
-.quiz-result {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 2px;
-}
-
-.quiz-actions > span {
-  font-size: 0.84rem;
-  color: var(--muted);
-}
-
-.quiz-result {
-  padding: 18px;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 15px;
-}
-
+/* Result banner tints */
 .quiz-result[data-passed='true'] {
   background: var(--success-soft);
   border-color: color-mix(in oklab, var(--success) 32%, var(--line));
@@ -442,59 +309,9 @@ const retry = () => {
   border-color: var(--warning-line);
 }
 
-.quiz-result-copy {
-  display: grid;
-  gap: 2px;
-}
-
-.quiz-result-score {
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  font-weight: 750;
-  line-height: 1.1;
-  color: var(--ink);
-}
-
-.quiz-result-copy strong {
-  font-size: 0.94rem;
-}
-
-.quiz-result-copy p {
-  margin: 2px 0 0;
-  font-size: 0.86rem;
-  color: var(--muted);
-}
-
-.quiz-empty {
-  margin: 18px 0 0;
-  font-size: 0.94rem;
-  color: var(--muted);
-}
-
 @media (max-width: 680px) {
   .quiz-runner {
     padding: 20px;
-  }
-
-  .quiz-head,
-  .quiz-actions,
-  .quiz-result {
-    display: block;
-  }
-
-  .quiz-meta {
-    justify-content: flex-start;
-    margin-top: 10px;
-  }
-
-  .quiz-actions .learning-button,
-  .quiz-result .learning-button {
-    width: 100%;
-    margin-top: 12px;
-  }
-
-  .quiz-question {
-    padding: 14px;
   }
 }
 </style>

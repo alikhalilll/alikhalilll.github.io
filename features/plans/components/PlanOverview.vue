@@ -9,8 +9,7 @@ import { phasePath, plansPath, roadmapPath, topicPath } from '../routes';
 import { usePlanProgress } from '../composables/usePlanProgress';
 import FullStackDiagram from './FullStackDiagram.vue';
 import LearningShell from './LearningShell.vue';
-import PhaseRoadmap from './PhaseRoadmap.vue';
-import PlanRoadmap from './PlanRoadmap.vue';
+import RoadmapFlow from './RoadmapFlow.vue';
 
 const props = defineProps<{
   planId: string;
@@ -91,19 +90,51 @@ const roleStatus = (phaseKey: PhaseKey) => {
   return result?.passed ? 'complete' : 'locked';
 };
 
-const currentPhaseKey = computed(() => {
-  if (nextAction.value.kind === 'phase') return nextAction.value.phase.key;
-  if (nextAction.value.kind === 'topic') return nextAction.value.topic.phase;
-  return undefined;
-});
+const phaseOutline = computed(() =>
+  (runtime.value?.phases ?? []).map((phase) => {
+    const progress = phaseProgress.value.find((entry) => entry.key === phase.key);
+    const gateStatus = getPhaseQuizStatus(phase.key);
+    const state = gateStatus === 'complete' ? 'complete' : progress?.unlocked ? 'active' : 'locked';
+
+    return {
+      key: phase.key,
+      number: phase.number,
+      title: phase.title,
+      goal: phase.goal,
+      weeks: phase.weeks,
+      role: phase.role.title,
+      tone: phase.tone,
+      topics: progress?.total ?? 0,
+      done: progress?.done ?? 0,
+      percent: progress?.percent ?? 0,
+      state,
+      stateLabel:
+        state === 'complete'
+          ? 'Complete'
+          : gateStatus === 'available'
+            ? 'Gate ready'
+            : state === 'active'
+              ? 'In progress'
+              : 'Locked',
+    };
+  })
+);
 
 const jumpLinks = computed(() => [
   { href: '#roadmap', label: 'Roadmap', icon: 'lucide:map' },
-  ...(isPlan1.value ? [] : [{ href: '#stack', label: 'Stack tree', icon: 'lucide:git-fork' }]),
+  ...(isPlan1.value ? [] : [{ href: '#stack', label: 'Architecture', icon: 'lucide:git-fork' }]),
+  { href: '#rhythm', label: 'How it works', icon: 'lucide:repeat-2' },
   { href: '#roles', label: 'Roles', icon: 'lucide:badge-check' },
-  { href: '#operations', label: 'Weekly system', icon: 'lucide:repeat-2' },
   { href: '#resources', label: 'Resources', icon: 'lucide:library' },
 ]);
+
+const sections = computed(() => ({
+  roadmap: '01',
+  stack: '02',
+  rhythm: isPlan1.value ? '02' : '03',
+  roles: isPlan1.value ? '03' : '04',
+  resources: isPlan1.value ? '04' : '05',
+}));
 </script>
 
 <template>
@@ -115,181 +146,515 @@ const jumpLinks = computed(() => [
     :progress-percent="progressPercent"
   >
     <template v-if="plan?.status === 'available'">
-      <section class="plan-hero" :data-tone="plan.tone">
-        <div class="plan-hero-copy">
-          <p class="plans-eyebrow">{{ plan.shortTitle }} · {{ plan.subtitle }}</p>
-          <h1>{{ plan.title }}</h1>
-          <p>{{ plan.description }}</p>
-
-          <div class="plan-hero-actions">
-            <NuxtLink :to="nextHref" class="learning-button learning-button-primary">
-              {{ nextLabel }}
-              <Icon name="lucide:arrow-right" class="learning-icon" />
-            </NuxtLink>
-            <a href="#roadmap" class="learning-button learning-button-soft">
-              View roadmap
-              <Icon name="lucide:map" class="learning-icon" />
-            </a>
-          </div>
-          <p class="plan-next-hint">
-            <Icon name="lucide:flag" class="learning-icon" />
-            {{ nextHint }}
-          </p>
-
-          <div class="plan-hero-stats">
-            <span
-              ><strong>{{ plan.weeks }}</strong> weeks</span
+      <!-- ============ HERO ============ -->
+      <section
+        class="plan-hero relative overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-sm"
+        :data-tone="plan.tone"
+      >
+        <span
+          class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[var(--brand)] via-[color:var(--phase-color)] to-[var(--brand)]"
+        />
+        <div class="grid gap-10 p-7 md:grid-cols-[minmax(0,1fr)_360px] md:items-center md:p-10">
+          <div class="min-w-0">
+            <p class="plans-eyebrow m-0">{{ plan.shortTitle }} · {{ plan.subtitle }}</p>
+            <h1
+              class="my-4 max-w-[18ch] text-[clamp(2.1rem,3.6vw,3.1rem)] font-bold leading-[1.08] tracking-tight"
             >
-            <span
-              ><strong>{{ plan.topics }}</strong> topics</span
-            >
-            <span
-              ><strong>{{ completedTopics }}</strong> passed</span
-            >
-            <span
-              ><strong>{{ completedPhases }}</strong> roles earned</span
-            >
-          </div>
-        </div>
+              {{ plan.title }}
+            </h1>
+            <p class="m-0 max-w-[62ch] text-[1.06rem] leading-relaxed text-[var(--muted)]">
+              {{ plan.description }}
+            </p>
 
-        <aside class="plan-hero-side">
-          <div class="plan-hero-side-head">
-            <span>Your progress</span>
-            <small>
-              <Icon name="lucide:cloud-check" class="learning-icon" />
-              Saved locally
-            </small>
-          </div>
-
-          <div class="plan-hero-progress">
-            <div class="plans-progress-ring" :style="{ '--p': progressPercent }">
-              <span>{{ progressPercent }}%</span>
+            <div class="mt-6 flex flex-wrap gap-2.5">
+              <NuxtLink :to="nextHref" class="learning-button learning-button-primary">
+                {{ nextLabel }}
+                <Icon name="lucide:arrow-right" class="learning-icon" />
+              </NuxtLink>
+              <a href="#roadmap" class="learning-button learning-button-soft">
+                Explore the roadmap
+                <Icon name="lucide:map" class="learning-icon" />
+              </a>
             </div>
-            <div>
-              <strong>{{ completedTopics }} / {{ plan.topics }} topics</strong>
-              <span>{{ completedPhases }} / {{ plan.phases }} phase gates passed</span>
-            </div>
+            <p class="mt-4 inline-flex items-center gap-1.5 text-[0.88rem] text-[var(--muted)]">
+              <Icon name="lucide:flag" class="learning-icon text-[var(--brand)]" />
+              {{ nextHint }}
+            </p>
           </div>
 
-          <div class="plan-hero-phases">
+          <aside
+            class="grid gap-4 rounded-xl border border-[var(--line)] bg-[var(--surface-2)] p-5"
+            aria-label="Plan at a glance"
+          >
             <div
-              v-for="phase in phaseProgress"
-              :key="phase.key"
-              class="plan-hero-phase"
-              :data-tone="phase.tone"
-              :data-current="currentPhaseKey === phase.key"
+              class="flex items-center justify-between gap-2.5 border-b border-[var(--line)] pb-3"
             >
-              <div class="plan-hero-phase-row">
-                <span>
-                  <i />
-                  {{ phase.title }}
-                </span>
-                <strong>{{ phase.percent }}%</strong>
+              <span class="text-[0.78rem] font-bold text-[var(--ink)]">Plan at a glance</span>
+              <small
+                class="inline-flex items-center gap-1 text-[0.74rem] font-medium text-[var(--muted)]"
+              >
+                <Icon name="lucide:cloud-check" class="learning-icon" />
+                Saved locally
+              </small>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <div class="plans-progress-ring" :style="{ '--p': progressPercent }">
+                <span>{{ progressPercent }}%</span>
               </div>
-              <div class="roadmap-progress-track">
-                <span :style="{ width: `${phase.percent}%` }" />
+              <div class="grid gap-0.5">
+                <strong class="text-[0.98rem] font-semibold text-[var(--ink)]">
+                  {{ completedTopics }} of {{ plan.topics }} topics
+                </strong>
+                <span class="text-[0.84rem] text-[var(--muted)]">
+                  {{ completedPhases }} of {{ plan.phases }} phase gates passed
+                </span>
               </div>
             </div>
-          </div>
 
-          <div class="plan-hero-roles">
-            <span class="plan-card-label">Roles you unlock</span>
-            <span
-              v-for="role in planRoles"
-              :key="role.title"
-              class="plan-role-chip"
-              :data-tone="role.tone"
-              :data-status="roleStatus(role.phase)"
-            >
-              <Icon
-                :name="
-                  roleStatus(role.phase) === 'complete' ? 'lucide:circle-check-big' : 'lucide:lock'
-                "
-                class="learning-icon"
+            <div class="h-1.5 overflow-hidden rounded-full bg-[var(--line)]" aria-hidden="true">
+              <span
+                class="block h-full rounded-full bg-[var(--brand)] transition-all duration-300"
+                :style="{ width: `${progressPercent}%` }"
               />
-              {{ role.title }}
-            </span>
-          </div>
-        </aside>
+            </div>
+
+            <dl
+              class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-[var(--line)] bg-[var(--line)] p-px"
+            >
+              <div class="bg-[var(--surface)] p-2.5">
+                <dt class="text-[0.7rem] font-bold uppercase tracking-widest text-[var(--muted)]">
+                  Phases
+                </dt>
+                <dd class="mt-0.5 font-[var(--font-display)] text-[1.2rem] font-bold leading-none">
+                  {{ plan.phases }}
+                </dd>
+              </div>
+              <div class="bg-[var(--surface)] p-2.5">
+                <dt class="text-[0.7rem] font-bold uppercase tracking-widest text-[var(--muted)]">
+                  Weeks
+                </dt>
+                <dd class="mt-0.5 font-[var(--font-display)] text-[1.2rem] font-bold leading-none">
+                  {{ plan.weeks }}
+                </dd>
+              </div>
+              <div class="bg-[var(--surface)] p-2.5">
+                <dt class="text-[0.7rem] font-bold uppercase tracking-widest text-[var(--muted)]">
+                  Topics
+                </dt>
+                <dd class="mt-0.5 font-[var(--font-display)] text-[1.2rem] font-bold leading-none">
+                  {{ plan.topics }}
+                </dd>
+              </div>
+              <div class="bg-[var(--surface)] p-2.5">
+                <dt class="text-[0.7rem] font-bold uppercase tracking-widest text-[var(--muted)]">
+                  Roles
+                </dt>
+                <dd class="mt-0.5 font-[var(--font-display)] text-[1.2rem] font-bold leading-none">
+                  {{ plan.roles.length }}
+                </dd>
+              </div>
+            </dl>
+          </aside>
+        </div>
       </section>
 
-      <nav class="plan-jump-nav" aria-label="Plan sections">
-        <div class="plan-jump-inner">
-          <span class="plan-jump-label">Jump to</span>
-          <a v-for="link in jumpLinks" :key="link.href" :href="link.href">
-            <Icon :name="link.icon" class="learning-icon" />
+      <!-- ============ STICKY JUMP NAV ============ -->
+      <nav
+        class="plan-jump-nav sticky top-[70px] z-20 mt-5 rounded-xl border border-[var(--line)] bg-[color-mix(in_oklab,var(--surface)_92%,transparent)] p-1.5 shadow-sm backdrop-blur"
+        aria-label="Plan sections"
+      >
+        <div class="flex items-center gap-1 overflow-x-auto">
+          <span
+            class="flex-none px-2 pl-1.5 text-[0.7rem] font-bold uppercase tracking-widest text-[var(--muted)]"
+          >
+            Jump to
+          </span>
+          <a
+            v-for="link in jumpLinks"
+            :key="link.href"
+            :href="link.href"
+            class="inline-flex flex-none items-center gap-1.5 rounded-md border border-transparent px-2.5 py-1.5 text-[0.84rem] font-medium text-[var(--muted)] no-underline transition-colors hover:border-[var(--line)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
+          >
+            <Icon :name="link.icon" class="learning-icon text-[var(--brand)]" />
             {{ link.label }}
           </a>
-          <span class="plan-jump-progress">
-            <strong>{{ progressPercent }}%</strong>
+          <span
+            class="ml-auto inline-flex flex-none items-center gap-1 rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2.5 py-1.5 text-[0.78rem] text-[var(--muted)]"
+          >
+            <strong class="text-[var(--ink)]">{{ progressPercent }}%</strong>
             complete
           </span>
         </div>
       </nav>
 
-      <section id="roadmap" class="plan-section" aria-labelledby="roadmap-title">
-        <div class="plan-section-head">
-          <div>
-            <p class="plans-section-kicker">The roadmap</p>
-            <h2 id="roadmap-title">{{ plan.topics }} topics, in the order they make sense</h2>
+      <!-- ============ § 01 — ROADMAP ============ -->
+      <section id="roadmap" class="plan-section scroll-mt-[160px]" aria-labelledby="roadmap-title">
+        <header
+          class="flex flex-wrap items-end justify-between gap-10 border-t border-[var(--line)] pt-7"
+        >
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-3">
+              <span
+                class="grid h-7 w-9 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_30%,transparent)] bg-[var(--brand-soft)] text-[0.72rem] font-bold text-[var(--brand)]"
+              >
+                {{ sections.roadmap }}
+              </span>
+              <p class="plans-section-kicker m-0">The roadmap</p>
+            </div>
+            <h2
+              id="roadmap-title"
+              class="mt-2 max-w-[760px] text-[clamp(1.65rem,2.3vw,2.15rem)] font-bold leading-tight"
+            >
+              {{ plan.topics }} topics, in the order they make sense
+            </h2>
           </div>
-          <p>
-            Each node is one topic. Open it for the why, the implementation steps, the weekly task
-            and free resources. Pass the topic quiz to unlock the next node. Finish a phase, pass
-            its gate, and a new role is added to your profile.
+          <p class="m-0 max-w-[500px] text-[0.98rem] leading-relaxed text-[var(--muted)]">
+            Every topic appears once, in the order you should learn it. Pass a topic quiz to open
+            the next leaf; pass every topic in a phase to unlock its gate and role.
           </p>
+        </header>
+
+        <!-- Phase outline cards -->
+        <div
+          class="plan-phase-outline mt-6 grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-3"
+          aria-label="Phase overview"
+        >
+          <article
+            v-for="phase in phaseOutline"
+            :key="phase.key"
+            class="plan-phase-item group relative flex flex-col gap-2 overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--surface)] p-4 transition-all hover:-translate-y-0.5 hover:border-[color:var(--phase-color)] hover:shadow-md"
+            :data-tone="phase.tone"
+            :data-state="phase.state"
+          >
+            <span
+              class="absolute inset-x-0 top-0 h-0.5 bg-[color:var(--phase-color)] opacity-70"
+              aria-hidden="true"
+            />
+            <div class="flex items-center justify-between gap-2">
+              <span
+                class="text-[0.72rem] font-bold uppercase tracking-wider text-[color:var(--phase-color)]"
+              >
+                Phase {{ phase.number }}
+              </span>
+              <span
+                class="inline-flex items-center gap-1 rounded-full border border-[var(--line)] bg-[var(--surface-2)] px-2 py-0.5 text-[0.7rem] font-semibold text-[var(--muted)]"
+              >
+                <Icon
+                  :name="
+                    phase.state === 'complete'
+                      ? 'lucide:circle-check-big'
+                      : phase.state === 'active'
+                        ? 'lucide:compass'
+                        : 'lucide:lock'
+                  "
+                  class="learning-icon"
+                />
+                {{ phase.stateLabel }}
+              </span>
+            </div>
+            <h3 class="m-0 text-[1.1rem] font-bold leading-tight text-[var(--ink)]">
+              {{ phase.title }}
+            </h3>
+            <p class="m-0 line-clamp-2 text-[0.88rem] leading-snug text-[var(--muted)]">
+              {{ phase.goal }}
+            </p>
+            <div class="flex items-center justify-between gap-2 text-[0.76rem] text-[var(--muted)]">
+              <span>{{ phase.weeks }}</span>
+              <span>
+                <strong class="text-[var(--ink)]">{{ phase.done }}</strong>
+                / {{ phase.topics }} topics
+              </span>
+            </div>
+            <div class="h-1 overflow-hidden rounded-full bg-[var(--line)]">
+              <span
+                class="block h-full rounded-full bg-[color:var(--phase-color)] transition-all"
+                :style="{ width: `${phase.percent}%` }"
+              />
+            </div>
+            <span
+              class="inline-flex items-center gap-1.5 self-start rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2 py-1 text-[0.76rem] font-medium text-[var(--ink)]"
+            >
+              <Icon
+                name="lucide:badge-check"
+                class="learning-icon text-[color:var(--phase-color)]"
+              />
+              {{ phase.role }}
+            </span>
+          </article>
         </div>
 
-        <PlanRoadmap
-          v-if="isPlan1"
-          :plan-id="planId"
-          :phase-progress="phaseProgress"
-          :next-action="nextAction"
-          :get-topic-status="getTopicStatus"
-          :get-topic-result="getTopicResult"
-          :get-phase-quiz-status="getPhaseQuizStatus"
-          :get-phase-result="getPhaseResult"
-        />
-        <PhaseRoadmap
-          v-else
-          :plan-id="planId"
-          :phase-progress="phaseProgress"
-          :next-action="nextAction"
-          :get-topic-status="getTopicStatus"
-          :get-topic-result="getTopicResult"
-          :get-phase-quiz-status="getPhaseQuizStatus"
-          :get-phase-result="getPhaseResult"
-        />
+        <div class="mt-6">
+          <RoadmapFlow
+            :plan-id="planId"
+            :phase-progress="phaseProgress"
+            :next-action="nextAction"
+            :get-topic-status="getTopicStatus"
+            :get-topic-result="getTopicResult"
+            :get-phase-quiz-status="getPhaseQuizStatus"
+            :get-phase-result="getPhaseResult"
+          />
+        </div>
       </section>
 
-      <section v-if="!isPlan1" id="stack" class="plan-section" aria-labelledby="stack-title">
-        <div class="plan-section-head">
-          <div>
-            <p class="plans-section-kicker">Architecture</p>
-            <h2 id="stack-title">The full-stack roadmap tree</h2>
+      <!-- ============ § 02 — ARCHITECTURE (plan 2 only) ============ -->
+      <section
+        v-if="!isPlan1"
+        id="stack"
+        class="plan-section scroll-mt-[160px]"
+        aria-labelledby="stack-title"
+      >
+        <header
+          class="flex flex-wrap items-end justify-between gap-10 border-t border-[var(--line)] pt-7"
+        >
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-3">
+              <span
+                class="grid h-7 w-9 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_30%,transparent)] bg-[var(--brand-soft)] text-[0.72rem] font-bold text-[var(--brand)]"
+              >
+                {{ sections.stack }}
+              </span>
+              <p class="plans-section-kicker m-0">Architecture</p>
+            </div>
+            <h2
+              id="stack-title"
+              class="mt-2 max-w-[760px] text-[clamp(1.65rem,2.3vw,2.15rem)] font-bold leading-tight"
+            >
+              Full-stack architecture
+            </h2>
           </div>
-          <p>
-            Start at the product root, then open each branch: the Vue interface, the Laravel
-            boundary, the data layer and the delivery path that turns working code into a release.
+          <p class="m-0 max-w-[500px] text-[0.98rem] leading-relaxed text-[var(--muted)]">
+            Start at the product root, then read each branch: the Vue interface, the Laravel API,
+            the data layer and the delivery path that turns working code into a safe release.
           </p>
-        </div>
+        </header>
 
-        <FullStackDiagram />
+        <div class="mt-6">
+          <FullStackDiagram :plan-id="planId" />
+        </div>
       </section>
 
-      <section id="roles" class="plan-section" aria-labelledby="roles-title">
-        <div class="plan-section-head">
-          <div>
-            <p class="plans-section-kicker">What you become</p>
-            <h2 id="roles-title">Every phase adds a role</h2>
+      <!-- ============ § 03 — HOW IT WORKS ============ -->
+      <section id="rhythm" class="plan-section scroll-mt-[160px]" aria-labelledby="rhythm-title">
+        <header
+          class="flex flex-wrap items-end justify-between gap-10 border-t border-[var(--line)] pt-7"
+        >
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-3">
+              <span
+                class="grid h-7 w-9 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_30%,transparent)] bg-[var(--brand-soft)] text-[0.72rem] font-bold text-[var(--brand)]"
+              >
+                {{ sections.rhythm }}
+              </span>
+              <p class="plans-section-kicker m-0">How it works</p>
+            </div>
+            <h2
+              id="rhythm-title"
+              class="mt-2 max-w-[760px] text-[clamp(1.65rem,2.3vw,2.15rem)] font-bold leading-tight"
+            >
+              A weekly rhythm you can keep
+            </h2>
           </div>
-          <p>
-            The role is not a certificate for watching videos. It is added after you pass the phase
-            gate and can show the output that proves it.
+          <p class="m-0 max-w-[500px] text-[0.98rem] leading-relaxed text-[var(--muted)]">
+            Each week uses the same four-step loop. Each phase follows Learn → Practice → Prove, so
+            you always know what to do next and what “finished” means.
           </p>
+        </header>
+
+        <!-- Study loop -->
+        <div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <article
+            v-for="step in studyLoop"
+            :key="step.step"
+            class="relative flex flex-col gap-2 overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--surface)] p-5 transition-colors hover:border-[var(--brand)]"
+          >
+            <span
+              class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-[var(--brand)] to-transparent opacity-60"
+            />
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[0.72rem] font-bold uppercase tracking-widest text-[var(--brand)]">
+                {{ step.step }}
+              </span>
+              <small class="text-[0.76rem] text-[var(--muted)]">{{ step.time }}</small>
+            </div>
+            <h3 class="m-0 text-[1.04rem] font-bold leading-tight">{{ step.title }}</h3>
+            <p class="m-0 text-[0.92rem] leading-relaxed text-[var(--muted)]">{{ step.body }}</p>
+          </article>
         </div>
 
-        <div class="plan-roles">
+        <!-- 2×2 operations grid -->
+        <div class="mt-4 grid gap-3.5 md:grid-cols-2">
+          <!-- Weekly rhythm + schedule -->
+          <article
+            class="flex flex-col rounded-xl border border-[var(--line)] bg-[var(--surface)] p-6"
+          >
+            <div class="flex items-center justify-between gap-3 border-b border-[var(--line)] pb-3">
+              <div class="flex items-center gap-2.5">
+                <span
+                  class="grid h-8 w-8 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_20%,transparent)] bg-[var(--brand-soft)] text-[var(--brand)]"
+                >
+                  <Icon name="lucide:calendar-days" class="learning-icon" />
+                </span>
+                <h3 class="m-0 text-[1.08rem] font-bold">Weekly rhythm</h3>
+              </div>
+              <span class="text-[0.72rem] font-bold uppercase tracking-widest text-[var(--muted)]">
+                10–12 hrs
+              </span>
+            </div>
+            <ul class="m-0 mt-4 grid list-none gap-2 p-0">
+              <li
+                v-for="item in weeklyRhythm"
+                :key="item"
+                class="flex items-start gap-2 text-[0.92rem] leading-snug text-[var(--muted)]"
+              >
+                <Icon name="lucide:check" class="learning-icon mt-1 text-[var(--brand)]" />
+                <span>{{ item }}</span>
+              </li>
+            </ul>
+            <div class="mt-4 grid border-t border-[var(--line)] text-[0.86rem]">
+              <div
+                v-for="(item, index) in schedule"
+                :key="`${item.day}-${index}`"
+                class="grid grid-cols-[60px_minmax(0,1fr)_auto] items-baseline gap-2.5 border-b border-[var(--line)] py-2.5 last:border-b-0"
+              >
+                <span class="font-bold text-[var(--ink)]">{{ item.day }}</span>
+                <strong class="font-medium text-[var(--muted)]">{{ item.activity }}</strong>
+                <small class="text-[var(--muted)]">{{ item.time }}</small>
+              </div>
+            </div>
+          </article>
+
+          <!-- Team roles -->
+          <article class="rounded-xl border border-[var(--line)] bg-[var(--surface)] p-6">
+            <div class="flex items-center justify-between gap-3 border-b border-[var(--line)] pb-3">
+              <div class="flex items-center gap-2.5">
+                <span
+                  class="grid h-8 w-8 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_20%,transparent)] bg-[var(--brand-soft)] text-[var(--brand)]"
+                >
+                  <Icon name="lucide:users" class="learning-icon" />
+                </span>
+                <h3 class="m-0 text-[1.08rem] font-bold">Who does what</h3>
+              </div>
+              <span class="text-[0.72rem] font-bold uppercase tracking-widest text-[var(--muted)]">
+                Team roles
+              </span>
+            </div>
+            <div class="mt-4 grid gap-4">
+              <div
+                v-for="role in roles"
+                :key="role.role"
+                class="grid gap-0.5 border-l-2 border-[var(--brand)] pl-3"
+              >
+                <strong class="text-[0.95rem] font-semibold text-[var(--ink)]">
+                  {{ role.role }}
+                </strong>
+                <p class="m-0 text-[0.86rem] leading-snug text-[var(--muted)]">
+                  {{ role.responsibility }}
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Conventions -->
+          <article class="rounded-xl border border-[var(--line)] bg-[var(--surface)] p-6">
+            <div class="flex items-center justify-between gap-3 border-b border-[var(--line)] pb-3">
+              <div class="flex items-center gap-2.5">
+                <span
+                  class="grid h-8 w-8 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_20%,transparent)] bg-[var(--brand-soft)] text-[var(--brand)]"
+                >
+                  <Icon name="lucide:ruler" class="learning-icon" />
+                </span>
+                <h3 class="m-0 text-[1.08rem] font-bold">Conventions</h3>
+              </div>
+              <span class="text-[0.72rem] font-bold uppercase tracking-widest text-[var(--muted)]">
+                Team rules
+              </span>
+            </div>
+            <div class="mt-4 grid gap-4">
+              <div
+                v-for="item in conventions"
+                :key="item.title"
+                class="grid gap-0.5 border-l-2 border-[var(--brand)] pl-3"
+              >
+                <strong class="text-[0.95rem] font-semibold text-[var(--ink)]">
+                  {{ item.title }}
+                </strong>
+                <p class="m-0 text-[0.86rem] leading-snug text-[var(--muted)]">{{ item.body }}</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- AI tools -->
+          <article class="rounded-xl border border-[var(--line)] bg-[var(--surface)] p-6">
+            <div class="flex items-center justify-between gap-3 border-b border-[var(--line)] pb-3">
+              <div class="flex items-center gap-2.5">
+                <span
+                  class="grid h-8 w-8 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_20%,transparent)] bg-[var(--brand-soft)] text-[var(--brand)]"
+                >
+                  <Icon name="lucide:sparkles" class="learning-icon" />
+                </span>
+                <h3 class="m-0 text-[1.08rem] font-bold">AI tools</h3>
+              </div>
+              <span class="text-[0.72rem] font-bold uppercase tracking-widest text-[var(--muted)]">
+                Use, then verify
+              </span>
+            </div>
+            <div class="mt-4 grid gap-2.5">
+              <a
+                v-for="tool in aiTools"
+                :key="tool.name"
+                :href="tool.href"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 rounded-lg border border-[var(--line)] bg-[var(--surface-2)] p-3 text-[var(--ink)] no-underline transition-colors hover:border-[var(--brand)]"
+              >
+                <div class="min-w-0">
+                  <strong class="block text-[0.9rem] font-semibold">{{ tool.name }}</strong>
+                  <p class="m-0 mt-0.5 text-[0.8rem] text-[var(--muted)]">{{ tool.use }}</p>
+                </div>
+                <span
+                  class="rounded-md bg-[var(--surface)] px-2 py-0.5 text-[0.72rem] font-medium text-[var(--muted)]"
+                >
+                  {{ tool.label }}
+                </span>
+                <Icon
+                  name="lucide:arrow-up-right"
+                  class="learning-icon text-[var(--brand)] transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                />
+              </a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============ § 04 — ROLES ============ -->
+      <section id="roles" class="plan-section scroll-mt-[160px]" aria-labelledby="roles-title">
+        <header
+          class="flex flex-wrap items-end justify-between gap-10 border-t border-[var(--line)] pt-7"
+        >
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-3">
+              <span
+                class="grid h-7 w-9 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_30%,transparent)] bg-[var(--brand-soft)] text-[0.72rem] font-bold text-[var(--brand)]"
+              >
+                {{ sections.roles }}
+              </span>
+              <p class="plans-section-kicker m-0">Your progress</p>
+            </div>
+            <h2
+              id="roles-title"
+              class="mt-2 max-w-[760px] text-[clamp(1.65rem,2.3vw,2.15rem)] font-bold leading-tight"
+            >
+              Roles you earn along the way
+            </h2>
+          </div>
+          <p class="m-0 max-w-[500px] text-[0.98rem] leading-relaxed text-[var(--muted)]">
+            Each role is tied to a phase gate and the work you produce. It stays locked until you
+            pass the gate, then it's added to your plan profile.
+          </p>
+        </header>
+
+        <div class="plan-roles mt-6">
           <article
             v-for="role in planRoles"
             :key="role.title"
@@ -322,142 +687,78 @@ const jumpLinks = computed(() => [
         </div>
       </section>
 
-      <section id="operations" class="plan-section" aria-labelledby="operations-title">
-        <div class="plan-section-head">
-          <div>
-            <p class="plans-section-kicker">How it runs</p>
-            <h2 id="operations-title">A small operating system for the week</h2>
-          </div>
-          <p>
-            Every week follows the same loop. Every phase follows Learn → Practice → Prove. Nobody
-            moves on until the quiz and the output are real.
-          </p>
-        </div>
-
-        <div class="plan-loop">
-          <article v-for="step in studyLoop" :key="step.step" class="plan-loop-card">
-            <div class="plan-loop-top">
-              <span>{{ step.step }}</span>
-              <small>{{ step.time }}</small>
-            </div>
-            <h3>{{ step.title }}</h3>
-            <p>{{ step.body }}</p>
-          </article>
-        </div>
-
-        <div class="plan-operations-grid">
-          <article class="plan-panel">
-            <div class="plan-panel-head">
-              <h3>Weekly rhythm</h3>
-              <span>10–12 hrs</span>
-            </div>
-            <ul class="plan-check-list">
-              <li v-for="item in weeklyRhythm" :key="item">
-                <Icon name="lucide:check" class="learning-icon" />
-                {{ item }}
-              </li>
-            </ul>
-            <div class="plan-schedule">
-              <div v-for="(item, index) in schedule" :key="`${item.day}-${index}`">
-                <span>{{ item.day }}</span>
-                <strong>{{ item.activity }}</strong>
-                <small>{{ item.time }}</small>
-              </div>
-            </div>
-          </article>
-
-          <article class="plan-panel">
-            <div class="plan-panel-head">
-              <h3>Who does what</h3>
-              <span>Team roles</span>
-            </div>
-            <div class="plan-team-roles">
-              <div v-for="role in roles" :key="role.role">
-                <strong>{{ role.role }}</strong>
-                <p>{{ role.responsibility }}</p>
-              </div>
-            </div>
-          </article>
-
-          <article class="plan-panel">
-            <div class="plan-panel-head">
-              <h3>Conventions</h3>
-              <span>Team rules</span>
-            </div>
-            <div class="plan-conventions">
-              <div v-for="item in conventions" :key="item.title">
-                <strong>{{ item.title }}</strong>
-                <p>{{ item.body }}</p>
-              </div>
-            </div>
-          </article>
-
-          <article class="plan-panel">
-            <div class="plan-panel-head">
-              <h3>AI tools</h3>
-              <span>Use, then verify</span>
-            </div>
-            <div class="plan-tools">
-              <a
-                v-for="tool in aiTools"
-                :key="tool.name"
-                :href="tool.href"
-                target="_blank"
-                rel="noopener noreferrer"
+      <!-- ============ § 05 — RESOURCES ============ -->
+      <section
+        id="resources"
+        class="plan-section scroll-mt-[160px]"
+        aria-labelledby="resources-title"
+      >
+        <header
+          class="flex flex-wrap items-end justify-between gap-10 border-t border-[var(--line)] pt-7"
+        >
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-3">
+              <span
+                class="grid h-7 w-9 place-items-center rounded-md border border-[color-mix(in_oklab,var(--brand)_30%,transparent)] bg-[var(--brand-soft)] text-[0.72rem] font-bold text-[var(--brand)]"
               >
-                <div>
-                  <strong>{{ tool.name }}</strong>
-                  <p>{{ tool.use }}</p>
-                </div>
-                <span>{{ tool.label }}</span>
-                <Icon name="lucide:arrow-up-right" class="learning-icon" />
-              </a>
+                {{ sections.resources }}
+              </span>
+              <p class="plans-section-kicker m-0">Resource library</p>
             </div>
-          </article>
-        </div>
-      </section>
-
-      <section id="resources" class="plan-section" aria-labelledby="resources-title">
-        <div class="plan-section-head">
-          <div>
-            <p class="plans-section-kicker">Resource library</p>
-            <h2 id="resources-title">Free material worth your time</h2>
+            <h2
+              id="resources-title"
+              class="mt-2 max-w-[760px] text-[clamp(1.65rem,2.3vw,2.15rem)] font-bold leading-tight"
+            >
+              Resources by phase
+            </h2>
           </div>
-          <p>
-            Every topic page repeats the exact videos and readings for that week. This is the
-            shortlist if you want to browse the whole plan first.
+          <p class="m-0 max-w-[500px] text-[0.98rem] leading-relaxed text-[var(--muted)]">
+            Each topic page repeats the exact videos and readings for that week. Use this shortlist
+            when you want to browse the whole plan before you start.
           </p>
-        </div>
+        </header>
 
-        <div class="plan-resource-groups">
+        <div class="mt-6 grid gap-3.5 md:grid-cols-3">
           <article
             v-for="group in resourceGroups"
             :key="group.key"
-            class="plan-resource-card"
+            class="relative rounded-xl border border-[var(--line)] bg-[var(--surface)] p-5"
             :data-tone="group.tone"
           >
-            <h3>{{ group.label }}</h3>
+            <span
+              class="absolute inset-x-0 top-0 h-[3px] rounded-t-xl bg-[color:var(--phase-color)]"
+            />
+            <h3 class="mb-3 mt-2 text-[1rem] font-bold">{{ group.label }}</h3>
             <a
               v-for="item in group.items"
               :key="item.href"
               :href="item.href"
               target="_blank"
               rel="noopener noreferrer"
+              class="group flex items-start justify-between gap-2 border-b border-[var(--line)] py-2 text-[0.9rem] leading-snug no-underline last:border-b-0 hover:text-[color:var(--phase-color)]"
             >
-              {{ item.label }}
-              <Icon name="lucide:arrow-up-right" class="learning-icon" />
+              <span>{{ item.label }}</span>
+              <Icon
+                name="lucide:arrow-up-right"
+                class="learning-icon mt-1 text-[0.9rem] text-[var(--muted)] transition-colors group-hover:text-[color:var(--phase-color)]"
+              />
             </a>
           </article>
         </div>
 
-        <div class="plan-main-resources">
-          <span>Start here</span>
+        <div
+          class="mt-4 flex flex-wrap items-center gap-2.5 rounded-xl border border-[var(--line)] bg-[var(--surface-2)] p-4"
+        >
+          <span class="mr-1 text-[0.72rem] font-bold uppercase tracking-widest text-[var(--muted)]">
+            Start here
+          </span>
           <a
             v-for="item in mainResources"
             :key="item.href"
             :href="item.href"
             target="_blank"
             rel="noopener noreferrer"
+            class="inline-flex items-center gap-1 rounded-md border border-[var(--line)] bg-[var(--surface)] px-2.5 py-1.5 text-[0.84rem] no-underline transition-colors hover:border-[var(--brand)] hover:text-[var(--brand)]"
           >
             {{ item.label }}
             <Icon name="lucide:arrow-up-right" class="learning-icon" />
@@ -465,10 +766,13 @@ const jumpLinks = computed(() => [
         </div>
       </section>
 
-      <section class="plan-reset">
+      <!-- ============ RESET ============ -->
+      <section
+        class="mt-16 flex flex-wrap items-center justify-between gap-6 rounded-xl border border-[var(--line)] bg-[var(--surface)] p-6"
+      >
         <div>
-          <h2>Want a clean run?</h2>
-          <p>
+          <h2 class="m-0 text-[1.14rem] font-bold">Want a clean run?</h2>
+          <p class="m-0 mt-1 text-[0.92rem] text-[var(--muted)]">
             This clears topic passes, phase gates and quiz scores for this plan in this browser.
           </p>
         </div>
@@ -521,691 +825,38 @@ const jumpLinks = computed(() => [
 </template>
 
 <style scoped>
-.plan-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  gap: 34px;
-  align-items: center;
-  padding: 38px;
-  background:
-    radial-gradient(
-      circle at 92% 4%,
-      color-mix(in oklab, var(--phase-color) 13%, transparent),
-      transparent 24rem
-    ),
-    linear-gradient(
-      145deg,
-      var(--surface),
-      color-mix(in oklab, var(--phase-color) 4%, var(--surface))
-    );
-  border: 1px solid var(--line);
-  border-top: 5px solid var(--phase-color);
-  border-radius: 30px;
-  box-shadow: var(--shadow);
+/* Hero decorative glow */
+.plan-hero::after {
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 420px;
+  height: 420px;
+  content: '';
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--brand) 18%, transparent) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
 }
 
-.plan-hero-copy h1 {
-  margin: 9px 0 14px;
-  font-size: clamp(2.7rem, 4.8vw, 4.2rem);
-  line-height: 0.98;
-  letter-spacing: -0.045em;
-}
-
-.plan-hero-copy > p:not(.plans-eyebrow, .plan-next-hint) {
-  max-width: 680px;
-  margin: 0;
-  font-size: 1.06rem;
-  line-height: 1.7;
-  color: var(--muted);
-}
-
-.plan-hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 26px;
-}
-
-.plan-next-hint {
-  display: flex;
-  gap: 7px;
-  align-items: center;
-  margin: 14px 0 0;
-  font-size: 0.86rem;
-  color: var(--muted);
-}
-
-.plan-hero-side {
-  display: grid;
-  gap: 20px;
-  padding: 22px;
-  background: color-mix(in oklab, var(--surface) 84%, transparent);
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  backdrop-filter: blur(12px);
-}
-
-.plan-hero-side-head {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 2px;
-  border-bottom: 1px solid var(--line);
-}
-
-.plan-hero-side-head > span {
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.plan-hero-side-head small {
-  display: inline-flex;
-  gap: 4px;
-  align-items: center;
-  font-size: 0.68rem;
-  font-weight: 650;
-  color: var(--success);
-}
-
-.plan-hero-progress {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-}
-
-.plan-hero-progress > div:last-child {
-  display: grid;
-  gap: 3px;
-}
-
-.plan-hero-progress strong {
-  font-size: 1rem;
-}
-
-.plan-hero-progress span {
-  font-size: 0.82rem;
-  color: var(--muted);
-}
-
-.plan-hero-phases {
-  display: grid;
-  gap: 11px;
-}
-
-.plan-hero-phase {
-  padding: 7px 8px;
-  border: 1px solid transparent;
-  border-radius: 8px;
-}
-
-.plan-hero-phase[data-current='true'] {
-  background: color-mix(in oklab, var(--phase-color) 7%, transparent);
-  border-color: color-mix(in oklab, var(--phase-color) 22%, var(--line));
-}
-
-.plan-hero-phase-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 5px;
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-.plan-hero-phase-row > span {
-  display: inline-flex;
-  gap: 7px;
-  align-items: center;
-  min-width: 0;
-}
-
-.plan-hero-phase-row i {
-  flex: none;
-  width: 7px;
-  height: 7px;
-  background: var(--phase-color);
-  border-radius: 999px;
-}
-
-.plan-hero-phase-row strong {
-  flex: none;
-  color: var(--phase-color);
-}
-
-.plan-hero-roles {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-}
-
-.plan-hero-roles .plan-card-label {
-  width: 100%;
-}
-
-.plan-role-chip {
-  display: inline-flex;
-  gap: 5px;
-  align-items: center;
-  padding: 5px 9px;
-  font-size: 0.78rem;
-  color: var(--muted);
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 7px;
-}
-
-.plan-role-chip[data-status='complete'] {
-  color: var(--ink);
-  background: var(--success-soft);
-  border-color: color-mix(in oklab, var(--success) 28%, var(--line));
-}
-
-.plan-role-chip[data-status='complete'] .learning-icon {
-  color: var(--success);
-}
-
-.plan-role-chip[data-status='locked'] .learning-icon {
-  color: var(--line-strong);
-}
-
-.plan-jump-nav {
-  position: sticky;
-  top: 72px;
-  z-index: 20;
-  padding: 8px;
-  margin-top: 22px;
-  background: color-mix(in oklab, var(--bg) 86%, transparent);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  backdrop-filter: blur(18px);
-}
-
-.plan-jump-inner {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-  max-width: 100%;
-  overflow-x: auto;
+/* Hide horizontal scrollbar on the jump nav */
+.plan-jump-nav > div {
   scrollbar-width: none;
 }
 
-.plan-jump-inner::-webkit-scrollbar {
+.plan-jump-nav > div::-webkit-scrollbar {
   display: none;
 }
 
-.plan-jump-label {
-  flex: none;
-  padding: 0 8px 0 4px;
-  font-size: 0.66rem;
-  font-weight: 800;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-}
-
-.plan-jump-inner a {
-  display: inline-flex;
-  flex: none;
-  gap: 5px;
-  align-items: center;
-  padding: 7px 10px;
-  font-size: 0.78rem;
-  font-weight: 650;
-  color: var(--muted) !important;
-  text-decoration: none !important;
-  border: 1px solid transparent;
-  border-radius: 8px;
-}
-
-.plan-jump-inner a:hover {
-  color: var(--ink) !important;
-  background: var(--surface);
-  border-color: var(--line);
-}
-
-.plan-jump-inner a .learning-icon {
-  color: var(--brand);
-}
-
-.plan-jump-progress {
-  display: inline-flex;
-  flex: none;
-  gap: 4px;
-  align-items: center;
-  padding: 6px 9px;
-  margin-left: auto;
-  font-size: 0.72rem;
-  color: var(--muted);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-}
-
-.plan-jump-progress strong {
-  color: var(--brand);
-}
-
-.plan-loop {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.plan-loop-card {
-  padding: 20px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-}
-
-.plan-loop-top {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.plan-loop-top span {
-  font-size: 0.74rem;
-  font-weight: 800;
-  color: var(--brand);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.plan-loop-top small {
-  font-size: 0.72rem;
-  color: var(--muted);
-}
-
-.plan-loop-card h3 {
-  margin: 0 0 6px;
-  font-size: 1.06rem;
-  line-height: 1.25;
-}
-
-.plan-loop-card p {
-  margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--muted);
-}
-
-.plan-operations-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 16px;
-}
-
-.plan-panel {
-  padding: 24px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-}
-
-.plan-panel-head {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.plan-panel-head h3 {
-  margin: 0;
-  font-size: 1.12rem;
-}
-
-.plan-panel-head span {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-}
-
-.plan-check-list {
-  display: grid;
-  gap: 8px;
-  padding: 0;
-  margin: 0 0 18px;
-  list-style: none;
-}
-
-.plan-check-list li {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  font-size: 0.9rem;
-  line-height: 1.55;
-  color: var(--muted);
-}
-
-.plan-check-list .learning-icon {
-  margin-top: 4px;
-  color: var(--brand);
-}
-
-.plan-schedule {
-  display: grid;
-  gap: 0;
-  border-top: 1px solid var(--line);
-}
-
-.plan-schedule > div {
-  display: grid;
-  grid-template-columns: 58px minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: baseline;
-  padding: 9px 0;
-  font-size: 0.84rem;
-  border-bottom: 1px solid var(--line);
-}
-
-.plan-schedule span {
-  font-weight: 700;
-  color: var(--ink);
-}
-
-.plan-schedule strong {
-  font-weight: 500;
-  color: var(--muted);
-}
-
-.plan-schedule small {
-  color: var(--muted);
-}
-
-.plan-team-roles {
-  display: grid;
-  gap: 15px;
-}
-
-.plan-team-roles strong {
-  font-size: 0.94rem;
-}
-
-.plan-team-roles p {
-  margin: 3px 0 0;
-  font-size: 0.86rem;
-  line-height: 1.55;
-  color: var(--muted);
-}
-
-.plan-conventions {
-  display: grid;
-  gap: 15px;
-}
-
-.plan-conventions strong {
-  font-size: 0.94rem;
-}
-
-.plan-conventions p {
-  margin: 3px 0 0;
-  font-size: 0.86rem;
-  line-height: 1.55;
-  color: var(--muted);
-}
-
-.plan-tools {
-  display: grid;
-  gap: 10px;
-}
-
-.plan-tools a {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  gap: 12px;
-  align-items: center;
-  padding: 12px 14px;
-  color: var(--ink) !important;
-  text-decoration: none !important;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 11px;
-}
-
-.plan-tools a:hover {
-  border-color: var(--brand);
-}
-
-.plan-tools strong {
-  display: block;
-  font-size: 0.9rem;
-}
-
-.plan-tools p {
-  margin: 2px 0 0;
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-.plan-tools span {
-  font-size: 0.78rem;
-  color: var(--muted);
-}
-
-.plan-tools .learning-icon {
-  color: var(--brand);
-}
-
-.plan-resource-groups {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.plan-resource-card {
-  padding: 22px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-top: 4px solid var(--phase-color);
-  border-radius: 18px;
-}
-
-.plan-resource-card h3 {
-  margin: 0 0 12px;
-  font-size: 1.02rem;
-}
-
-.plan-resource-card a {
-  display: flex;
-  gap: 7px;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 7px 0;
-  font-size: 0.86rem;
-  line-height: 1.5;
-  text-decoration: none;
-  border-bottom: 1px solid var(--line);
-}
-
-.plan-resource-card a:last-child {
-  border-bottom: 0;
-}
-
-.plan-resource-card a .learning-icon {
-  margin-top: 4px;
-  font-size: 0.9rem;
-}
-
-.plan-main-resources {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 9px;
-  align-items: center;
-  padding: 16px 18px;
-  margin-top: 16px;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-}
-
-.plan-main-resources > span {
-  margin-right: 4px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.plan-main-resources a {
-  display: inline-flex;
-  gap: 4px;
-  align-items: center;
-  padding: 5px 10px;
-  font-size: 0.82rem;
-  text-decoration: none;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 7px;
-}
-
-.plan-reset {
-  display: flex;
-  gap: 24px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 26px;
-  margin-top: 68px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-}
-
-.plan-reset h2 {
-  margin: 0 0 4px;
-  font-size: 1.18rem;
-}
-
-.plan-reset p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: var(--muted);
-}
-
 .plan-section {
-  scroll-margin-top: 144px;
-}
-
-@media (max-width: 1080px) {
-  .plan-hero {
-    grid-template-columns: 1fr;
-  }
-
-  .plan-hero-side {
-    grid-template-columns: 1fr 1fr;
-    align-items: start;
-  }
-
-  .plan-hero-side-head,
-  .plan-hero-progress,
-  .plan-hero-roles {
-    grid-column: span 2;
-  }
-
-  .plan-loop {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 820px) {
-  .plan-hero {
-    padding: 24px;
-  }
-
-  .plan-hero-side {
-    grid-template-columns: 1fr;
-  }
-
-  .plan-hero-side-head,
-  .plan-hero-progress,
-  .plan-hero-roles {
-    grid-column: auto;
-  }
-
-  .plan-operations-grid,
-  .plan-resource-groups {
-    grid-template-columns: 1fr;
-  }
-
-  .plan-reset {
-    display: block;
-  }
-
-  .plan-reset .learning-button {
-    width: 100%;
-    margin-top: 14px;
-  }
+  margin-top: 72px;
 }
 
 @media (max-width: 680px) {
-  .plan-jump-nav {
-    top: 64px;
-    padding: 6px;
-    margin-top: 16px;
-  }
-
-  .plan-jump-label,
-  .plan-jump-progress {
-    display: none;
-  }
-
-  .plan-jump-inner {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 4px;
-    overflow: visible;
-  }
-
-  .plan-jump-inner a {
-    justify-content: center;
-  }
-
-  .plan-jump-inner a:last-child:nth-child(odd) {
-    grid-column: 1 / -1;
-  }
-
   .plan-section {
-    scroll-margin-top: 152px;
-  }
-}
-
-@media (max-width: 560px) {
-  .plan-hero {
-    padding: 20px;
-    border-radius: 22px;
-  }
-
-  .plan-hero-actions .learning-button {
-    width: 100%;
-  }
-
-  .plan-loop {
-    grid-template-columns: 1fr;
-  }
-
-  .plan-panel {
-    padding: 16px;
-  }
-
-  .plan-schedule > div {
-    grid-template-columns: 46px minmax(0, 1fr);
-  }
-
-  .plan-schedule small {
-    grid-column: 2;
+    margin-top: 48px;
   }
 }
 </style>

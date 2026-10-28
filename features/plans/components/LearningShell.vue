@@ -30,7 +30,7 @@ useHead({
     { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
     {
       rel: 'stylesheet',
-      href: 'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap',
+      href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap',
     },
   ],
 });
@@ -86,36 +86,36 @@ useHead({
 
 <style scoped>
 .learning-page {
-  --bg: #f1f4fb;
+  --bg: #f6f6f7;
   --surface: #ffffff;
-  --surface-2: #f5f8fe;
-  --surface-3: #e8eef9;
-  --ink: #101a2f;
-  --muted: #586685;
-  --line: #dde4f1;
-  --line-strong: #b8c4db;
-  --brand: #2f4fe0;
-  --brand-soft: #e8edff;
+  --surface-2: #fafafa;
+  --surface-3: #f0f0f1;
+  --ink: #18181b;
+  --muted: #52525b;
+  --line: #e4e4e7;
+  --line-strong: #a1a1aa;
+  --brand: #df234f;
+  --brand-soft: #fdf0f3;
   --on-brand: #ffffff;
-  --info: #0b6acb;
-  --info-soft: #e5f1ff;
-  --success: #087e64;
-  --success-soft: #dff7ef;
-  --warning-ink: #994a06;
-  --warning-soft: #fff3e2;
-  --warning-line: #f0c896;
-  --phase-blue: #2f5ce0;
-  --phase-violet: #7b45d6;
-  --phase-teal: #078477;
+  --info: #1d4ed8;
+  --info-soft: #eef3ff;
+  --success: #0f7b5f;
+  --success-soft: #edf8f4;
+  --warning-ink: #9a4d08;
+  --warning-soft: #fff5e8;
+  --warning-line: #e7c495;
+  --phase-blue: #2563eb;
+  --phase-violet: #7c3aed;
+  --phase-teal: #0f766e;
   --phase-amber: #b45309;
-  --phase-rose: #be3c70;
+  --phase-rose: #be123c;
   --phase-indigo: #4f46e5;
-  --accent: #e2693b;
-  --dot: rgba(16, 26, 47, 0.085);
-  --shadow: 0 26px 70px rgba(18, 30, 58, 0.11);
-  --shadow-sm: 0 10px 30px rgba(18, 30, 58, 0.07);
-  --radius: 20px;
-  --radius-lg: 30px;
+  --accent: #df234f;
+  --dot: rgba(24, 24, 27, 0.055);
+  --shadow: 0 18px 42px rgba(24, 24, 27, 0.08);
+  --shadow-sm: 0 4px 14px rgba(24, 24, 27, 0.04);
+  --radius: 10px;
+  --radius-lg: 14px;
   --font-display:
     'Manrope', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-body: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -123,44 +123,42 @@ useHead({
 
   min-height: 100vh;
   color: var(--ink);
-  background:
-    radial-gradient(circle at 8% -4%, rgba(47, 79, 224, 0.1), transparent 30rem),
-    radial-gradient(circle at 96% 2%, rgba(7, 132, 119, 0.07), transparent 26rem), var(--bg);
+  background: var(--bg);
   font-family: var(--font-body);
   font-size: 17px;
-  line-height: 1.6;
+  line-height: 1.65;
   overflow-wrap: break-word;
 }
 
 .learning-page[data-theme='dark'] {
-  --bg: #080e1a;
-  --surface: #111a2c;
-  --surface-2: #0b1322;
-  --surface-3: #17233a;
-  --ink: #eef2fb;
-  --muted: #9aa8c5;
-  --line: #24314b;
-  --line-strong: #3e5071;
-  --brand: #8ca3ff;
-  --brand-soft: #182750;
-  --on-brand: #08101f;
-  --info: #7db8ff;
-  --info-soft: #102a4c;
-  --success: #5fddbd;
-  --success-soft: #0d3831;
-  --warning-ink: #f5b97a;
-  --warning-soft: #3a2815;
-  --warning-line: #6d4b25;
-  --phase-blue: #8ca3ff;
-  --phase-violet: #c3a5ff;
-  --phase-teal: #5fddbd;
-  --phase-amber: #f5b97a;
-  --phase-rose: #ff9cc2;
+  --bg: #0b0b0d;
+  --surface: #131315;
+  --surface-2: #18181b;
+  --surface-3: #202024;
+  --ink: #f4f4f5;
+  --muted: #a1a1aa;
+  --line: #2e2e33;
+  --line-strong: #52525b;
+  --brand: #ff4d6d;
+  --brand-soft: #35131b;
+  --on-brand: #ffffff;
+  --info: #93b4ff;
+  --info-soft: #16223d;
+  --success: #5fd6b4;
+  --success-soft: #10342c;
+  --warning-ink: #f3bd82;
+  --warning-soft: #342617;
+  --warning-line: #644828;
+  --phase-blue: #93b4ff;
+  --phase-violet: #c4a7ff;
+  --phase-teal: #5fd6b4;
+  --phase-amber: #f3bd82;
+  --phase-rose: #ff8fab;
   --phase-indigo: #a5b4fc;
-  --accent: #ffa071;
+  --accent: #ff4d6d;
   --dot: rgba(255, 255, 255, 0.06);
-  --shadow: 0 26px 70px rgba(0, 0, 0, 0.34);
-  --shadow-sm: 0 10px 30px rgba(0, 0, 0, 0.24);
+  --shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
+  --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.22);
 }
 
 .learning-page,
@@ -189,9 +187,9 @@ useHead({
   position: sticky;
   top: 0;
   z-index: 40;
-  background: color-mix(in oklab, var(--bg) 84%, transparent);
+  background: color-mix(in oklab, var(--surface) 92%, transparent);
   border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(16px);
 }
 
 .learning-topbar-inner {
@@ -200,13 +198,13 @@ useHead({
   align-items: center;
   width: 100%;
   max-width: 1200px;
-  height: 72px;
-  padding: 0 22px;
+  height: 70px;
+  padding: 0 24px;
   margin: 0 auto;
 }
 
 .learning-topbar-inner.is-wide {
-  max-width: 1740px;
+  max-width: 1500px;
 }
 
 .learning-brand {
@@ -220,22 +218,21 @@ useHead({
 .learning-brand-mark {
   display: grid;
   flex: none;
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   font-family: var(--font-display);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 800;
-  color: #ffffff;
-  background: linear-gradient(145deg, #5d76ff, #2039b8);
-  border-radius: 13px;
-  box-shadow: 0 8px 20px rgba(47, 79, 224, 0.3);
+  color: var(--on-brand);
+  background: var(--brand);
+  border-radius: 10px;
   place-items: center;
 }
 
 .learning-brand-copy strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 0.98rem;
   font-weight: 750;
   line-height: 1.1;
   letter-spacing: -0.01em;
@@ -243,8 +240,8 @@ useHead({
 
 .learning-brand-copy small {
   display: block;
-  margin-top: 3px;
-  font-size: 0.72rem;
+  margin-top: 2px;
+  font-size: 0.76rem;
   color: var(--muted);
 }
 
@@ -290,7 +287,7 @@ useHead({
   flex: none;
   width: 34px;
   height: 34px;
-  font-size: 0.58rem;
+  font-size: 0.6rem;
   font-weight: 800;
   color: var(--ink);
   background: conic-gradient(var(--brand) calc(var(--p) * 1%), var(--line) 0);
@@ -320,12 +317,12 @@ useHead({
   display: grid;
   width: 40px;
   height: 40px;
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: var(--ink);
   cursor: pointer;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 11px;
+  border-radius: 9px;
   place-items: center;
 }
 
@@ -342,12 +339,12 @@ useHead({
 .learning-main {
   width: 100%;
   max-width: 1200px;
-  padding: 44px 22px 88px;
+  padding: 40px 24px 88px;
   margin: 0 auto;
 }
 
 .learning-main.is-wide {
-  max-width: 1740px;
+  max-width: 1500px;
 }
 
 .learning-footer {
@@ -357,7 +354,7 @@ useHead({
   justify-content: space-between;
   width: 100%;
   max-width: 1200px;
-  padding: 24px 22px;
+  padding: 24px;
   margin: 0 auto;
   font-size: 0.86rem;
   color: var(--muted);
@@ -365,7 +362,7 @@ useHead({
 }
 
 .learning-footer.is-wide {
-  max-width: 1740px;
+  max-width: 1500px;
 }
 
 .learning-footer a {
@@ -404,44 +401,38 @@ useHead({
 
 .learning-page :deep(.learning-button) {
   display: inline-flex;
-  gap: 9px;
+  gap: 8px;
   align-items: center;
   justify-content: center;
-  padding: 12px 19px;
+  padding: 12px 18px;
   font: inherit;
-  font-size: 0.95rem;
+  font-size: 0.94rem;
   font-weight: 650;
   line-height: 1.2;
   text-decoration: none !important;
   cursor: pointer;
   border: 1px solid transparent;
-  border-radius: 11px;
+  border-radius: 9px;
   transition:
-    transform 0.16s ease,
     box-shadow 0.16s ease,
     background 0.16s ease,
     border-color 0.16s ease;
 }
 
-.learning-page :deep(.learning-button:hover) {
-  transform: translateY(-1px);
-}
-
 .learning-page :deep(.learning-button:disabled) {
   cursor: not-allowed;
   opacity: 0.55;
-  transform: none;
 }
 
 .learning-page :deep(.learning-button-primary) {
   color: var(--on-brand) !important;
   background: var(--brand);
   border-color: var(--brand);
-  box-shadow: 0 7px 18px color-mix(in oklab, var(--brand) 22%, transparent);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--brand) 22%, transparent);
 }
 
 .learning-page :deep(.learning-button-primary:hover) {
-  box-shadow: 0 10px 24px color-mix(in oklab, var(--brand) 30%, transparent);
+  box-shadow: 0 4px 14px color-mix(in oklab, var(--brand) 24%, transparent);
 }
 
 .learning-page :deep(.learning-button-soft) {
@@ -451,7 +442,7 @@ useHead({
 }
 
 .learning-page :deep(.learning-button-soft:hover) {
-  border-color: var(--brand);
+  border-color: var(--line-strong);
 }
 
 .learning-page :deep(.learning-button-danger) {
@@ -471,29 +462,29 @@ useHead({
 .learning-page :deep(.plans-section-kicker) {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 800;
   color: var(--brand);
   text-transform: uppercase;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.11em;
 }
 
 .learning-page :deep(.plan-card-label) {
-  font-size: 0.72rem;
-  font-weight: 800;
+  font-size: 0.76rem;
+  font-weight: 700;
   color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
 }
 
 .learning-page :deep(.plans-progress-ring) {
   position: relative;
   display: grid;
   flex: none;
-  width: 104px;
-  height: 104px;
+  width: 96px;
+  height: 96px;
   font-family: var(--font-display);
-  font-size: 1.45rem;
+  font-size: 1.35rem;
   font-weight: 750;
   color: var(--ink);
   background: conic-gradient(var(--brand) calc(var(--p) * 1%), var(--line) 0);
@@ -503,7 +494,7 @@ useHead({
 
 .learning-page :deep(.plans-progress-ring::before) {
   position: absolute;
-  inset: 9px;
+  inset: 8px;
   content: '';
   background: var(--surface);
   border-radius: 999px;
@@ -532,15 +523,17 @@ useHead({
 
 .learning-page :deep(.plan-section),
 .learning-page :deep(.topic-section) {
-  margin-top: 68px;
+  margin-top: 72px;
 }
 
 .learning-page :deep(.plan-section-head) {
   display: flex;
-  gap: 32px;
+  gap: 40px;
   align-items: flex-end;
   justify-content: space-between;
+  padding-top: 26px;
   margin-bottom: 24px;
+  border-top: 1px solid var(--line);
 }
 
 .learning-page :deep(.plan-section-head > div) {
@@ -548,26 +541,27 @@ useHead({
 }
 
 .learning-page :deep(.plan-section-head h2) {
-  margin: 5px 0 0;
-  font-size: clamp(1.7rem, 2.6vw, 2.35rem);
-  line-height: 1.12;
+  max-width: 760px;
+  margin: 6px 0 0;
+  font-size: clamp(1.65rem, 2.3vw, 2.15rem);
+  line-height: 1.18;
 }
 
 .learning-page :deep(.plan-section-head > p) {
-  max-width: 540px;
+  max-width: 500px;
   margin: 0;
-  font-size: 1rem;
-  line-height: 1.65;
+  font-size: 0.98rem;
+  line-height: 1.7;
   color: var(--muted);
 }
 
 .learning-page :deep(.plan-hero-stats) {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 26px;
+  gap: 10px 26px;
   padding: 0;
-  margin: 22px 0 0;
-  font-size: 0.9rem;
+  margin: 24px 0 0;
+  font-size: 0.92rem;
   color: var(--muted);
 }
 
@@ -579,7 +573,7 @@ useHead({
 
 .learning-page :deep(.plan-hero-stats strong) {
   font-family: var(--font-display);
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 750;
   color: var(--ink);
 }
@@ -629,13 +623,12 @@ useHead({
   padding: 22px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-top: 4px solid var(--phase-color, var(--brand));
-  border-radius: 18px;
-  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--phase-color, var(--brand));
+  border-radius: 14px;
 }
 
 .learning-page :deep(.plan-role-card[data-status='locked']) {
-  opacity: 0.68;
+  opacity: 0.66;
 }
 
 .learning-page :deep(.plan-role-card-top) {
@@ -643,11 +636,11 @@ useHead({
   gap: 10px;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.75rem;
+  font-size: 0.76rem;
   font-weight: 700;
   color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.06em;
 }
 
 .learning-page :deep(.plan-role-status) {
@@ -661,12 +654,12 @@ useHead({
 
 .learning-page :deep(.plan-role-card h3) {
   margin: 0;
-  font-size: 1.18rem;
+  font-size: 1.16rem;
 }
 
 .learning-page :deep(.plan-role-card p) {
   margin: 0;
-  font-size: 0.92rem;
+  font-size: 0.94rem;
   color: var(--muted);
 }
 
@@ -680,7 +673,7 @@ useHead({
 
 .learning-page :deep(.plan-role-card li) {
   padding-left: 15px;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: var(--muted);
   text-indent: -15px;
 }
@@ -713,23 +706,20 @@ useHead({
   justify-content: space-between;
   padding: 22px 24px;
   margin-top: 20px;
-  background: linear-gradient(
-    110deg,
-    color-mix(in oklab, var(--brand) 11%, var(--surface)),
-    var(--surface)
-  );
-  border: 1px solid color-mix(in oklab, var(--brand) 32%, var(--line));
-  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--brand);
+  border-radius: 14px;
 }
 
 .learning-page :deep(.topic-next h3) {
   margin: 4px 0 3px;
-  font-size: 1.18rem;
+  font-size: 1.16rem;
 }
 
 .learning-page :deep(.topic-next p) {
   margin: 0;
-  font-size: 0.92rem;
+  font-size: 0.94rem;
   color: var(--muted);
 }
 
@@ -745,33 +735,33 @@ useHead({
   gap: 12px;
   align-items: flex-start;
   max-width: 660px;
-  padding: 36px;
+  padding: 34px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 24px;
+  border-radius: 18px;
   box-shadow: var(--shadow);
 }
 
 .learning-page :deep(.topic-locked-card h1) {
   margin: 0;
-  font-size: clamp(2rem, 3.2vw, 2.9rem);
-  line-height: 1.05;
+  font-size: clamp(1.9rem, 3vw, 2.6rem);
+  line-height: 1.1;
 }
 
 .learning-page :deep(.topic-locked-card > p) {
   margin: 0;
-  font-size: 1.02rem;
+  font-size: 1rem;
   color: var(--muted);
 }
 
 .learning-page :deep(.topic-locked-icon) {
   display: grid;
-  width: 48px;
-  height: 48px;
-  font-size: 1.2rem;
+  width: 46px;
+  height: 46px;
+  font-size: 1.15rem;
   color: var(--brand);
   background: var(--brand-soft);
-  border-radius: 14px;
+  border-radius: 12px;
   place-items: center;
 }
 

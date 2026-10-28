@@ -1,4 +1,18 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
+import { useElementSize } from '@vueuse/core';
+import {
+  Handle,
+  Position,
+  VueFlow,
+  type Edge,
+  type Node,
+  type NodeMouseEvent,
+} from '@vue-flow/core';
+import { useRouter } from 'vue-router';
+
+import { phasePath, roadmapPath } from '../routes';
+
 interface TreeLeaf {
   label: string;
   detail: string;
@@ -12,8 +26,13 @@ interface TreeBranch {
   summary: string;
   icon: string;
   tone: string;
+  phaseKey: string;
   leaves: TreeLeaf[];
 }
+
+const props = defineProps<{
+  planId: string;
+}>();
 
 const branches: TreeBranch[] = [
   {
@@ -24,6 +43,7 @@ const branches: TreeBranch[] = [
     summary: 'The interface, navigation and state that turn user intent into API calls.',
     icon: 'lucide:monitor-smartphone',
     tone: 'violet',
+    phaseKey: 'api',
     leaves: [
       { label: 'Vue Router', detail: 'Pages, layouts and navigation guards' },
       { label: 'Pinia stores', detail: 'Shared state and server-state caching' },
@@ -39,6 +59,7 @@ const branches: TreeBranch[] = [
     summary: 'The contract, authorization and business rules that protect the domain.',
     icon: 'lucide:server',
     tone: 'blue',
+    phaseKey: 'laravel',
     leaves: [
       { label: 'Routes & middleware', detail: 'Versioned endpoints and throttling' },
       { label: 'Validation', detail: 'Form requests before the domain runs' },
@@ -54,6 +75,7 @@ const branches: TreeBranch[] = [
     summary: 'The source of truth, the fast path and the work that happens later.',
     icon: 'lucide:database',
     tone: 'teal',
+    phaseKey: 'api',
     leaves: [
       { label: 'MySQL', detail: 'Schema, indexes and transactions' },
       { label: 'Redis', detail: 'Cache, sessions and rate limits' },
@@ -69,6 +91,7 @@ const branches: TreeBranch[] = [
     summary: 'The repeatable release path that turns working code into a safe deployment.',
     icon: 'lucide:rocket',
     tone: 'amber',
+    phaseKey: 'quality',
     leaves: [
       { label: 'Automated tests', detail: 'Unit, feature and API coverage' },
       { label: 'GitHub Actions', detail: 'Lint, test, build and release gates' },
@@ -77,521 +100,339 @@ const branches: TreeBranch[] = [
     ],
   },
 ];
+
+const canvas = ref<HTMLElement | null>(null);
+const { width: canvasWidth } = useElementSize(canvas);
+
+const router = useRouter();
+
+// Programmatic nav: vue-flow owns pointer events on its node wrapper, so a
+// child <a>/<NuxtLink> doesn't always get the click. We bind @node-click on
+// VueFlow itself and read `href` off node.data.
+const onNodeClick = ({ node }: NodeMouseEvent) => {
+  const href = (node.data as { href?: string } | undefined)?.href;
+  if (href) router.push(href);
+};
+
+const PAD = 10;
+const COLUMN_GAP = 22;
+const ROOT_H = 130;
+const BRANCH_HEAD_H = 128;
+
+const layoutWidth = computed(() => Math.max(320, canvasWidth.value || 1200));
+const columns = computed(() => {
+  if (layoutWidth.value < 680) return 1;
+  if (layoutWidth.value < 1080) return 2;
+  return 4;
+});
+const columnWidth = computed(
+  () =>
+    Math.floor((layoutWidth.value - PAD * 2 - COLUMN_GAP * (columns.value - 1)) / columns.value) ||
+    280
+);
+const branchHeight = computed(() => BRANCH_HEAD_H + branches[0].leaves.length * 52 + 24);
+
+const edgeStyle = (tone: string) => ({
+  stroke: `var(--phase-${tone})`,
+  strokeWidth: 1.5,
+  opacity: 0.85,
+});
+
+const flow = computed(() => {
+  const cols = columns.value;
+  const colW = columnWidth.value;
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+  const rootWidth = Math.min(520, layoutWidth.value - PAD * 2);
+  const rootY = 20;
+
+  nodes.push({
+    id: 'stack-root',
+    type: 'stack-root',
+    position: { x: (layoutWidth.value - rootWidth) / 2, y: rootY },
+    data: { href: roadmapPath(props.planId) },
+    draggable: false,
+    selectable: false,
+    style: { width: `${rootWidth}px`, height: `${ROOT_H}px` },
+  });
+
+  const rowCount = Math.ceil(branches.length / cols);
+  let rowY = rootY + ROOT_H + 72;
+
+  for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+    const row = branches.slice(rowIndex * cols, rowIndex * cols + cols);
+    const rowOffset = ((cols - row.length) * (colW + COLUMN_GAP)) / 2;
+
+    row.forEach((branch, columnIndex) => {
+      const x = PAD + rowOffset + columnIndex * (colW + COLUMN_GAP);
+      nodes.push({
+        id: `stack-branch-${branch.key}`,
+        type: 'stack-branch',
+        position: { x, y: rowY },
+        data: { branch, href: phasePath(props.planId, branch.phaseKey) },
+        draggable: false,
+        selectable: false,
+        style: { width: `${colW}px`, height: `${branchHeight.value}px` },
+      });
+      edges.push({
+        id: `stack-root-${branch.key}`,
+        source: 'stack-root',
+        target: `stack-branch-${branch.key}`,
+        type: 'smoothstep',
+        style: edgeStyle(branch.tone),
+      });
+    });
+
+    rowY += branchHeight.value + 56;
+  }
+
+  return {
+    nodes,
+    edges,
+    height: rowY + 8,
+  };
+});
 </script>
 
 <template>
-  <div class="stack-tree" role="group" aria-label="Full-stack architecture tree">
-    <div class="tree-toolbar">
-      <div>
-        <span class="tree-kicker">Tree view</span>
-        <strong>One system, four branches</strong>
+  <div class="stack-flow grid gap-4">
+    <!-- Toolbar: title + hint -->
+    <header
+      class="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--line)] pb-3"
+    >
+      <div class="grid gap-0.5">
+        <span
+          class="stack-kicker text-[0.7rem] font-bold uppercase tracking-widest text-[var(--brand)]"
+        >
+          Stack tree
+        </span>
+        <strong class="font-[var(--font-display)] text-[1.02rem] leading-tight text-[var(--ink)]">
+          One system, four branches — tap any node to open its phase
+        </strong>
       </div>
-      <span class="tree-note">
-        <Icon name="lucide:git-fork" class="learning-icon" />
+      <span
+        class="inline-flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--surface-2)] px-2.5 py-1 text-[0.76rem] text-[var(--muted)]"
+      >
+        <Icon name="lucide:git-fork" class="learning-icon text-[var(--brand)]" />
         Root → branch → capability
       </span>
-    </div>
+    </header>
 
-    <div class="tree-canvas">
-      <div class="tree-root">
-        <span class="tree-root-icon">
-          <Icon name="lucide:workflow" class="learning-icon" />
-        </span>
-        <div>
-          <span>Full-stack roadmap</span>
-          <strong>Product engineering</strong>
-          <small>Client → API → Data → Delivery</small>
-        </div>
-      </div>
-
-      <div class="tree-root-stem" aria-hidden="true" />
-
-      <div class="tree-branches">
-        <section
-          v-for="(branch, index) in branches"
-          :key="branch.key"
-          class="tree-branch"
-          :data-tone="branch.tone"
+    <!-- Canvas with vue-flow diagram -->
+    <div
+      ref="canvas"
+      class="stack-canvas relative w-full overflow-hidden rounded-xl border border-[var(--line)]"
+      :style="{ height: `${flow.height}px` }"
+    >
+      <ClientOnly>
+        <VueFlow
+          :nodes="flow.nodes"
+          :edges="flow.edges"
+          :default-viewport="{ x: 0, y: 0, zoom: 1 }"
+          :min-zoom="1"
+          :max-zoom="1"
+          :nodes-draggable="false"
+          :nodes-connectable="false"
+          :elements-selectable="false"
+          :pan-on-drag="false"
+          :zoom-on-scroll="false"
+          :zoom-on-pinch="false"
+          :zoom-on-double-click="false"
+          :prevent-scrolling="false"
+          :fit-view-on-init="false"
+          class="stack-vue-flow"
+          @node-click="onNodeClick"
         >
-          <article class="tree-branch-head">
-            <div class="tree-branch-top">
-              <span class="tree-branch-icon">
-                <Icon :name="branch.icon" class="learning-icon" />
+          <!-- Root node: links to roadmap -->
+          <template #node-stack-root>
+            <NuxtLink
+              :to="roadmapPath(planId)"
+              class="stack-node stack-root group flex h-full w-full items-center gap-3 rounded-xl border border-[var(--line)] bg-[var(--surface)] px-5 py-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[var(--brand)] hover:shadow-md"
+              title="Open the plan roadmap"
+            >
+              <span
+                class="grid h-11 w-11 flex-none place-items-center rounded-lg border border-[var(--brand)]/20 bg-[var(--brand-soft)] text-[var(--brand)] transition-transform group-hover:scale-105"
+              >
+                <Icon name="lucide:workflow" class="learning-icon text-lg" />
               </span>
-              <span class="tree-branch-index">0{{ index + 1 }}</span>
-            </div>
-            <span class="tree-branch-kicker">{{ branch.kicker }}</span>
-            <h3>{{ branch.title }}</h3>
-            <small>{{ branch.subtitle }}</small>
-            <p>{{ branch.summary }}</p>
-          </article>
-
-          <ul class="tree-leaves">
-            <li v-for="leaf in branch.leaves" :key="leaf.label" class="tree-leaf">
-              <div>
-                <strong>{{ leaf.label }}</strong>
-                <span>{{ leaf.detail }}</span>
+              <div class="grid min-w-0 gap-0.5">
+                <span class="text-[0.7rem] font-bold uppercase tracking-widest text-[var(--brand)]">
+                  Full-stack roadmap
+                </span>
+                <strong
+                  class="font-[var(--font-display)] text-[1.18rem] font-bold leading-tight text-[var(--ink)]"
+                >
+                  Product engineering
+                </strong>
+                <small class="text-[0.82rem] text-[var(--muted)]">
+                  Client → API → Data → Delivery
+                </small>
               </div>
-            </li>
-          </ul>
-        </section>
-      </div>
+              <span
+                class="ml-auto hidden items-center gap-1 rounded-md border border-[var(--line)] bg-[var(--surface-2)] px-2 py-1 text-[0.72rem] text-[var(--muted)] group-hover:text-[var(--brand)] sm:inline-flex"
+              >
+                Open
+                <Icon name="lucide:arrow-right" class="learning-icon" />
+              </span>
+              <Handle type="source" :position="Position.Bottom" class="stack-handle" />
+            </NuxtLink>
+          </template>
+
+          <!-- Branch node: links to that layer's phase -->
+          <template #node-stack-branch="{ data }">
+            <NuxtLink
+              :to="phasePath(planId, data.branch.phaseKey)"
+              class="stack-node stack-branch group flex h-full w-full flex-col overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--surface)] shadow-sm transition-all hover:-translate-y-0.5 hover:border-[color:var(--phase-color)] hover:shadow-md"
+              :data-tone="data.branch.tone"
+              :title="`Open the ${data.branch.title} phase`"
+            >
+              <div class="grid gap-1 border-b border-[var(--line)] bg-[var(--surface-2)] p-4">
+                <div class="flex items-center justify-between gap-2">
+                  <span
+                    class="grid h-8 w-8 place-items-center rounded-md border border-[var(--line)] bg-[var(--surface)] text-[color:var(--phase-color)]"
+                  >
+                    <Icon :name="data.branch.icon" class="learning-icon" />
+                  </span>
+                  <span
+                    class="truncate text-[0.64rem] font-bold uppercase tracking-wider text-[color:var(--phase-color)]"
+                  >
+                    {{ data.branch.kicker }}
+                  </span>
+                </div>
+                <h3 class="m-0 text-[1.16rem] font-bold leading-tight text-[var(--ink)]">
+                  {{ data.branch.title }}
+                </h3>
+                <small class="text-[0.78rem] text-[var(--muted)]">{{ data.branch.subtitle }}</small>
+                <p class="m-0 mt-0.5 line-clamp-2 text-[0.82rem] leading-snug text-[var(--muted)]">
+                  {{ data.branch.summary }}
+                </p>
+              </div>
+              <ul class="m-0 grid list-none p-0">
+                <li
+                  v-for="(leaf, idx) in data.branch.leaves"
+                  :key="leaf.label"
+                  class="flex min-h-[52px] items-start gap-2 px-3 py-2"
+                  :class="idx !== 0 && 'border-t border-[var(--line)]'"
+                >
+                  <span
+                    class="mt-[7px] h-1.5 w-1.5 flex-none rounded-full border border-[color:var(--phase-color)] bg-[var(--surface)]"
+                  />
+                  <div class="grid min-w-0 gap-0">
+                    <strong class="text-[0.84rem] font-semibold leading-snug text-[var(--ink)]">
+                      {{ leaf.label }}
+                    </strong>
+                    <span class="truncate text-[0.72rem] leading-tight text-[var(--muted)]">
+                      {{ leaf.detail }}
+                    </span>
+                  </div>
+                </li>
+              </ul>
+              <span
+                class="mt-auto flex items-center justify-between gap-2 border-t border-[var(--line)] bg-[var(--surface-2)] px-3 py-2 text-[0.74rem] font-semibold text-[var(--muted)] transition-colors group-hover:text-[color:var(--phase-color)]"
+              >
+                Open phase
+                <Icon name="lucide:arrow-right" class="learning-icon" />
+              </span>
+              <Handle type="target" :position="Position.Top" class="stack-handle" />
+            </NuxtLink>
+          </template>
+        </VueFlow>
+        <template #fallback>
+          <div class="grid h-full place-items-center text-sm text-[var(--muted)]">
+            Loading the stack tree…
+          </div>
+        </template>
+      </ClientOnly>
     </div>
 
-    <div class="tree-legend">
-      <span class="tree-legend-label">Read the tree</span>
-      <span><i class="is-root" /> Root: the system</span>
-      <span><i class="is-branch" /> Branch: a layer</span>
-      <span><i class="is-leaf" /> Leaf: a capability</span>
+    <!-- Legend -->
+    <div class="flex flex-wrap items-center gap-3 text-[0.78rem] text-[var(--muted)]">
+      <span class="font-semibold text-[var(--ink)]">Read the tree</span>
+      <span class="inline-flex items-center gap-1.5">
+        <i class="h-2 w-2 rounded-full bg-[var(--brand)]" />
+        Root: the system
+      </span>
+      <span class="inline-flex items-center gap-1.5">
+        <i class="h-2 w-2 rounded-full bg-[var(--phase-blue)]" />
+        Branch: a layer
+      </span>
+      <span class="inline-flex items-center gap-1.5">
+        <i class="h-2 w-2 rounded-full border border-[var(--line-strong)] bg-[var(--surface)]" />
+        Leaf: a capability
+      </span>
+      <span class="ml-auto inline-flex items-center gap-1 text-[var(--brand)]">
+        <Icon name="lucide:mouse-pointer-2" class="learning-icon" />
+        Click any node
+      </span>
     </div>
   </div>
 </template>
 
 <style scoped>
-.stack-tree {
-  position: relative;
-  padding: 22px;
-  overflow: hidden;
+/* Dotted canvas background. */
+.stack-canvas {
   background:
-    radial-gradient(var(--dot) 1px, transparent 1px) 0 0 / 16px 16px,
+    radial-gradient(var(--dot) 1px, transparent 1px) 0 0 / 18px 18px,
     var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  box-shadow: var(--shadow-sm);
 }
 
-.tree-toolbar {
-  display: flex;
-  gap: 18px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2px 16px;
-  border-bottom: 1px solid var(--line);
+.stack-canvas :deep(.vue-flow) {
+  width: 100%;
+  height: 100%;
 }
 
-.tree-toolbar > div {
-  display: grid;
-  gap: 2px;
+.stack-canvas :deep(.vue-flow__pane) {
+  cursor: default;
 }
 
-.tree-kicker {
-  font-size: 0.66rem;
-  font-weight: 800;
-  color: var(--brand);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+.stack-canvas :deep(.vue-flow__node) {
+  padding: 0;
+  font-family: var(--font-body);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  cursor: pointer;
 }
 
-.tree-toolbar strong {
-  font-family: var(--font-display);
-  font-size: 1rem;
-  line-height: 1.3;
+.stack-canvas :deep(.vue-flow__edge-path) {
+  stroke-linecap: round;
 }
 
-.tree-note {
-  display: inline-flex;
-  flex: none;
-  gap: 5px;
-  align-items: center;
-  padding: 5px 9px;
-  font-size: 0.7rem;
-  font-weight: 650;
-  color: var(--muted);
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-}
-
-.tree-note .learning-icon {
-  color: var(--brand);
-}
-
-.tree-canvas {
-  padding: 24px 12px 18px;
-}
-
-.tree-root {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  width: min(100%, 390px);
-  padding: 14px 16px;
-  margin: 0 auto;
-  background: linear-gradient(
-    145deg,
-    color-mix(in oklab, var(--brand) 12%, var(--surface)),
-    var(--surface)
-  );
-  border: 1px solid color-mix(in oklab, var(--brand) 34%, var(--line));
-  border-radius: 14px;
-  box-shadow: 0 16px 30px -28px color-mix(in oklab, var(--brand) 55%, transparent);
-}
-
-.tree-root-icon {
-  display: grid;
-  flex: none;
-  width: 38px;
-  height: 38px;
-  font-size: 1.05rem;
-  color: var(--brand);
-  background: var(--surface);
-  border: 1px solid color-mix(in oklab, var(--brand) 24%, var(--line));
-  border-radius: 10px;
-  place-items: center;
-}
-
-.tree-root > div {
-  display: grid;
-  gap: 1px;
-  min-width: 0;
-}
-
-.tree-root > div > span {
-  font-size: 0.58rem;
-  font-weight: 800;
-  color: var(--brand);
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-}
-
-.tree-root strong {
-  font-family: var(--font-display);
-  font-size: 1.08rem;
-  line-height: 1.2;
-}
-
-.tree-root small {
-  font-size: 0.7rem;
-  color: var(--muted);
-}
-
-.tree-root-stem {
+/* vue-flow handles exist only for edge connectivity. Keep them invisible but
+   on the page so edges can resolve their positions. */
+.stack-handle {
   width: 1px;
-  height: 30px;
-  margin: 0 auto;
-  background: linear-gradient(var(--brand), var(--line-strong));
-}
-
-.tree-branches {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
-  padding-top: 28px;
-}
-
-.tree-branches::before {
-  position: absolute;
-  top: 0;
-  right: 12.5%;
-  left: 12.5%;
   height: 1px;
-  content: '';
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--line-strong) 8%,
-    var(--line-strong) 92%,
-    transparent
-  );
+  min-width: 1px;
+  min-height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  border: 0;
 }
 
-.tree-branch {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-width: 0;
+/* Keep the tone CSS variable mapping — PlanOverview sets data-tone on the
+   diagram container, and these branches inherit by matching their own tone. */
+.stack-branch[data-tone='violet'] {
+  --phase-color: var(--phase-violet);
 }
 
-.tree-branch::before {
-  position: absolute;
-  top: -28px;
-  left: 50%;
-  width: 1px;
-  height: 28px;
-  content: '';
-  background: var(--line-strong);
+.stack-branch[data-tone='blue'] {
+  --phase-color: var(--phase-blue);
 }
 
-.tree-branch::after {
-  position: absolute;
-  top: -4px;
-  left: 50%;
-  width: 8px;
-  height: 8px;
-  content: '';
-  background: var(--surface);
-  border: 2px solid var(--phase-color);
-  border-radius: 999px;
-  transform: translateX(-50%);
+.stack-branch[data-tone='teal'] {
+  --phase-color: var(--phase-teal);
 }
 
-.tree-branch-head {
-  display: flex;
-  flex-direction: column;
-  min-height: 178px;
-  padding: 14px;
-  background: linear-gradient(
-    160deg,
-    color-mix(in oklab, var(--phase-color) 9%, var(--surface)),
-    var(--surface)
-  );
-  border: 1px solid color-mix(in oklab, var(--phase-color) 20%, var(--line));
-  border-top: 3px solid var(--phase-color);
-  border-radius: 12px;
+.stack-branch[data-tone='amber'] {
+  --phase-color: var(--phase-amber);
 }
 
-.tree-branch-top {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
+.stack-branch[data-tone='rose'] {
+  --phase-color: var(--phase-rose);
 }
 
-.tree-branch-icon {
-  display: grid;
-  width: 30px;
-  height: 30px;
-  font-size: 0.82rem;
-  color: var(--phase-color);
-  background: var(--surface);
-  border: 1px solid color-mix(in oklab, var(--phase-color) 22%, var(--line));
-  border-radius: 8px;
-  place-items: center;
-}
-
-.tree-branch-index {
-  font-family: var(--font-display);
-  font-size: 1.18rem;
-  font-weight: 800;
-  line-height: 1;
-  color: var(--phase-color);
-  opacity: 0.35;
-}
-
-.tree-branch-kicker {
-  font-size: 0.56rem;
-  font-weight: 800;
-  color: var(--phase-color);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.tree-branch-head h3 {
-  margin: 1px 0 0;
-  font-size: 1rem;
-  line-height: 1.2;
-}
-
-.tree-branch-head small {
-  margin-top: 1px;
-  font-size: 0.66rem;
-  color: var(--muted);
-}
-
-.tree-branch-head p {
-  margin: auto 0 0;
-  padding-top: 9px;
-  font-size: 0.7rem;
-  line-height: 1.45;
-  color: var(--muted);
-}
-
-.tree-leaves {
-  position: relative;
-  display: grid;
-  gap: 6px;
-  padding: 0 0 0 16px;
-  margin: 0;
-  list-style: none;
-}
-
-.tree-leaves::before {
-  position: absolute;
-  top: -10px;
-  bottom: 17px;
-  left: 4px;
-  width: 1px;
-  content: '';
-  background: linear-gradient(var(--line-strong), var(--line));
-}
-
-.tree-leaf {
-  position: relative;
-  padding: 8px 9px;
-  background: color-mix(in oklab, var(--phase-color) 3%, var(--surface));
-  border: 1px solid var(--line);
-  border-radius: 8px;
-}
-
-.tree-leaf::before {
-  position: absolute;
-  top: 17px;
-  left: -12px;
-  width: 12px;
-  height: 1px;
-  content: '';
-  background: var(--line-strong);
-}
-
-.tree-leaf::after {
-  position: absolute;
-  top: 14px;
-  left: -15px;
-  width: 6px;
-  height: 6px;
-  content: '';
-  background: var(--surface);
-  border: 1px solid var(--phase-color);
-  border-radius: 999px;
-}
-
-.tree-leaf > div {
-  display: grid;
-  gap: 1px;
-  min-width: 0;
-}
-
-.tree-leaf strong {
-  font-size: 0.75rem;
-  font-weight: 650;
-  line-height: 1.3;
-}
-
-.tree-leaf span {
-  font-size: 0.65rem;
-  line-height: 1.4;
-  color: var(--muted);
-}
-
-.tree-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 16px;
-  align-items: center;
-  padding: 12px 2px 0;
-  font-size: 0.68rem;
-  color: var(--muted);
-  border-top: 1px solid var(--line);
-}
-
-.tree-legend-label {
-  font-size: 0.6rem;
-  font-weight: 800;
-  color: var(--ink);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.tree-legend > span {
-  display: inline-flex;
-  gap: 5px;
-  align-items: center;
-}
-
-.tree-legend i {
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-}
-
-.tree-legend .is-root {
-  background: var(--brand);
-}
-
-.tree-legend .is-branch {
-  background: var(--surface);
-  border: 2px solid var(--brand);
-}
-
-.tree-legend .is-leaf {
-  background: var(--line-strong);
-}
-
-@media (max-width: 1180px) {
-  .tree-root {
-    width: min(100%, 390px);
-    margin: 0;
-  }
-
-  .tree-root-stem {
-    height: 20px;
-    margin-left: 20px;
-  }
-
-  .tree-branches {
-    grid-template-columns: 1fr;
-    gap: 14px;
-    padding: 0 0 0 24px;
-    margin-left: 20px;
-    border-left: 1px solid var(--line-strong);
-  }
-
-  .tree-branches::before {
-    display: none;
-  }
-
-  .tree-branch::before {
-    top: 28px;
-    left: -24px;
-    width: 24px;
-    height: 1px;
-  }
-
-  .tree-branch::after {
-    top: 25px;
-    left: -28px;
-    width: 7px;
-    height: 7px;
-    border-width: 2px;
-    transform: none;
-  }
-
-  .tree-branch-head {
-    min-height: 0;
-  }
-}
-
-@media (max-width: 760px) {
-  .stack-tree {
-    padding: 16px;
-    border-radius: 18px;
-  }
-
-  .tree-toolbar {
-    display: block;
-  }
-
-  .tree-note {
-    margin-top: 9px;
-  }
-
-  .tree-canvas {
-    padding: 18px 0 14px;
-  }
-
-  .tree-root {
-    width: 100%;
-  }
-
-  .tree-branches {
-    margin-left: 16px;
-    padding-left: 20px;
-  }
-
-  .tree-root-stem {
-    margin-left: 16px;
-  }
-
-  .tree-branch::before {
-    left: -20px;
-    width: 20px;
-  }
-
-  .tree-branch::after {
-    left: -24px;
-  }
+.stack-branch[data-tone='indigo'] {
+  --phase-color: var(--phase-indigo);
 }
 </style>
