@@ -63,8 +63,9 @@ export const weekPath: WeekPathRow[] = [
     phase: 'qa',
     phaseLabel: 'Quality assurance',
     stage: 'Practice',
-    focus: 'Test cases from criteria, exploratory sessions, Postman, k6, accessibility',
-    output: 'Test cases + Postman collection + k6 script',
+    focus:
+      'Test cases from criteria, exploratory sessions, Postman, k6, accessibility, plus the QA toolbox: Vitest, Playwright, visual regression, MSW, DevTools, cross-browser, CI',
+    output: 'Test cases + Postman collection + k6 script + QA tool survey',
   },
   {
     week: 9,
@@ -288,6 +289,15 @@ export const trackerItems: TrackerItem[] = [
   },
   { id: 41, topic: 'Regression checklist', week: 9, phase: 'qa' },
   { id: 42, topic: 'DoD & code review checklist', week: 9, phase: 'qa' },
+  { id: 43, topic: 'Unit & component testing (Vitest)', week: 8, phase: 'qa' },
+  { id: 44, topic: 'End-to-end testing (Playwright)', week: 8, phase: 'qa' },
+  { id: 45, topic: 'API testing (Postman + Playwright request)', week: 8, phase: 'qa' },
+  { id: 46, topic: 'Visual regression', week: 8, phase: 'qa' },
+  { id: 47, topic: 'Performance & accessibility (Lighthouse, axe-core)', week: 8, phase: 'qa' },
+  { id: 48, topic: 'Mocking with MSW', week: 8, phase: 'qa' },
+  { id: 49, topic: 'Chrome DevTools for QA', week: 8, phase: 'qa' },
+  { id: 50, topic: 'Cross-browser & real devices (BrowserStack)', week: 8, phase: 'qa' },
+  { id: 51, topic: 'Running tests in CI (GitHub Actions)', week: 8, phase: 'qa' },
 ];
 
 export const resourceGroups: ResourceGroup[] = [
@@ -430,6 +440,45 @@ export const resourceGroups: ResourceGroup[] = [
         label: 'axe DevTools',
         href: 'https://www.deque.com/axe/devtools/',
       },
+      { label: 'Vitest', href: 'https://vitest.dev/' },
+      { label: 'Vue Test Utils', href: 'https://test-utils.vuejs.org/' },
+      {
+        label: 'Testing Library (Vue)',
+        href: 'https://testing-library.com/docs/vue-testing-library/intro/',
+      },
+      { label: 'Jest', href: 'https://jestjs.io/' },
+      { label: 'Playwright', href: 'https://playwright.dev/' },
+      {
+        label: 'Playwright API testing',
+        href: 'https://playwright.dev/docs/api-testing',
+      },
+      {
+        label: 'Playwright visual comparisons',
+        href: 'https://playwright.dev/docs/test-snapshots',
+      },
+      { label: 'Cypress', href: 'https://www.cypress.io/' },
+      { label: 'Selenium', href: 'https://www.selenium.dev/' },
+      { label: 'Percy', href: 'https://percy.io/' },
+      { label: 'Chromatic', href: 'https://www.chromatic.com/' },
+      {
+        label: 'Lighthouse',
+        href: 'https://developer.chrome.com/docs/lighthouse/overview',
+      },
+      { label: 'axe-core', href: 'https://github.com/dequelabs/axe-core' },
+      {
+        label: '@axe-core/playwright',
+        href: 'https://www.npmjs.com/package/@axe-core/playwright',
+      },
+      { label: 'WebPageTest', href: 'https://www.webpagetest.org/' },
+      { label: 'Mock Service Worker (MSW)', href: 'https://mswjs.io/' },
+      {
+        label: 'Chrome DevTools',
+        href: 'https://developer.chrome.com/docs/devtools',
+      },
+      { label: 'BrowserStack', href: 'https://www.browserstack.com/' },
+      { label: 'LambdaTest', href: 'https://www.lambdatest.com/' },
+      { label: 'GitHub Actions', href: 'https://docs.github.com/actions' },
+      { label: 'GitLab CI/CD', href: 'https://docs.gitlab.com/ee/ci/' },
       {
         label: 'Google engineering practices: code review',
         href: 'https://google.github.io/eng-practices/review/',

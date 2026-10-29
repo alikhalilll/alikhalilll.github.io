@@ -1143,6 +1143,170 @@ export const phases: PlanPhase[] = [
               'You learn to combine automation with expertise, which is the realistic future of quality work.',
             body: 'Generate test cases and test data, then review and fix what the AI got wrong.',
           },
+          {
+            title: 'Unit & component testing',
+            why: 'Fast, isolated tests catch regressions in seconds instead of hours and make every refactor safe.',
+            how: 'Use Vitest as the default for Vue/Nuxt projects — the API matches Jest and it is fast. Mount components with Vue Test Utils, and prefer @testing-library/vue to test the way a user interacts with the component. Jest is still the common choice on React.',
+            impact:
+              'You learn to design code that is small enough to test and to defend each change with evidence, which is the entry point into test automation.',
+            body: 'Write unit tests for pure logic and component tests for user-visible behaviour. Prefer queries by role/label over implementation details.',
+            list: [
+              'Vitest — default runner for Vue/Nuxt, Jest-compatible API',
+              'Vue Test Utils — mount Vue components inside tests',
+              '@testing-library/vue — assert what the user sees, not internals',
+              'Jest — still common in React projects',
+            ],
+            links: [
+              { label: 'Vitest', href: 'https://vitest.dev/' },
+              { label: 'Vue Test Utils', href: 'https://test-utils.vuejs.org/' },
+              {
+                label: 'Testing Library (Vue)',
+                href: 'https://testing-library.com/docs/vue-testing-library/intro/',
+              },
+              { label: 'Jest', href: 'https://jestjs.io/' },
+            ],
+          },
+          {
+            title: 'End-to-end (E2E) testing',
+            why: 'Only an E2E test proves the full stack — browser, API, database — behaves correctly for a real user journey.',
+            how: 'Pick Playwright as the default: it runs on Chromium, Firefox and WebKit, auto-waits for elements and handles RTL and mobile viewports well. Cypress is easy to start with but weaker across multiple tabs and multiple domains. Selenium is older but still widespread in large enterprises.',
+            impact:
+              'You can prove the golden paths work on every build, which turns releases from scary one-off events into routine checks.',
+            body: 'Cover 5–10 critical journeys (login, checkout, publish). Keep E2E small; push detail down to unit and API tests.',
+            list: [
+              'Playwright — top pick; multi-browser, auto-wait, RTL and mobile friendly',
+              'Cypress — easy to start with; limited across tabs/domains',
+              'Selenium — older but still common in large companies',
+            ],
+            links: [
+              { label: 'Playwright', href: 'https://playwright.dev/' },
+              { label: 'Cypress', href: 'https://www.cypress.io/' },
+              { label: 'Selenium', href: 'https://www.selenium.dev/' },
+            ],
+          },
+          {
+            title: 'API testing',
+            why: 'Many user-facing bugs start as broken API contracts that no UI test will ever catch.',
+            how: 'Use Postman for manual exploration and shared collections with assertions. Then use Playwright’s request API to run the same checks in CI next to the E2E suite, so the API is covered without spinning up a browser.',
+            impact:
+              'You test at the right layer, keep API behaviour under version control and stop relying on UI tests to catch backend regressions.',
+            body: 'Status codes, validation errors, auth, permissions and pagination belong at the API layer, not the UI.',
+            list: [
+              'Postman — manual API checks and shared team collections',
+              'Playwright request API — automate the same checks inside the test suite',
+            ],
+            links: [
+              {
+                label: 'Postman Learning Center',
+                href: 'https://learning.postman.com/docs/introduction/overview/',
+              },
+              {
+                label: 'Playwright API testing',
+                href: 'https://playwright.dev/docs/api-testing',
+              },
+            ],
+          },
+          {
+            title: 'Visual regression testing',
+            why: 'A single CSS change can quietly break layouts across every page; eyes alone will not catch it.',
+            how: 'Start with Playwright screenshots (toHaveScreenshot) — free and built in. Graduate to Percy or Chromatic when the team needs a review dashboard, shared baselines and approvals across branches.',
+            impact:
+              'You defend design intent at the pixel level and remove entire classes of surprise UI regressions.',
+            body: 'Snapshot the components or pages that change rarely but matter most. Review failures as deliberately as you review code diffs.',
+            list: [
+              'Playwright toHaveScreenshot — free, built in, per-browser baselines',
+              'Percy — paid, with a review dashboard',
+              'Chromatic — paid, built around Storybook stories',
+            ],
+            links: [
+              {
+                label: 'Playwright visual comparisons',
+                href: 'https://playwright.dev/docs/test-snapshots',
+              },
+              { label: 'Percy', href: 'https://percy.io/' },
+              { label: 'Chromatic', href: 'https://www.chromatic.com/' },
+            ],
+          },
+          {
+            title: 'Performance & accessibility checks',
+            why: 'A slow page loses users; an inaccessible page excludes them. Both are quality defects, not polish items.',
+            how: 'Run Lighthouse for a quick scorecard across performance, accessibility and SEO. Automate axe-core (or @axe-core/playwright) in CI so every PR gets an a11y pass. Use WebPageTest for deeper performance analysis and real-device waterfalls.',
+            impact:
+              'You treat performance and accessibility as requirements with evidence, not opinions you only check right before release.',
+            body: 'Set a budget (e.g. Lighthouse perf ≥ 90, zero serious axe violations) and fail the build if the budget regresses.',
+            list: [
+              'Lighthouse — performance, accessibility and SEO scorecard',
+              'axe-core / @axe-core/playwright — automated a11y checks',
+              'WebPageTest — deep performance analysis and real-device traces',
+            ],
+            links: [
+              {
+                label: 'Lighthouse',
+                href: 'https://developer.chrome.com/docs/lighthouse/overview',
+              },
+              { label: 'axe-core', href: 'https://github.com/dequelabs/axe-core' },
+              {
+                label: '@axe-core/playwright',
+                href: 'https://www.npmjs.com/package/@axe-core/playwright',
+              },
+              { label: 'WebPageTest', href: 'https://www.webpagetest.org/' },
+            ],
+          },
+          {
+            title: 'Mocking the network with MSW',
+            why: 'You cannot cover 5xx errors, slow networks and empty payloads by hitting a real API — you have to control the response.',
+            how: 'Use Mock Service Worker (MSW) to intercept requests at the network layer, in the browser and in Node. Share the same handlers between tests and local development, so the mock stays honest.',
+            impact:
+              'You learn to isolate the system under test, which makes failures easier to localise and your tests dramatically faster to run.',
+            body: 'Mock at the network boundary, not the module boundary. The code under test should not know it is being tested.',
+            links: [{ label: 'Mock Service Worker', href: 'https://mswjs.io/' }],
+          },
+          {
+            title: 'Chrome DevTools for daily QA',
+            why: 'Most bugs you triage start with “it only happens on this device or network”. DevTools shows you exactly why.',
+            how: 'Use the Network panel to catch failed requests and payload issues, the Console for runtime errors, the Responsive view for breakpoints, and network throttling to reproduce slow-network bugs locally.',
+            impact:
+              'You become faster at diagnosing issues and your bug reports become specific enough that developers reproduce them on the first attempt.',
+            body: 'Attach the request/response, console error and screenshot to every bug report. “It doesn’t work” is not a bug report.',
+            links: [
+              {
+                label: 'Chrome DevTools',
+                href: 'https://developer.chrome.com/docs/devtools',
+              },
+            ],
+          },
+          {
+            title: 'Cross-browser & real devices',
+            why: 'A feature that works on your Mac Chrome can still break on an older iPhone Safari or a low-end Android.',
+            how: 'Use BrowserStack or LambdaTest to run manual and automated checks on real devices and browser versions. Prioritise the devices your users actually use, not every device that exists.',
+            impact:
+              'You stop shipping bugs that only your customers find — the gap between a tester and a QA engineer.',
+            body: 'Keep the device matrix short, data-driven and reviewed every quarter.',
+            list: [
+              'BrowserStack — real devices and browsers in the cloud',
+              'LambdaTest — comparable alternative, also cloud-based',
+            ],
+            links: [
+              { label: 'BrowserStack', href: 'https://www.browserstack.com/' },
+              { label: 'LambdaTest', href: 'https://www.lambdatest.com/' },
+            ],
+          },
+          {
+            title: 'Running the tests in CI',
+            why: 'Tests that only run on your laptop are not tests; they are hope. CI is what turns them into a safety net.',
+            how: 'Wire Vitest, Playwright and axe into GitHub Actions (or GitLab CI) so every push and PR runs the suite. Fail the build on red, publish artefacts (traces, screenshots, HTML reports) and gate merges on green.',
+            impact:
+              'You turn quality from an individual effort into a team contract and stop regressions ever reaching main.',
+            body: 'Keep the pipeline fast: unit on every push, E2E on PR + nightly, visual + perf on PR with budgets.',
+            list: [
+              'GitHub Actions — the default on GitHub repos',
+              'GitLab CI — the equivalent on GitLab',
+            ],
+            links: [
+              { label: 'GitHub Actions', href: 'https://docs.github.com/actions' },
+              { label: 'GitLab CI/CD', href: 'https://docs.gitlab.com/ee/ci/' },
+            ],
+          },
         ],
       },
       {

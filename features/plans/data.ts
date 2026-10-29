@@ -46,7 +46,7 @@ export const planCatalog: PlanSummary[] = [
     outcome:
       'A signed-off spec, a tested prompt library, an executed QA plan and a Postman + k6 collection you can hand to a developer.',
     preview: [
-      '9 weeks · 39 topics · 3 phases',
+      '9 weeks · 48 topics · 3 phases',
       'Full-time pace: 10–12 hrs/wk · part-time: double the calendar',
       'One real feature carried through every week',
       'Topic quizzes + phase gates · best score is kept',

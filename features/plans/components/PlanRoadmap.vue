@@ -400,7 +400,7 @@ const nodeScore = (node: GraphNode) => {
       <span><i class="legend-dot is-locked" /> Locked</span>
       <span class="roadmap-legend-note">
         <Icon name="lucide:git-fork" class="learning-icon" />
-        One root · three phases · nine weekly branches · 39 topics
+        One root · three phases · nine weekly branches · {{ planTopics.length }} topics
       </span>
     </div>
 
